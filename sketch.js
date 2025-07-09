@@ -36,7 +36,11 @@ function setup() {
 
 function getClassicLevel(levelSet, previousCards) {
 	let lvl, index;
-	while(true){
+	let cont = true;
+	for(let tries = 0; tries<1000 && cont; tries++){
+		if(tries===999){
+			console.log("reached try #999. see getClassicLevel");
+		}
 		index = floor(random(0,levelSet.length));
 		lvl = levelSet[index];
 		if(previousCards===undefined || lvl.cards.length!==previousCards.length){
@@ -44,6 +48,7 @@ function getClassicLevel(levelSet, previousCards) {
 		}
 		for(let i = 0; i<lvl.cards.length; i++){
 			if(lvl.cards[i]!==previousCards[i]){
+				cont = false;
 				break;
 			}
 		}
@@ -61,8 +66,7 @@ function draw() {
 	if (screen === "game") {
 		level.draw();
 		if(level.solved){
-			console.log(level.originalValues);
-			level = getClassicLevel(classicSets[2],level.originalValues);
+			level = getClassicLevel(classicSets[2],level.originalValues.map(c => c.real));
 			Level.setupKeyboard(level);
 		}
 	}

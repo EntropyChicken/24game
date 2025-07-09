@@ -4,31 +4,41 @@ const EQUALITY_THRESHOLD = 1e-6;
 const DISPLAY_THRESHOLD = 7e-9;
 let screen = "game";
 let level;
-let classicLevels;
+let classicSets = [[],[],[],[],[]];
 
 function preload() {
 	loadJSON("levelData/classicLevelsEasy.json", data => {
-		classicLevels = data;
+		classicSets[0] = data;
+	});
+	loadJSON("levelData/classicLevelsMedium.json", data => {
+		classicSets[1] = data;
+	});
+	loadJSON("levelData/classicLevelsHard.json", data => {
+		classicSets[2] = data;
+	});
+	loadJSON("levelData/classicLevelsTricky.json", data => {
+		classicSets[3] = data;
+	});
+	loadJSON("levelData/classicLevelsDoomed.json", data => {
+		classicSets[4] = data;
 	});
 }
 
 function setup() {
 	createCanvas(windowWidth, windowHeight);
 
-	// level = newClassicLevel();
+	// level = getClassicLevel(classicSets[2]);
 	level = new Level([23,25,27,Math.PI,Math.E]);
 	// level = new Level([2,2,2]);
 
 	Level.setupKeyboard(level);
 }
 
-function newClassicLevel(index, previousCards) {
-	if(index === undefined){
-		index = floor(random(0,classicLevels.length));
-	}
-	let lvl;
+function getClassicLevel(levelSet, previousCards) {
+	let lvl, index;
 	while(true){
-		lvl = classicLevels[index];
+		index = floor(random(0,levelSet.length));
+		lvl = levelSet[index];
 		if(previousCards===undefined || lvl.cards.length!==previousCards.length){
 			break;
 		}
@@ -51,7 +61,8 @@ function draw() {
 	if (screen === "game") {
 		level.draw();
 		if(level.solved){
-			level = newClassicLevel();
+			console.log(level.originalValues);
+			level = getClassicLevel(classicSets[2],level.originalValues);
 			Level.setupKeyboard(level);
 		}
 	}

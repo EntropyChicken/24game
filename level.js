@@ -2,6 +2,7 @@ class Level {
 	constructor(numbers, opSymbols = ['+', '-', '×', '÷', '^', '√', 'ln'], metaData = {}) {
         this.metaData = metaData;
 		this.values = numbers.map(n => new Complex(n));
+		this.originalValues = numbers.map(n => new Complex(n));
 		this.boxes = [];
 		this.opSymbols = opSymbols;
 		this.setupBoxes();

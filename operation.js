@@ -8,6 +8,9 @@ class Operation {
 	}
 
 	draw(selected) {
+		if(this.drawAngle === undefined){
+			this.drawAngle = 0;
+		}
 		if(this.drawOffset === undefined){
 			this.drawOffset = 0;
 		}
@@ -17,6 +20,7 @@ class Operation {
 		if (selected || mouseX > this.x && mouseX < this.x + this.w && mouseY > this.y && mouseY < this.y + this.h) {
 			this.drawOffset += height*0.003;
 		}
+		this.drawAngle *= 0.8;
 		this.drawOffset *= 0.85;
 		this.drawScale = 1+(this.drawScale-1)*0.9;
 
@@ -24,6 +28,7 @@ class Operation {
 		translate(this.x+this.w/2,this.y+this.h/2);
 		scale(this.drawScale);
 		translate(0,this.drawOffset);
+		rotate(this.drawAngle);
 		translate(-this.x-this.w/2,-this.y-this.h/2);
 
         fill(selected ? color(225,255,180) : color(255,255,255));

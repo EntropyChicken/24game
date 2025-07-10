@@ -29,7 +29,8 @@ class Level {
 			w: boxW,
 			h: boxH,
 			value: v,
-			locName: i
+			locName: i,
+			drawScale: 0.7
 		}));
 	}
 
@@ -67,6 +68,9 @@ class Level {
 			btnW,
 			btnH
 		));
+		for(let btn of this.opButtons){
+			btn.drawScale = 0.7;
+		}
 	}
 
 	setupUndo() {
@@ -75,6 +79,7 @@ class Level {
 			y: height * 0.85,
 			w: width * 0.14,
 			h: height * 0.09
+			// drawScale: 0.7
 		};
 	}
 
@@ -112,17 +117,23 @@ class Level {
 			if(b.drawScale === undefined){
 				b.drawScale = 1;
 			}
+			if(b.drawOffset === undefined){
+				b.drawOffset = 0;
+			}
 			if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
-				b.drawAngle += 0.03
+				b.drawOffset -= height*0.005;
 				// alternative: b.drawAngle += b.locName%2 ? -0.02 : 0.02
 			}
+
 			b.drawAngle *= 0.8;
 			b.drawScale = 1+(b.drawScale-1)*0.9;
+			b.drawOffset *= 0.8;
 
 			push();
 			translate(b.x+b.w/2,b.y+b.h/2);
-			rotate(b.drawAngle);
 			scale(b.drawScale);
+			translate(0,b.drawOffset);
+			rotate(b.drawAngle);
 			translate(-b.x-b.w/2,-b.y-b.h/2);
 
 
@@ -204,16 +215,21 @@ class Level {
 		if(b.drawScale === undefined){
 			b.drawScale = 1;
 		}
+		if(b.drawOffset === undefined){
+			b.drawOffset = 0;
+		}
 		if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
-			b.drawAngle -= 0.02
+			b.drawOffset += height*0.004;
 		}
 		b.drawAngle *= 0.8;
 		b.drawScale = 1+(b.drawScale-1)*0.9;
+		b.drawOffset *= 0.8;
 
 		push();
 		translate(b.x+b.w/2,b.y+b.h/2);
-		rotate(b.drawAngle);
 		scale(b.drawScale);
+		translate(0,b.drawOffset);
+		rotate(b.drawAngle);
 		translate(-b.x-b.w/2,-b.y-b.h/2);
 
 		fill('white'); stroke(100,93,85); strokeWeight(3);
@@ -229,8 +245,14 @@ class Level {
 		// Undo click
 		const u = this.undoButton;
 		if (mx > u.x && mx < u.x + u.w && my > u.y && my < u.y + u.h) {
-			u.drawScale -= 0.06;
-			this.undo(); return;
+			if(this.history.length){
+				u.drawScale -= 0.08;
+				this.undo();
+			}
+			else{
+				u.drawAngle -= 0.16;
+			}
+			return;
 		}
 
 		// Number box click
@@ -246,7 +268,7 @@ class Level {
 
 				// if no number selected, pick this one
 				if (this.firstIndex === null) {
-					b.drawScale -= 0.06;
+					b.drawScale -= 0.065;
 					this.firstIndex = i;
 					return;
 				}
@@ -255,7 +277,7 @@ class Level {
 
 				// if number selected but no op, switch selection
 				if (this.firstIndex !== null && this.selectedOp === null) {
-					b.drawScale -= 0.06;
+					b.drawScale -= 0.065;
 					this.firstIndex = i; return;
 				}
 
@@ -283,13 +305,27 @@ class Level {
 						this.boxes[this.firstIndex].drawScale += 0.1;
                         this.selectedOp = null;
                     }
-                    // Never visibly select unary op
+					else{
+						btn.drawAngle -= 0.16;
+					}
                     return;
                 } else {
-                    // Binary op: select/deselect
-                    this.selectedOp = (this.selectedOp === btn) ? null : btn;
+					/*
+					OLD version where you can select op before any numbers
+					// Binary op: select/deselect
+					this.selectedOp = (this.selectedOp === btn) ? null : btn;
 					if(this.selectedOp === btn){
-						btn.drawScale -= 0.06;
+						btn.drawScale -= 0.065;
+					}
+					*/
+					if(this.firstIndex===null){
+						btn.drawAngle -= 0.16;
+					}
+					else{
+						this.selectedOp = (this.selectedOp === btn) ? null : btn;
+						if(this.selectedOp === btn){
+							btn.drawScale -= 0.065;
+						}
 					}
                 }
                 return;
@@ -376,6 +412,7 @@ class Level {
 						this.applyOperation(this.firstIndex, i, this.selectedOp);
                     } else {
                         this.firstIndex = i;
+						this.boxes[i].drawScale -= 0.065;
                     }
                     return;
                 }
@@ -412,6 +449,7 @@ class Level {
                     } else {
                         // Binary op: select/deselect
                         this.selectedOp = (this.selectedOp === btn) ? null : btn;
+						if(this.selectedOp){ btn.drawScale -= 0.065; }
                     }
                     return;
                 }
@@ -424,11 +462,18 @@ class Level {
 			if (code >= 97 && code <= 122) { // 'a' to 'z'
 				let loc = code - 97;
 				for (let i = 0; i < this.boxes.length; i++) {
-					if (this.boxes[i].locName === loc && i !== this.firstIndex) {
+					if (this.boxes[i].locName === loc){
 						if (this.firstIndex !== null && this.selectedOp) {
-							this.applyOperation(this.firstIndex, i, this.selectedOp);
+							if(i === this.firstIndex) {
+								this.firstIndex = null;
+								this.selectedOp = null;
+							}
+							else {
+								this.applyOperation(this.firstIndex, i, this.selectedOp);
+							}
 						} else {
 							this.firstIndex = i;
+							this.boxes[i].drawScale -= 0.065;
 						}
 						return;
 					}

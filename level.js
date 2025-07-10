@@ -450,9 +450,15 @@ class Level {
                         }
                         return;
                     } else {
-                        // Binary op: select/deselect
-                        this.selectedOp = (this.selectedOp === btn) ? null : btn;
-						if(this.selectedOp){ btn.drawScale -= 0.065; }
+						if(this.firstIndex===null){
+							btn.drawAngle -= 0.16;
+						}
+						else{
+							this.selectedOp = (this.selectedOp === btn) ? null : btn;
+							if(this.selectedOp){
+								btn.drawScale -= 0.065;
+							}
+						}
                     }
                     return;
                 }

@@ -23,8 +23,11 @@ function preload() {
 	loadJSON("levelData/classicLevelsDoomed.json", data => {
 		classicSets[4] = data;
 	});
-	loadJSON("levelData/puzzleLevels.json", data => {
+	loadJSON("levelData/puzzleLevelsFun.json", data => {
 		puzzleSets[0] = data;
+	});
+	loadJSON("levelData/puzzleLevelsCrazy.json", data => {
+		puzzleSets[1] = data;
 	});
 }
 

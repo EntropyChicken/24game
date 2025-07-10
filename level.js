@@ -401,6 +401,10 @@ class Level {
 		if (key === '\\'){
 			this.solved = true;
 		}
+		if (key === 'o'){
+			this.opSymbols = Level.SYMBOLS;
+			this.setupOps();
+		}
 		if (key === 'u' || key === 'z'){
 			this.undo();
 			return;

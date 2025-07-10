@@ -437,7 +437,10 @@ class Level {
                 if (btn.symbol === symbol) {
                     // For unary ops, apply immediately if number selected
                     if (this.symbolIsUnary(symbol)) {
-                        if (this.firstIndex !== null) {
+                        if (this.firstIndex === null) {
+							btn.drawAngle -= 0.16;
+						}
+						else{
                             this.saveState();
                             const a = this.boxes[this.firstIndex].value;
                             const res = btn.apply(a, null);

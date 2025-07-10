@@ -428,7 +428,8 @@ class Level {
             '^': '^',
             's': '√',
             'l': 'ln',
-            'x': '×', // sketchy
+			'!': '!',
+            'x': '×', // sus
         };
         if (key in opKeyMap) {
             const symbol = opKeyMap[key];

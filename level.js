@@ -84,10 +84,27 @@ class Level {
 	}
 
 	draw() {
+		const WIN_TIMER_START = 75;
 		if (this.winTimer === 0 && this.boxes.length === 1 && this.boxes[0].value.equals(new Complex(24))) {
-			this.winTimer = 45;
+			this.winTimer = WIN_TIMER_START;
 		}
         if (this.winTimer > 0) {
+			for(let b of this.boxes){
+				if(b.value.equals(new Complex(24))){
+					let factor = constrain((WIN_TIMER_START-this.winTimer)*0.006-0.03,-0.02,1);
+					let vel = {
+						x:(width/2-b.w/2-b.x)*factor,
+						y:(height*0.32-b.h/2-b.y)*factor
+					};
+					b.x += vel.x;
+					b.y += vel.y;
+					b.drawOffset = 0;
+					b.drawAngle = 0;
+					b.drawScale = 1;
+					// b.drawAngle = sq(3*factor)*(0.5-b.locName%2);
+					// b.drawScale = 1+constrain(dist(0,0,vel.x,vel.y),0,10)*0.03;
+				}
+			}
             background(200,230,155); // green
             this.winTimer--;
             if (this.winTimer <= 0) {

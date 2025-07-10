@@ -111,7 +111,7 @@ function draw() {
 	if (screen === "game") {
 		level.draw();
 		if(level.solved){
-			level = getPuzzleLevel(puzzleSets[3],level.originalValues.map(c => c.real));
+			level = getClassicLevel(classicSets[0],level.originalValues.map(c => c.real));
 			Level.setupKeyboard(level);
 		}
 	}

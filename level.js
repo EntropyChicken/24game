@@ -75,14 +75,14 @@ class Level {
 			this.winTimer = 45;
 		}
         if (this.winTimer > 0) {
-            background(100, 240, 140); // green
+            background(200,230,155); // green
             this.winTimer--;
             if (this.winTimer <= 0) {
 				this.solved = true;
                 return;
             }
         } else {
-            background(100, 130, 180);
+            background(215, 200, 180);
         }
 		this.drawOps();
 		this.drawBoxes();
@@ -118,31 +118,39 @@ class Level {
 			translate(-b.x-b.w/2,-b.y-b.h/2);
 
 
-			fill(i === this.firstIndex ? color(255,255,150) : color(255,255,255));
+			fill(i === this.firstIndex ? color(225,255,180) : color(255,255,255));
 			stroke(0); strokeWeight(3);
 			rect(b.x, b.y, b.w, b.h, 15);
 
-			fill(0); noStroke();
+			noStroke();
 			textAlign(CENTER, CENTER);
 
 			let txt = "";
 			let raw = b.value;
+			fill(raw.getColor());
 			if(keyIsDown(32)){
 				txt = raw.real.toString()+"+"+raw.imag.toString()+"i";
+				fill(0,100,0);
 			}
 			else if(isNaN(raw.real)||isNaN(raw.imag)){
 				txt = "🤯⁉️";
 			}
+			else if(raw.equals(new Complex(Math.PI),DISPLAY_THRESHOLD)){
+				txt = "π";
+			}
+			else if(raw.equals(new Complex(Math.E),DISPLAY_THRESHOLD)){
+				txt = "e";
+			}
 			else{
 				let rounded = raw.round(DISPLAY_THRESHOLD);
 				if(abs(raw.real)>DISPLAY_THRESHOLD) {
-					txt = rounded.real.toString();
+					txt = numToString(rounded.real);
 				}
 				if (abs(raw.imag)>DISPLAY_THRESHOLD) {
 					if(txt!==""&&rounded.imag>=0) {
 						txt += "+";
 					}
-					txt += rounded.imag + "i";
+					txt += numToString(rounded.imag) + "i";
 				}
 				if(txt===""){
 					txt = "0";
@@ -151,7 +159,7 @@ class Level {
 
 			const maxWidth = b.w - 7;
 			const maxHeight = b.h - 7;
-			const fallbackFontSize = height * 0.033;
+			const fallbackFontSize = height * 0.05;
 
 			// First check if fallback size is enough for one-line fit
 			textSize(fallbackFontSize);
@@ -192,11 +200,11 @@ class Level {
 				}
 				if (currentLine.length > 0) lines.push(currentLine);
 
-				const lineHeight = fallbackFontSize * 1.2;
-				const startY = b.y + b.h / 2 - (lines.length - 1) * lineHeight / 2;
+				const lineHeight = fallbackFontSize * 1.1;
+				const startY = b.y + b.h / 2 - (lines.length - 1) * lineHeight / 2 + 3;
 
 				lines.forEach((line, j) => {
-					text(line, b.x + b.w/2, startY + j * lineHeight + 3);
+					text(line, b.x + b.w/2, startY + j * lineHeight);
 				});
 			}
 			pop();

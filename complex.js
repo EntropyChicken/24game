@@ -59,14 +59,13 @@ class Complex {
     }
 
     static gamma(z) {
-        const EQUALITY_THRESHOLD = 1e-10;
-        const DISPLAY_THRESHOLD = 1e-10;
+        const THRESHOLD = 1e-10;
         const PI = Math.PI;
 
         // Check for poles (non-positive integers)
-        if (Math.abs(z.imag) < EQUALITY_THRESHOLD) {
+        if (Math.abs(z.imag) < THRESHOLD) {
             const realRounded = Math.round(z.real);
-            if (Math.abs(z.real - realRounded) < DISPLAY_THRESHOLD && realRounded <= 0) {
+            if (Math.abs(z.real - realRounded) < THRESHOLD && realRounded <= 0) {
                 return new Complex(NaN, NaN);
             }
         }
@@ -79,7 +78,7 @@ class Complex {
             );
 
             // Check for sinPIz being zero (indicating pole)
-            if (Math.abs(sinPIz.real) < EQUALITY_THRESHOLD && Math.abs(sinPIz.imag) < EQUALITY_THRESHOLD) {
+            if (Math.abs(sinPIz.real) < THRESHOLD && Math.abs(sinPIz.imag) < THRESHOLD) {
                 return new Complex(NaN, NaN);
             }
 
@@ -124,6 +123,34 @@ class Complex {
             const sqrt2PI = new Complex(Math.sqrt(2 * PI));
 
             return A.multiply(term1).multiply(term2).multiply(sqrt2PI);
+        }
+    }
+
+    
+    getColor(){
+        if(isNaN(this.real)||isNaN(this.imag||typeof(this.real)!=="number"||typeof(this.imag)!=="number")||!isFinite(this.real)||!isFinite(this.imag)){
+            return color(120,120,120);
+        }
+        if(abs(this.imag)>DISPLAY_THRESHOLD){
+            if(abs(this.real)>DISPLAY_THRESHOLD){
+                return color(180,0,240);
+            }
+            else{
+                return color(0,0,200);
+            }
+        }
+        else{
+            if(this.real>-DISPLAY_THRESHOLD){
+                if(abs(this.real-round(this.real))<DISPLAY_THRESHOLD){
+                    return color(0,0,0);
+                }
+                else{
+                    return color(200,120,0);
+                }
+            }
+            else{
+                return color(255,0,100);
+            }
         }
     }
 }

@@ -26,7 +26,7 @@ class Operation {
 		translate(0,this.drawOffset);
 		translate(-this.x-this.w/2,-this.y-this.h/2);
 
-        fill(selected ? color(255,255,150) : color(255,255,255));
+        fill(selected ? color(225,255,180) : color(255,255,255));
 		stroke(0); strokeWeight(3);
 		rect(this.x, this.y, this.w, this.h, 12);
 		fill(0); noStroke();

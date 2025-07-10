@@ -75,10 +75,10 @@ class Level {
 
 	setupUndo() {
 		this.undoButton = {
-			x: width * 0.05,
-			y: height * 0.85,
-			w: width * 0.14,
-			h: height * 0.09
+			x: width * 0.07,
+			y: height * 0.8,
+			w: width * 0.2,
+			h: height * 0.12,
 			// drawScale: 0.7
 		};
 	}
@@ -219,7 +219,7 @@ class Level {
 			b.drawOffset = 0;
 		}
 		if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
-			b.drawOffset += height*0.004;
+			b.drawOffset += height*0.0045;
 		}
 		b.drawAngle *= 0.8;
 		b.drawScale = 1+(b.drawScale-1)*0.9;

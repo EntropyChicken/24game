@@ -18,7 +18,7 @@ class Operation {
 			this.drawScale = 1;
 		}
 		if (selected || mouseX > this.x && mouseX < this.x + this.w && mouseY > this.y && mouseY < this.y + this.h) {
-			this.drawOffset += height*0.003;
+			this.drawOffset += height*0.0045;
 		}
 		this.drawAngle *= 0.8;
 		this.drawOffset *= 0.85;

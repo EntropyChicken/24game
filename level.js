@@ -481,6 +481,7 @@ class Level {
                             this.boxes[this.firstIndex].value = res;
                             this.boxes[this.firstIndex].drawScale += 0.1;
                             this.selectedOp = null;
+							btn.drawScale -= 0.08;
                         }
                         return;
                     } else {

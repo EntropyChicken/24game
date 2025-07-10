@@ -417,6 +417,15 @@ class Level {
                     return;
                 }
             }
+			// (didn't find it) deselection
+			if(this.firstIndex!==null&&this.selectedOp){
+				let v = this.boxes[this.firstIndex].value;
+				if (v.imag === 0 && v.real.toString() === key){
+					this.firstIndex = null;
+					this.selectedOp = null;
+				}
+			}
+
             return;
         }
         // Map keys to op symbols

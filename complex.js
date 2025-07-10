@@ -1,3 +1,9 @@
+function numToString(x) {
+	if (!Number.isFinite(x)) return x.toString(); // for Infinity, NaN
+	// Fix to 11 decimal places, then remove trailing zeros and optional "."
+	return parseFloat(x.toFixed(11)).toString();
+}
+
 class Complex {
     constructor(real, imag = 0) {
         this.real = real;
@@ -177,6 +183,43 @@ class Complex {
         return ln.multiply(negI);
     };
     
+    getText(){
+        let txt = "";
+        fill(this.getColor());
+        if(keyIsDown(32)){
+            txt = this.real.toString()+"+"+this.imag.toString()+"i";
+            fill(0,100,0);
+        }
+        else if(isNaN(this.real)||isNaN(this.imag)){
+            txt = "🤯⁉️";
+        }
+        else if(this.equals(new Complex(Math.PI),DISPLAY_THRESHOLD)){
+            txt = "π";
+        }
+        else if(this.equals(new Complex(Math.E),DISPLAY_THRESHOLD)){
+            txt = "e";
+        }
+        else{
+            let rounded = this.round(DISPLAY_THRESHOLD);
+            if(abs(this.real)>DISPLAY_THRESHOLD) {
+                txt = numToString(rounded.real);
+            }
+            if (abs(this.imag)>DISPLAY_THRESHOLD) {
+                if(txt!==""&&rounded.imag>=0) {
+                    txt += "+";
+                }
+                if(numToString(rounded.imag)!=="1"){
+                    txt += numToString(rounded.imag);
+                }
+                txt += "i";
+            }
+            if(txt===""){
+                txt = "0";
+            }
+        }
+        return txt;
+    }
+
     getColor(){
         if(isNaN(this.real)||isNaN(this.imag||typeof(this.real)!=="number"||typeof(this.imag)!=="number")||!isFinite(this.real)||!isFinite(this.imag)){
             return color(120,120,120);

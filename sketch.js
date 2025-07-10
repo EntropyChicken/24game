@@ -81,12 +81,6 @@ function getPuzzleLevel(levelSet, previousCards) {
 	return new Level(shuffle(lvl.cards), lvl.ops, lvl);
 }
 
-function numToString(x) {
-	if (!Number.isFinite(x)) return x.toString(); // for Infinity, NaN
-	// Fix to 11 decimal places, then remove trailing zeros and optional "."
-	return parseFloat(x.toFixed(11)).toString();
-}
-
 
 
 

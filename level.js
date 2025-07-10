@@ -132,37 +132,7 @@ class Level {
 			noStroke();
 			textAlign(CENTER, CENTER);
 
-			let txt = "";
-			let raw = b.value;
-			fill(raw.getColor());
-			if(keyIsDown(32)){
-				txt = raw.real.toString()+"+"+raw.imag.toString()+"i";
-				fill(0,100,0);
-			}
-			else if(isNaN(raw.real)||isNaN(raw.imag)){
-				txt = "🤯⁉️";
-			}
-			else if(raw.equals(new Complex(Math.PI),DISPLAY_THRESHOLD)){
-				txt = "π";
-			}
-			else if(raw.equals(new Complex(Math.E),DISPLAY_THRESHOLD)){
-				txt = "e";
-			}
-			else{
-				let rounded = raw.round(DISPLAY_THRESHOLD);
-				if(abs(raw.real)>DISPLAY_THRESHOLD) {
-					txt = numToString(rounded.real);
-				}
-				if (abs(raw.imag)>DISPLAY_THRESHOLD) {
-					if(txt!==""&&rounded.imag>=0) {
-						txt += "+";
-					}
-					txt += numToString(rounded.imag) + "i";
-				}
-				if(txt===""){
-					txt = "0";
-				}
-			}
+			let txt = b.value.getText();
 
 			const maxWidth = b.w - 7;
 			const maxHeight = b.h - 7;

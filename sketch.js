@@ -22,7 +22,7 @@ function preload() {
 function setup() {
 	createCanvas(windowWidth, windowHeight);
 	
-	// level = getClassicLevel(classicSets[0]);
+	// level = getRandomLevel(classicSets[0],[],["+","-","×","÷"]);
 	level = new Level([-1,-3,Math.PI,4,0]);
 	Level.setupKeyboard(level);
 	
@@ -48,36 +48,13 @@ function setup() {
 
 }
 
-function getClassicLevel(levelSet, previousCards) {
-	let lvl, index;
-	let cont = true;
-	for(let tries = 0; tries<1000 && cont; tries++){
-		if(tries===999){
-			console.log("reached try #999. see getClassicLevel");
-		}
-		index = floor(random(0,levelSet.length));
-		lvl = levelSet[index];
-		if(previousCards===undefined || lvl.cards.length!==previousCards.length){
-			break;
-		}
-		let sortedCards = lvl.cards.toSorted();
-		let sortedPreviousCards = previousCards.toSorted();
-		for(let i = 0; i<sortedCards.length; i++){
-			if(sortedCards[i]!==sortedPreviousCards[i]){
-				cont = false;
-				break;
-			}
-		}
-	}
-	return new Level(shuffle(lvl.cards), ['+', '-', '×', '÷'], lvl);
-}
-function getPuzzleLevel(levelSet, previousCards) {
+function getRandomLevel(levelSet, previousCards, defaultOps=Level.SYMBOLS, overrideOps=false) {
 	// if two distinct puzzles have the same cards, then don't transition (for clarity)
 	let lvl, index;
 	let cont = true;
 	for(let tries = 0; tries<1000 && cont; tries++){
 		if(tries===999){
-			console.log("reached try #999. see getPuzzleLevel");
+			console.log("reached try #999 in getRandomLevel");
 		}
 		index = floor(random(0,levelSet.length));
 		lvl = levelSet[index];
@@ -93,7 +70,11 @@ function getPuzzleLevel(levelSet, previousCards) {
 			}
 		}
 	}
-	return new Level(shuffle(lvl.cards), lvl.ops, lvl);
+	let ops = defaultOps;
+	if((!overrideOps)&&lvl.ops!==undefined){
+		ops = lvl.ops;
+	}
+	return new Level(shuffle(lvl.cards), ops, lvl);
 }
 
 
@@ -111,7 +92,7 @@ function draw() {
 	if (screen === "game") {
 		level.draw();
 		if(level.solved){
-			level = getClassicLevel(classicSets[0],level.originalValues.map(c => c.real));
+			level = getRandomLevel(classicSets[0],level.originalValues.map(c => c.real),["+","-","×","÷"]);
 			Level.setupKeyboard(level);
 		}
 	}

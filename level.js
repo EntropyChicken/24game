@@ -263,7 +263,6 @@ class Level {
 		const u = this.undoButton;
 		if (mx > u.x && mx < u.x + u.w && my > u.y && my < u.y + u.h) {
 			if(this.history.length){
-				u.drawScale -= 0.08;
 				this.undo();
 			}
 			else{
@@ -377,6 +376,10 @@ class Level {
 
 	undo() {
 		if (!this.history.length) return;
+		if(this.undoButton.drawScale>0.99){
+			this.undoButton.drawScale -= 0.1;
+		}
+		this.undoButton.drawScale -= 0.08;
 		const prev = this.history.pop();
 		this.boxes = prev.map(b => ({
 			x: b.x, y: b.y, w: b.w, h: b.h,

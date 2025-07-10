@@ -200,8 +200,11 @@ class Complex {
     }
     
     getText(){
+        if(typeof(this.real)==="string"&&this.imag===0){
+            return "\""+this.real+"\"";
+        }
+
         let txt = "";
-        fill(this.getColor());
         if(keyIsDown(32)){
             txt = this.real.toString()+"+"+this.imag.toString()+"i";
             fill(0,100,0);

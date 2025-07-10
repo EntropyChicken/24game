@@ -1,0 +1,5 @@
+[
+    {"cards":["2","4"],"ops":["+"],"hint":"Javascript is an untyped language","sols":"\"2\"+\"4\""},
+    {"cards":[1,"2",3],"ops":["+"],"hint":"2 concat 4","sols":"\"2\"+(\"3\"+1)"},
+    {"cards":[2,"4","8"],"ops":["+","÷"],"hint":"24 is half of 48","sols":"(\"4\"+\"8\")÷2"}
+]

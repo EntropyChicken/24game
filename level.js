@@ -133,6 +133,7 @@ class Level {
 			noStroke();
 			textAlign(CENTER, CENTER);
 
+			fill(b.value.getColor());
 			let txt = b.value.getText();
 
 			const maxWidth = b.w - 7;

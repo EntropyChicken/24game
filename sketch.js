@@ -5,7 +5,7 @@ const DISPLAY_THRESHOLD = 7e-9;
 let screen = "game";
 let level;
 let classicSets = [[],[],[],[],[]];
-let puzzleSets = [[],[],[]];
+let puzzleSets = [[],[],[],[]];
 
 function preload() {
 	loadJSON("levelData/classicLevelsEasy.json", data => {classicSets[0] = data;});
@@ -16,6 +16,7 @@ function preload() {
 	loadJSON("levelData/puzzleLevelsSimple.json", data => {puzzleSets[0] = data;});
 	loadJSON("levelData/puzzleLevelsInteresting.json", data => {puzzleSets[1] = data;});
 	loadJSON("levelData/puzzleLevelsCrazy.json", data => {puzzleSets[2] = data;});
+	loadJSON("levelData/puzzleLevelsJavascript.json", data => {puzzleSets[3] = data;});
 }
 
 function setup() {
@@ -104,7 +105,7 @@ function draw() {
 	if (screen === "game") {
 		level.draw();
 		if(level.solved){
-			level = getPuzzleLevel(puzzleSets[0],level.originalValues.map(c => c.real));
+			level = getPuzzleLevel(puzzleSets[3],level.originalValues.map(c => c.real));
 			Level.setupKeyboard(level);
 		}
 	}

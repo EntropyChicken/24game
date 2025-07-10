@@ -1,5 +1,7 @@
 class Level {
-	constructor(numbers, opSymbols = ['+', '-', '×', '÷', '^', '√', 'ln', '!'], metaData = {}) {
+	static SYMBOLS = ['+', '-', '×', '÷', '^', '√', 'ln', '!', 'sin', 'cos', 'tan', 'cot', 'acos'];
+
+	constructor(numbers, opSymbols = Level.SYMBOLS, metaData = {}) {
         this.metaData = metaData;
 		this.values = numbers.map(n => new Complex(n));
 		this.originalValues = numbers.map(n => new Complex(n));
@@ -32,9 +34,9 @@ class Level {
 	}
 
 	setupOps() {
-        const spaceConst = 1.9;
+        const spaceConst = this.opSymbols.length>=10 ? 0.7 : 1.9;
 		const syms = this.opSymbols;
-		const btnW = width * 0.91 / (this.opSymbols.length+3);
+		const btnW = width * (this.opSymbols.length>=10 ? 1.1 : 0.91) / (this.opSymbols.length+3);
 		const btnH = height * 0.16;
 		const spacing = width / (syms.length + 2*spaceConst-1);
 		this.opButtons = syms.map((s, i) => new Operation(
@@ -46,9 +48,14 @@ class Level {
 					case '×': return a.multiply(b);
 					case '÷': return a.divide(b);
                     case '^': return a.power(b);
-                    case '√': return a.power(new Complex(0.5));
+                    case '√': return a.sqrt();
                     case 'ln': return a.naturalLog();
 					case '!': return a.factorial();
+					case 'sin': return a.sin();
+					case 'cos': return a.cos();
+					case 'tan': return a.tan();
+					case 'cot': return a.cot();
+					case 'acos': return a.acos();
 					default:
 						console.log("INVALID OPERATOR CHARACTER");
 						return new Complex("INVALID OPERATOR CHARACTER");
@@ -119,7 +126,7 @@ class Level {
 
 
 			fill(i === this.firstIndex ? color(225,255,180) : color(255,255,255));
-			stroke(0); strokeWeight(3);
+			stroke(100,93,85); strokeWeight(3);
 			rect(b.x, b.y, b.w, b.h, 15);
 
 			noStroke();
@@ -237,7 +244,7 @@ class Level {
 		scale(b.drawScale);
 		translate(-b.x-b.w/2,-b.y-b.h/2);
 
-		fill('white'); stroke(0); strokeWeight(3);
+		fill('white'); stroke(100,93,85); strokeWeight(3);
 		rect(b.x, b.y, b.w, b.h, 10);
 		fill(0); noStroke();
 		textAlign(CENTER, CENTER);
@@ -292,7 +299,7 @@ class Level {
 		for (let btn of this.opButtons) {
 			if (btn.contains(mx, my)) {
 				// Check if this is a unary op (√ or ln)
-                if ((btn.symbol === '√' || btn.symbol === 'ln' || btn.symbol === '!')) {
+                if (this.symbolIsUnary(btn.symbol)) {
                     if (this.firstIndex !== null) {
 						btn.drawScale -= 0.08;
                         // Apply unary op immediately to selected box
@@ -355,15 +362,10 @@ class Level {
 		this.selectedOp = null;
 	}
 
-	// newGame() {
-	// 	this.values = randomNumbers().map(n => new Complex(n));
-	// 	this.history = [];
-	// 	this.firstIndex = null;
-	// 	this.selectedOp = null;
-	// 	this.setupBoxes();
-	// 	this.setupOps();
-	// 	this.setupUndo();
-	// }
+	symbolIsUnary(symbol){
+		// when adding any non-unary operator, update this list
+		return !(symbol === '+' || symbol === '-' || symbol === '×' || symbol === '÷' || symbol === '^');
+	}
 
 	handleKey(e) {
 		const key = e.key;
@@ -425,7 +427,7 @@ class Level {
             for (let btn of this.opButtons) {
                 if (btn.symbol === symbol) {
                     // For unary ops, apply immediately if number selected
-                    if (symbol === '√' || symbol === 'ln' || symbol === '!') {
+                    if (this.symbolIsUnary(symbol)) {
                         if (this.firstIndex !== null) {
                             this.saveState();
                             const a = this.boxes[this.firstIndex].value;

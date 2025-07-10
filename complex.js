@@ -44,8 +44,7 @@ class Complex {
         const r = Math.sqrt(this.real * this.real + this.imag * this.imag);
         const theta = Math.atan2(this.imag, this.real);
         return new Complex(Math.log(r), theta);
-    }
-    
+    }    
     exp() {
         const r = Math.exp(this.real);
         return new Complex(
@@ -126,6 +125,57 @@ class Complex {
         }
     }
 
+    sqrt() {
+        return this.power(new Complex(0.5));
+        // const r = Math.sqrt(this.real * this.real + this.imag * this.imag);
+        // const realPart = Math.sqrt((r + this.real) / 2);
+        // const imagPart = Math.sign(this.imag) * Math.sqrt((r - this.real) / 2);
+        // return new Complex(realPart, imagPart);
+    };
+
+    // Sin(z) = (e^{i z} - e^{-i z}) / (2i)
+    sin() {
+        const i = new Complex(0, 1);
+        const negI = new Complex(0, -1);
+        const iz = i.multiply(this);
+        const ePos = iz.exp();
+        const eNeg = negI.multiply(this).exp();
+        const numerator = ePos.subtract(eNeg);
+        const denom = new Complex(0, 2);
+        return numerator.divide(denom.multiply(i)); // divide by 2i
+    };
+
+    // Cos(z) = (e^{i z} + e^{-i z}) / 2
+    cos() {
+        const i = new Complex(0, 1);
+        const negI = new Complex(0, -1);
+        const iz = i.multiply(this);
+        const ePos = iz.exp();
+        const eNeg = negI.multiply(this).exp();
+        return ePos.add(eNeg).divide(new Complex(2, 0));
+    };
+
+    // Tan(z) = sin(z) / cos(z)
+    tan() {
+        return this.sin().divide(this.cos());
+    };
+
+    // Cot(z) = cos(z) / sin(z)
+    cot() {
+        return this.cos().divide(this.sin());
+    };
+
+    // Acos(z) = -i * ln(z + sqrt(z^2 - 1))
+    acos() {
+        const one = new Complex(1, 0);
+        const z2 = this.multiply(this);
+        const insideSqrt = z2.subtract(one);
+        const root = insideSqrt.sqrt();
+        const sum = this.add(root);
+        const ln = sum.naturalLog();
+        const negI = new Complex(0, -1);
+        return ln.multiply(negI);
+    };
     
     getColor(){
         if(isNaN(this.real)||isNaN(this.imag||typeof(this.real)!=="number"||typeof(this.imag)!=="number")||!isFinite(this.real)||!isFinite(this.imag)){

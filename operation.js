@@ -31,7 +31,7 @@ class Operation {
 		rect(this.x, this.y, this.w, this.h, 12);
 		fill(0); noStroke();
 		textAlign(CENTER, CENTER);
-		textSize(height * 0.06);
+		textSize(height * 0.1);
 		text(this.symbol, this.x + this.w/2, this.y + this.h/2);
 
 		pop();

@@ -48,6 +48,7 @@ class Level {
                     case '^': return a.power(b);
                     case '√': return a.power(new Complex(0.5));
                     case 'ln': return a.naturalLog();
+					case '!': return a.factorial();
 				}
 			},
 			spacing * (i + spaceConst) - btnW / 2,
@@ -280,7 +281,7 @@ class Level {
 		for (let btn of this.opButtons) {
 			if (btn.contains(mx, my)) {
 				// Check if this is a unary op (√ or ln)
-                if ((btn.symbol === '√' || btn.symbol === 'ln')) {
+                if ((btn.symbol === '√' || btn.symbol === 'ln' || btn.symbol === '!')) {
                     if (this.firstIndex !== null) {
 						btn.drawScale -= 0.08;
                         // Apply unary op immediately to selected box
@@ -413,7 +414,7 @@ class Level {
             for (let btn of this.opButtons) {
                 if (btn.symbol === symbol) {
                     // For unary ops, apply immediately if number selected
-                    if (symbol === '√' || symbol === 'ln') {
+                    if (symbol === '√' || symbol === 'ln' || symbol === '!') {
                         if (this.firstIndex !== null) {
                             this.saveState();
                             const a = this.boxes[this.firstIndex].value;

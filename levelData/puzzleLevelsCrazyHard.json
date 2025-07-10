@@ -1,5 +1,4 @@
 [
-    {"cards":[7,7,25,25],"ops":["-","×","√"],"hint":"There exists a right triangle with side lengths 7, 24, 25","sols":["√(25×25-7×7)"]},
     {"cards":[15,17,45],"ops":["÷","cot","acos"],"hint":"A right triangle with side lengths 8, 15, 17 can be scaled up to be 24, 45, 51","sols":["45÷cot(arccos(15/17))"]},
     {"cards":[0.02,0.3,7],"ops":["-","×","cot","asin"],"hint":"There exists a right triangle with side lengths 7, 24, 25","sols":["7×cot(arcsin(0.3-0.02))"]},
     {"cards":[2,2,2],"ops":["÷","√","ln"],"hint":"Start by pressing the square root button 24 times. Remember the base change formula.","sols":["(ln(ln(2)÷ln(√√√√√√√√√√√√√√√√√√√√√√√√2)))÷ln(2)","ln(ln(2)÷ln(√√√2))÷ln(√√√2)"]},

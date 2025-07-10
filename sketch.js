@@ -5,30 +5,17 @@ const DISPLAY_THRESHOLD = 7e-9;
 let screen = "game";
 let level;
 let classicSets = [[],[],[],[],[]];
-let puzzleSets = [[],[]];
+let puzzleSets = [[],[],[]];
 
 function preload() {
-	loadJSON("levelData/classicLevelsEasy.json", data => {
-		classicSets[0] = data;
-	});
-	loadJSON("levelData/classicLevelsMedium.json", data => {
-		classicSets[1] = data;
-	});
-	loadJSON("levelData/classicLevelsHard.json", data => {
-		classicSets[2] = data;
-	});
-	loadJSON("levelData/classicLevelsTricky.json", data => {
-		classicSets[3] = data;
-	});
-	loadJSON("levelData/classicLevelsDoomed.json", data => {
-		classicSets[4] = data;
-	});
-	loadJSON("levelData/puzzleLevelsFun.json", data => {
-		puzzleSets[0] = data;
-	});
-	loadJSON("levelData/puzzleLevelsCrazy.json", data => {
-		puzzleSets[1] = data;
-	});
+	loadJSON("levelData/classicLevelsEasy.json", data => {classicSets[0] = data;});
+	loadJSON("levelData/classicLevelsMedium.json", data => {classicSets[1] = data;});
+	loadJSON("levelData/classicLevelsHard.json", data => {classicSets[2] = data;});
+	loadJSON("levelData/classicLevelsTricky.json", data => {classicSets[3] = data;});
+	loadJSON("levelData/classicLevelsDoomed.json", data => {classicSets[4] = data;});
+	loadJSON("levelData/puzzleLevelsSimple.json", data => {puzzleSets[0] = data;});
+	loadJSON("levelData/puzzleLevelsInteresting.json", data => {puzzleSets[1] = data;});
+	loadJSON("levelData/puzzleLevelsCrazy.json", data => {puzzleSets[2] = data;});
 }
 
 function setup() {
@@ -117,7 +104,7 @@ function draw() {
 	if (screen === "game") {
 		level.draw();
 		if(level.solved){
-			level = getPuzzleLevel(puzzleSets[1],level.originalValues.map(c => c.real));
+			level = getPuzzleLevel(puzzleSets[0],level.originalValues.map(c => c.real));
 			Level.setupKeyboard(level);
 		}
 	}

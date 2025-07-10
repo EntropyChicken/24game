@@ -1,5 +1,5 @@
 class Level {
-	static SYMBOLS = ['+', '-', '×', '÷', '^', '√', 'ln', '!', 'sin', 'cos', 'tan', 'cot', 'asin', 'acos'];
+	static SYMBOLS = ["+","-","×","÷","^","√","ln","!","sin","cos","tan","cot","asin","acos"];
 
 	constructor(numbers, opSymbols = Level.SYMBOLS, metaData = {}) {
         this.metaData = metaData;
@@ -34,9 +34,9 @@ class Level {
 	}
 
 	setupOps() {
-        const spaceConst = this.opSymbols.length>=10 ? 0.7 : 1.9;
+        const spaceConst = this.opSymbols.length>=8 ? 0.6 : 1.9;
 		const syms = this.opSymbols;
-		const btnW = width * (this.opSymbols.length>=10 ? 1.1 : 0.91) / (this.opSymbols.length+3);
+		const btnW = width * (this.opSymbols.length>=8 ? 1.18 : 0.91) / (this.opSymbols.length+3);
 		const btnH = height * 0.16;
 		const spacing = width / (syms.length + 2*spaceConst-1);
 		this.opButtons = syms.map((s, i) => new Operation(
@@ -73,8 +73,8 @@ class Level {
 		this.undoButton = {
 			x: width * 0.05,
 			y: height * 0.85,
-			w: width * 0.15,
-			h: height * 0.08
+			w: width * 0.14,
+			h: height * 0.09
 		};
 	}
 
@@ -137,7 +137,7 @@ class Level {
 
 			const maxWidth = b.w - 7;
 			const maxHeight = b.h - 7;
-			const fallbackFontSize = height * 0.05;
+			const fallbackFontSize = min(height * 0.05, width * 0.07);
 
 			// First check if fallback size is enough for one-line fit
 			textSize(fallbackFontSize);

@@ -31,9 +31,9 @@ class Operation {
 		rect(this.x, this.y, this.w, this.h, 12);
 		fill(0); noStroke();
 		textAlign(CENTER, CENTER);
-		let ts = height * 0.1;
+		let ts = min(height * 0.1, width * 0.08);
 		if(this.symbol.length > 2){
-			ts /= pow(this.symbol.length-1,0.65);
+			ts /= pow(this.symbol.length-1,0.8);
 		}
 		textSize(ts);
 		text(this.symbol, this.x + this.w/2, this.y + this.h/2);

@@ -35,6 +35,12 @@ class Complex {
         return new Complex((this.real * o.real + this.imag * o.imag) / d, (this.imag * o.real - this.real * o.imag) / d);
     }
     power(o) {
+        if(this.equals(new Complex(0),DISPLAY_THRESHOLD)){
+            if(o.real>0){
+                return new Complex(0);
+            }
+            return new Complex(NaN,NaN);
+        }
         let r = Math.sqrt(this.real * this.real + this.imag * this.imag);
         let theta = Math.atan2(this.imag, this.real);
         let a = o.real;

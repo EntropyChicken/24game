@@ -22,6 +22,16 @@ function preload() {
 function setup() {
 	createCanvas(windowWidth, windowHeight);
 	
+	// level = getClassicLevel(classicSets[0]);
+	level = new Level([-1,-3,Math.PI,4,0]);
+	Level.setupKeyboard(level);
+	
+	// console.log(new Complex(0).power(new Complex(1)));
+	// console.log(new Complex(0).power(new Complex(0)));
+	// console.log(new Complex(0).power(new Complex(1,1)));
+	// console.log(new Complex(0).power(new Complex(4,-3)));
+	// console.log(new Complex(0).power(new Complex(-5,6)));
+	// console.log(new Complex(0).power(new Complex(0,3)));
 	// let a = new Complex(0,0.70488569589).sin()
 	// let b = a.asin();
 	// let c = b.sin();
@@ -36,10 +46,6 @@ function setup() {
 	// console.log(z3.asin().real);  // Returns ~-1.5708 (-π/2)
 	// console.log(new Complex(0,0).acos());
 
-	// level = getClassicLevel(classicSets[0]);
-	level = new Level([-1,-3,Math.PI,4,0]);
-
-	Level.setupKeyboard(level);
 }
 
 function getClassicLevel(levelSet, previousCards) {

@@ -35,10 +35,6 @@ function setup() {
 	level = new Level([-1,-Math.PI,3,4]);
 
 	Level.setupKeyboard(level);
-
-	let z = new Complex(-1);
-	console.log(z.factorial());  // Should be ≈ 52.3428
-
 }
 
 function getClassicLevel(levelSet, previousCards) {

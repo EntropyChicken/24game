@@ -66,8 +66,10 @@ function getClassicLevel(levelSet, previousCards) {
 		if(previousCards===undefined || lvl.cards.length!==previousCards.length){
 			break;
 		}
-		for(let i = 0; i<lvl.cards.length; i++){
-			if(lvl.cards[i]!==previousCards[i]){
+		let sortedCards = lvl.cards.toSorted();
+		let sortedPreviousCards = previousCards.toSorted();
+		for(let i = 0; i<sortedCards.length; i++){
+			if(sortedCards[i]!==sortedPreviousCards[i]){
 				cont = false;
 				break;
 			}
@@ -88,8 +90,10 @@ function getPuzzleLevel(levelSet, previousCards) {
 		if(previousCards===undefined || lvl.cards.length!==previousCards.length){
 			break;
 		}
-		for(let i = 0; i<lvl.cards.length; i++){
-			if(lvl.cards[i]!==previousCards[i]){
+		let sortedCards = lvl.cards.toSorted();
+		let sortedPreviousCards = previousCards.toSorted();
+		for(let i = 0; i<sortedCards.length; i++){
+			if(sortedCards[i]!==sortedPreviousCards[i]){
 				cont = false;
 				break;
 			}
@@ -113,7 +117,7 @@ function draw() {
 	if (screen === "game") {
 		level.draw();
 		if(level.solved){
-			level = getPuzzleLevel(puzzleSets[0],level.originalValues.map(c => c.real));
+			level = getPuzzleLevel(puzzleSets[1],level.originalValues.map(c => c.real));
 			Level.setupKeyboard(level);
 		}
 	}

@@ -9,12 +9,40 @@ class Level {
 		this.opSymbols = opSymbols;
 		this.setupBoxes();
 		this.setupOps();
-		this.setupUndo();
 		this.firstIndex = null;
 		this.selectedOp = null;
 		this.history = [];
 		this.winTimer = 0;
 		this.solved = false; // for external use
+
+		this.undoButton = {
+			x: width * 0.07,
+			y: height * 0.8,
+			w: width * 0.2,
+			h: height * 0.12,
+		};
+        this.hintButton = {
+            x: width * 0.5,
+            y: height * 0.8,
+            w: width * 0.215,
+            h: height * 0.12,
+            drawScale: 1,
+            drawOffset: 0,
+            drawAngle: 0,
+            showHint: false,
+            text: "Hint"
+        };
+        this.solutionButton = {
+            x: width * 0.73,
+            y: height * 0.8,
+            w: width * 0.215,
+            h: height * 0.12,
+            drawScale: 1,
+            drawOffset: 0,
+            drawAngle: 0,
+            showSolution: false,
+            text: "Solution"
+        };
 	}
 
 	setupBoxes() {
@@ -73,16 +101,6 @@ class Level {
 		}
 	}
 
-	setupUndo() {
-		this.undoButton = {
-			x: width * 0.07,
-			y: height * 0.8,
-			w: width * 0.2,
-			h: height * 0.12,
-			// drawScale: 0.7
-		};
-	}
-
 	draw() {
 		const WIN_TIMER_START = 75;
 		if (this.winTimer === 0 && this.boxes.length === 1 && this.boxes[0].value.equals(new Complex(24))) {
@@ -117,6 +135,8 @@ class Level {
 		this.drawOps();
 		this.drawBoxes();
 		this.drawUndo();
+        this.drawHintButton();
+        this.drawSolutionButton();
 	}
     drawBoxes() {
 		let sorted = this.boxes
@@ -258,6 +278,194 @@ class Level {
 		pop();
 	}
 
+	drawHintButton() {
+		const b = this.hintButton;
+		if (b.drawAngle === undefined) b.drawAngle = 0;
+		if (b.drawScale === undefined) b.drawScale = 1;
+		if (b.drawOffset === undefined) b.drawOffset = 0;
+
+		if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
+			b.drawOffset += height * 0.0045;
+		}
+		b.drawAngle *= 0.8;
+		b.drawScale = 1 + (b.drawScale - 1) * 0.9;
+		b.drawOffset *= 0.8;
+
+		push();
+		translate(b.x + b.w / 2, b.y + b.h / 2);
+		scale(b.drawScale);
+		translate(0, b.drawOffset);
+		rotate(b.drawAngle);
+		translate(-b.x - b.w / 2, -b.y - b.h / 2);
+
+		fill('white');
+		stroke(100, 93, 85);
+		strokeWeight(3);
+		rect(b.x, b.y, b.w, b.h, 10);
+
+		fill(0);
+		noStroke();
+		textAlign(CENTER, CENTER);
+
+		let displayText = b.showHint ? this.getHint() : "Hint";
+		let fontSize = height * 0.04;
+		let maxWidth = b.w - 10;
+		textSize(fontSize);
+
+		while (textWidth(displayText) > maxWidth && fontSize > 15) {
+			fontSize -= 1;
+			textSize(fontSize);
+		}
+
+		// If fontSize is 15 and text still doesn't fit, split into lines
+		if (textWidth(displayText) > maxWidth) {
+			// Word wrap by spaces
+			let words = displayText.split(' ');
+			let lines = [];
+			let currentLine = "";
+
+			for (let word of words) {
+				let testLine = currentLine.length === 0 ? word : currentLine + " " + word;
+				if (textWidth(testLine) <= maxWidth || currentLine.length === 0) {
+					currentLine = testLine;
+				} else {
+					lines.push(currentLine);
+					currentLine = word;
+				}
+			}
+			if (currentLine.length > 0) lines.push(currentLine);
+
+			// Vertical centering
+			let lineHeight = fontSize * 1.15;
+			let totalHeight = lines.length * lineHeight;
+			let startY = b.y + b.h / 2 - totalHeight / 2 + lineHeight / 2;
+
+			textSize(fontSize);
+			for (let i = 0; i < lines.length; i++) {
+				text(lines[i], b.x + b.w / 2, startY + i * lineHeight);
+			}
+		} else {
+			// Single line fits
+			textSize(fontSize);
+			text(displayText, b.x + b.w / 2, b.y + b.h / 2);
+		}
+		pop();
+	}
+
+    drawSolutionButton() {
+        const b = this.solutionButton;
+        if (b.drawAngle === undefined) b.drawAngle = 0;
+        if (b.drawScale === undefined) b.drawScale = 1;
+        if (b.drawOffset === undefined) b.drawOffset = 0;
+        if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
+            b.drawOffset += height * 0.0045;
+        }
+        b.drawAngle *= 0.8;
+        b.drawScale = 1 + (b.drawScale - 1) * 0.9;
+        b.drawOffset *= 0.8;
+        push();
+        translate(b.x + b.w / 2, b.y + b.h / 2);
+        scale(b.drawScale);
+        translate(0, b.drawOffset);
+        rotate(b.drawAngle);
+        translate(-b.x - b.w / 2, -b.y - b.h / 2);
+        fill('white'); stroke(100,93,85); strokeWeight(3);
+        rect(b.x, b.y, b.w, b.h, 10);
+        fill(0); noStroke();
+        textAlign(CENTER, CENTER);
+        let displayText = b.showSolution && this.metaData.sols ? this.metaData.sols[0] : "Solution";
+        let fontSize = height * 0.04;
+        textSize(fontSize);
+        // Shrink text to fit if needed
+        let maxWidth = b.w - 10;
+        while (textWidth(displayText) > maxWidth && fontSize > 15) {
+            fontSize -= 1;
+            textSize(fontSize);
+        }
+        text(displayText, b.x + b.w / 2, b.y + b.h / 2);
+        pop();
+    }
+
+	undo() {
+		if (!this.history.length) return;
+		if(this.undoButton.drawScale>0.99){
+			this.undoButton.drawScale -= 0.1;
+		}
+		this.undoButton.drawScale -= 0.08;
+		const prev = this.history.pop();
+		this.boxes = prev.map(b => ({
+			x: b.x, y: b.y, w: b.w, h: b.h,
+			value: new Complex(b.value.real, b.value.imag),
+			locName: b.locName
+		}));
+		this.firstIndex = null;
+		this.selectedOp = null;
+	}
+
+	applyOperation(i1, i2, opBtn) {
+		this.saveState();
+		const a = this.boxes[i1].value;
+		const b = this.boxes[i2].value;
+		const res = opBtn.apply(a, b);
+		this.boxes[i2].value = res;
+		this.boxes[i2].drawScale += 0.1;
+		this.boxes.splice(i1, 1);
+
+		// new selection
+		const newIndex = i1 < i2 ? i2 - 1 : i2;
+		this.firstIndex = newIndex;
+		this.selectedOp = null;  // remove this to easily repeat operation
+	}
+
+	symbolIsUnary(symbol){
+		// when adding any non-unary operator, update this list
+		return !(symbol === '+' || symbol === '-' || symbol === '×' || symbol === '÷' || symbol === '^');
+	}
+
+	saveState() {
+		const snap = this.boxes.map(b => ({
+			x: b.x, y: b.y, w: b.w, h: b.h,
+			value: new Complex(b.value.real, b.value.imag),
+			locName: b.locName
+		}));
+		this.history.push(snap);
+		if (this.history.length > 5000) this.history.shift();
+	}
+
+	getHint() {
+		let hint = "";
+		if(this.metaData.hint===undefined){
+			let factorable = this.metaData.factorable;
+			let needsFrac = this.metaData.needsFrac;
+			let solCount = this.metaData.sols.length;
+			hint += solCount+" known solution";
+			if(solCount!==1){
+				hint += "s";
+			}
+			hint += ". ";
+			if(needsFrac!==undefined){
+				if(needsFrac){
+					hint += "You'll need to use decimals at some point. ";
+				}
+				else{
+					hint += "It's solvable with integers (no decimals needed). "; // please no complex numbers lol
+				}
+			}
+			if(factorable!==undefined){
+				if(factorable){
+					hint += "You can make two numbers that multiply to 24. ";
+				}
+				else{
+					hint += "It's impossible to make two numbers that multiply to 24. Try other operators! ";
+				}
+			}
+		}
+		else{
+			hint = this.metaData.hint;
+		}
+		return hint;
+	}
+
 	handleClick(mx, my) {
 		// Undo click
 		const u = this.undoButton;
@@ -270,7 +478,20 @@ class Level {
 			}
 			return;
 		}
-
+        // Hint button click
+        const hb = this.hintButton;
+        if (mx > hb.x && mx < hb.x + hb.w && my > hb.y && my < hb.y + hb.h) {
+            hb.drawScale -= 0.08;
+            hb.showHint = true;
+            return;
+        }
+        // Solution button click
+        const sb = this.solutionButton;
+        if (mx > sb.x && mx < sb.x + sb.w && my > sb.y && my < sb.y + sb.h) {
+            sb.drawScale -= 0.08;
+            sb.showSolution = true;
+            return;
+        }
 		// Number box click
 		for (let i = 0; i < this.boxes.length; i++) {
 			const b = this.boxes[i];
@@ -347,52 +568,6 @@ class Level {
                 return;
             }
         }
-	}
-
-	applyOperation(i1, i2, opBtn) {
-		this.saveState();
-		const a = this.boxes[i1].value;
-		const b = this.boxes[i2].value;
-		const res = opBtn.apply(a, b);
-		this.boxes[i2].value = res;
-		this.boxes[i2].drawScale += 0.1;
-		this.boxes.splice(i1, 1);
-
-		// new selection
-		const newIndex = i1 < i2 ? i2 - 1 : i2;
-		this.firstIndex = newIndex;
-		this.selectedOp = null;  // remove this to easily repeat operation
-	}
-
-	saveState() {
-		const snap = this.boxes.map(b => ({
-			x: b.x, y: b.y, w: b.w, h: b.h,
-			value: new Complex(b.value.real, b.value.imag),
-			locName: b.locName
-		}));
-		this.history.push(snap);
-		if (this.history.length > 5000) this.history.shift();
-	}
-
-	undo() {
-		if (!this.history.length) return;
-		if(this.undoButton.drawScale>0.99){
-			this.undoButton.drawScale -= 0.1;
-		}
-		this.undoButton.drawScale -= 0.08;
-		const prev = this.history.pop();
-		this.boxes = prev.map(b => ({
-			x: b.x, y: b.y, w: b.w, h: b.h,
-			value: new Complex(b.value.real, b.value.imag),
-			locName: b.locName
-		}));
-		this.firstIndex = null;
-		this.selectedOp = null;
-	}
-
-	symbolIsUnary(symbol){
-		// when adding any non-unary operator, update this list
-		return !(symbol === '+' || symbol === '-' || symbol === '×' || symbol === '÷' || symbol === '^');
 	}
 
 	handleKey(e) {

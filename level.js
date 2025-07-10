@@ -1,3 +1,64 @@
+// shrink or make multiple lines to fit in a box
+const WRAP_BREAK_CHARS = ["+", "-", "×", "÷", "^", "√", "!", "*", "/", "(", ")", " ", ","];
+function drawTextInBox(txt, x, y, w, h, maxFontSize = height * 0.045, minFontSize = 20) {
+	fill(0); noStroke();
+	textAlign(CENTER, CENTER);
+
+	let fontSize = maxFontSize;
+	textSize(fontSize);
+	const maxWidth = w - 4;
+
+	// Shrink to minimum font size if necessary
+	while (textWidth(txt) > maxWidth && fontSize > minFontSize) {
+		fontSize -= 1;
+		textSize(fontSize);
+	}
+
+	// If text fits, draw it directly
+	if (textWidth(txt) <= maxWidth) {
+		text(txt, x + w / 2, y + h / 2);
+		return;
+	}
+
+	// Custom line-breaking logic
+	let lines = [];
+	let currentLine = '';
+	for (let i = 0; i < txt.length; i++) {
+		currentLine += txt[i];
+		if (textWidth(currentLine) > maxWidth) {
+			// Too long: backtrack to last break char
+			let j = currentLine.length - 1;
+			while (j > 0 && !WRAP_BREAK_CHARS.includes(currentLine[j])) {
+				j--;
+			}
+			if (j === 0) {
+				// No break point found—force break
+				lines.push(currentLine.trim());
+				currentLine = '';
+			} else {
+				lines.push(currentLine.slice(0, j + 1).trim());
+				currentLine = currentLine.slice(j + 1).trimStart();
+			}
+		}
+	}
+	if (currentLine.length > 0) lines.push(currentLine.trim());
+
+	// Draw each line centered
+	let lineHeight = fontSize * 1.15;
+	let totalHeight = lines.length * lineHeight;
+	let startY = y + h / 2 - totalHeight / 2 + lineHeight / 2;
+
+	if(minFontSize>16&&lines.length>=6){
+		drawTextInBox(txt,x,y,w,h,maxFontSize,16);
+		return;
+	}
+	
+	for (let i = 0; i < lines.length; i++) {
+		text(lines[i], x + w / 2, startY + i * lineHeight);
+	}
+}
+
+
 class Level {
 	static SYMBOLS = ["+","-","×","÷","^","√","ln","!","sin","cos","tan","cot","asin","acos"];
 
@@ -16,16 +77,16 @@ class Level {
 		this.solved = false; // for external use
 
 		this.undoButton = {
-			x: width * 0.07,
-			y: height * 0.8,
-			w: width * 0.2,
-			h: height * 0.12,
+			x: width * 0.05,
+			y: height * 0.77,
+			w: width * 0.22,
+			h: height * 0.18,
 		};
         this.hintButton = {
-            x: width * 0.5,
-            y: height * 0.8,
-            w: width * 0.215,
-            h: height * 0.12,
+            x: width * 0.43,
+            y: height * 0.77,
+            w: width * 0.3,
+            h: height * 0.18,
             drawScale: 1,
             drawOffset: 0,
             drawAngle: 0,
@@ -33,10 +94,10 @@ class Level {
             text: "Hint"
         };
         this.solutionButton = {
-            x: width * 0.73,
-            y: height * 0.8,
-            w: width * 0.215,
-            h: height * 0.12,
+            x: width * 0.75,
+            y: height * 0.77,
+            w: width * 0.2,
+            h: height * 0.18,
             drawScale: 1,
             drawOffset: 0,
             drawAngle: 0,
@@ -53,7 +114,7 @@ class Level {
 		const spacing = width / (count + 2*spaceConst-1);
 		this.boxes = this.values.map((v, i) => ({
 			x: spacing * (i + spaceConst) - boxW / 2,
-			y: height * 0.25,
+			y: height * 0.2,
 			w: boxW,
 			h: boxH,
 			value: v,
@@ -92,7 +153,7 @@ class Level {
 				}
 			},
 			spacing * (i + spaceConst) - btnW / 2,
-			height * 0.55,
+			height * 0.5,
 			btnW,
 			btnH
 		));
@@ -269,11 +330,11 @@ class Level {
 		rotate(b.drawAngle);
 		translate(-b.x-b.w/2,-b.y-b.h/2);
 
-		fill('white'); stroke(100,93,85); strokeWeight(3);
+		noFill(); stroke(100,93,85); strokeWeight(3);
 		rect(b.x, b.y, b.w, b.h, 10);
 		fill(0); noStroke();
 		textAlign(CENTER, CENTER);
-		textSize(height * 0.04);
+		textSize(height * 0.045);
 		text("Undo", b.x + b.w/2, b.y + b.h/2);
 		pop();
 	}
@@ -298,57 +359,14 @@ class Level {
 		rotate(b.drawAngle);
 		translate(-b.x - b.w / 2, -b.y - b.h / 2);
 
-		fill('white');
+		noFill();
 		stroke(100, 93, 85);
 		strokeWeight(3);
 		rect(b.x, b.y, b.w, b.h, 10);
 
-		fill(0);
-		noStroke();
-		textAlign(CENTER, CENTER);
-
 		let displayText = b.showHint ? this.getHint() : "Hint";
-		let fontSize = height * 0.04;
-		let maxWidth = b.w - 10;
-		textSize(fontSize);
+		drawTextInBox(displayText, b.x, b.y, b.w, b.h);
 
-		while (textWidth(displayText) > maxWidth && fontSize > 15) {
-			fontSize -= 1;
-			textSize(fontSize);
-		}
-
-		// If fontSize is 15 and text still doesn't fit, split into lines
-		if (textWidth(displayText) > maxWidth) {
-			// Word wrap by spaces
-			let words = displayText.split(' ');
-			let lines = [];
-			let currentLine = "";
-
-			for (let word of words) {
-				let testLine = currentLine.length === 0 ? word : currentLine + " " + word;
-				if (textWidth(testLine) <= maxWidth || currentLine.length === 0) {
-					currentLine = testLine;
-				} else {
-					lines.push(currentLine);
-					currentLine = word;
-				}
-			}
-			if (currentLine.length > 0) lines.push(currentLine);
-
-			// Vertical centering
-			let lineHeight = fontSize * 1.15;
-			let totalHeight = lines.length * lineHeight;
-			let startY = b.y + b.h / 2 - totalHeight / 2 + lineHeight / 2;
-
-			textSize(fontSize);
-			for (let i = 0; i < lines.length; i++) {
-				text(lines[i], b.x + b.w / 2, startY + i * lineHeight);
-			}
-		} else {
-			// Single line fits
-			textSize(fontSize);
-			text(displayText, b.x + b.w / 2, b.y + b.h / 2);
-		}
 		pop();
 	}
 
@@ -369,20 +387,12 @@ class Level {
         translate(0, b.drawOffset);
         rotate(b.drawAngle);
         translate(-b.x - b.w / 2, -b.y - b.h / 2);
-        fill('white'); stroke(100,93,85); strokeWeight(3);
+        noFill(); stroke(100,93,85); strokeWeight(3);
         rect(b.x, b.y, b.w, b.h, 10);
-        fill(0); noStroke();
-        textAlign(CENTER, CENTER);
-        let displayText = b.showSolution && this.metaData.sols ? this.metaData.sols[0] : "Solution";
-        let fontSize = height * 0.04;
-        textSize(fontSize);
-        // Shrink text to fit if needed
-        let maxWidth = b.w - 10;
-        while (textWidth(displayText) > maxWidth && fontSize > 15) {
-            fontSize -= 1;
-            textSize(fontSize);
-        }
-        text(displayText, b.x + b.w / 2, b.y + b.h / 2);
+
+		let displayText = b.showSolution && this.metaData.sols ? this.metaData.sols[0] : "Solution";
+		drawTextInBox(displayText, b.x, b.y, b.w, b.h);
+
         pop();
     }
 
@@ -445,10 +455,10 @@ class Level {
 			hint += ". ";
 			if(needsFrac!==undefined){
 				if(needsFrac){
-					hint += "You'll need to use decimals at some point. ";
+					hint += "You'll need to use fractions. ";
 				}
 				else{
-					hint += "It's solvable with integers (no decimals needed). "; // please no complex numbers lol
+					hint += "It's solvable with integers (no fractions needed). "; // please no complex numbers lol
 				}
 			}
 			if(factorable!==undefined){
@@ -456,7 +466,7 @@ class Level {
 					hint += "You can make two numbers that multiply to 24. ";
 				}
 				else{
-					hint += "It's impossible to make two numbers that multiply to 24. Try other operators! ";
+					hint += "The solution's final step ISN'T multiplication. ";
 				}
 			}
 		}
@@ -482,14 +492,14 @@ class Level {
         const hb = this.hintButton;
         if (mx > hb.x && mx < hb.x + hb.w && my > hb.y && my < hb.y + hb.h) {
             hb.drawScale -= 0.08;
-            hb.showHint = true;
+            hb.showHint = !hb.showHint;
             return;
         }
         // Solution button click
         const sb = this.solutionButton;
         if (mx > sb.x && mx < sb.x + sb.w && my > sb.y && my < sb.y + sb.h) {
             sb.drawScale -= 0.08;
-            sb.showSolution = true;
+            sb.showSolution = !sb.showSolution;
             return;
         }
 		// Number box click

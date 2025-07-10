@@ -3,6 +3,15 @@ function numToString(x) {
 	// Fix to 11 decimal places, then remove trailing zeros and optional "."
 	return parseFloat(x.toFixed(11)).toString();
 }
+function factorialRecursive(int){
+    if(int>0){
+        return int*factorialRecursive(int-1);
+    }
+    if(int===0){
+        return 1;
+    }
+    return NaN;
+}
 
 class Complex {
     constructor(real, imag = 0) {
@@ -73,6 +82,9 @@ class Complex {
     }
 
     factorial() {
+        if(this.imag===0&&this.real>=0&&this.real<=100&&this.real===round(this.real)&&this.real){
+            return new Complex(factorialRecursive(round(this.real)));
+        }
         return Complex.gamma(this.add(new Complex(1)));
     }
 

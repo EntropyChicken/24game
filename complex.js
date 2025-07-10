@@ -29,6 +29,9 @@ class Complex {
         if (d === 0) {
             return new Complex(NaN, NaN);
         }
+        if(o.equals(new Complex(0),DISPLAY_THRESHOLD)){
+            return new Complex(NaN,NaN);
+        }
         return new Complex((this.real * o.real + this.imag * o.imag) / d, (this.imag * o.real - this.real * o.imag) / d);
     }
     power(o) {
@@ -42,6 +45,10 @@ class Complex {
             modulus * Math.cos(angle),
             modulus * Math.sin(angle)
         );
+    }
+    
+    negate() {
+        return new Complex(-this.real, -this.imag);
     }
     naturalLog(checkReal = false) {
         if (checkReal && this.round().imag === 0) {
@@ -139,49 +146,58 @@ class Complex {
         // return new Complex(realPart, imagPart);
     };
 
-    // Sin(z) = (e^{i z} - e^{-i z}) / (2i)
     sin() {
-        const i = new Complex(0, 1);
-        const negI = new Complex(0, -1);
-        const iz = i.multiply(this);
-        const ePos = iz.exp();
-        const eNeg = negI.multiply(this).exp();
-        const numerator = ePos.subtract(eNeg);
-        const denom = new Complex(0, 2);
-        return numerator.divide(denom.multiply(i)); // divide by 2i
-    };
+        const iz = new Complex(-this.imag, this.real);
+        const eiz = iz.exp();
+        const e_iz = iz.negate().exp();
+        return eiz.subtract(e_iz).divide(new Complex(0, 2));
+    }
 
-    // Cos(z) = (e^{i z} + e^{-i z}) / 2
     cos() {
-        const i = new Complex(0, 1);
-        const negI = new Complex(0, -1);
-        const iz = i.multiply(this);
-        const ePos = iz.exp();
-        const eNeg = negI.multiply(this).exp();
-        return ePos.add(eNeg).divide(new Complex(2, 0));
-    };
+        const iz = new Complex(-this.imag, this.real);
+        const eiz = iz.exp();
+        const e_iz = iz.negate().exp();
+        return eiz.add(e_iz).multiply(new Complex(0.5, 0));
+    }
 
-    // Tan(z) = sin(z) / cos(z)
     tan() {
-        return this.sin().divide(this.cos());
-    };
+        const s = this.sin();
+        const c = this.cos();
+        return s.divide(c);
+    }
 
-    // Cot(z) = cos(z) / sin(z)
     cot() {
-        return this.cos().divide(this.sin());
-    };
+        const s = this.sin();
+        const c = this.cos();
+        return c.divide(s);
+    }
+    asin() {
+        const i = new Complex(0, 1);
+        const zSquared = this.multiply(this);
+        const oneMinusZSquared = (new Complex(1, 0)).subtract(zSquared);
 
-    // Acos(z) = -i * ln(z + sqrt(z^2 - 1))
+        // Handle edge case where |z| ≈ 1 (e.g., z = 1 or z = -1)
+        if (oneMinusZSquared.round().equals(new Complex(0, 0))) {
+            return new Complex(Math.PI / 2 * Math.sign(this.real), 0);
+        }
+
+        const root = oneMinusZSquared.power(new Complex(0.5, 0));
+        const inner = i.multiply(this).add(root);
+        return i.negate().multiply(inner.naturalLog());
+    }
     acos() {
-        const one = new Complex(1, 0);
-        const z2 = this.multiply(this);
-        const insideSqrt = z2.subtract(one);
-        const root = insideSqrt.sqrt();
-        const sum = this.add(root);
-        const ln = sum.naturalLog();
-        const negI = new Complex(0, -1);
-        return ln.multiply(negI);
-    };
+        const i = new Complex(0, 1);
+        const zSquared = this.multiply(this);
+        const oneMinusZSquared = (new Complex(1, 0)).subtract(zSquared);
+
+        if (oneMinusZSquared.round().equals(new Complex(0, 0))) {
+            return new Complex((this.real > 0) ? 0 : Math.PI, 0);
+        }
+
+        const root = oneMinusZSquared.power(new Complex(0.5, 0));
+        const inner = this.add(i.multiply(root));
+        return i.negate().multiply(inner.naturalLog());
+    }
     
     getText(){
         let txt = "";

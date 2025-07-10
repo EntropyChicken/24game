@@ -33,7 +33,7 @@ class Operation {
 		textAlign(CENTER, CENTER);
 		let ts = height * 0.1;
 		if(this.symbol.length > 2){
-			ts /= sqrt(this.symbol.length-1);
+			ts /= pow(this.symbol.length-1,0.65);
 		}
 		textSize(ts);
 		text(this.symbol, this.x + this.w/2, this.y + this.h/2);

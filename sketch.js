@@ -30,6 +30,20 @@ function preload() {
 
 function setup() {
 	createCanvas(windowWidth, windowHeight);
+	
+	// let a = new Complex(0,0.70488569589).sin()
+	// let b = a.asin();
+	// let c = b.sin();
+	// console.log(a);
+	// console.log(b);
+	// console.log(c);
+	// const z1 = new Complex(1, 0);
+	// console.log(z1.asin().real);  // Now correctly returns ~1.5708 (π/2)
+	// const z2 = new Complex(0.9999, 0);
+	// console.log(z2.asin().real);  // Still returns ~1.5567 (close to π/2)
+	// const z3 = new Complex(-1, 0);
+	// console.log(z3.asin().real);  // Returns ~-1.5708 (-π/2)
+	// console.log(new Complex(0,0).acos());
 
 	// level = getClassicLevel(classicSets[0]);
 	level = new Level([-1,-3,Math.PI,4,0]);

@@ -1,5 +1,5 @@
 class Level {
-	static SYMBOLS = ['+', '-', '×', '÷', '^', '√', 'ln', '!', 'sin', 'cos', 'tan', 'cot', 'acos'];
+	static SYMBOLS = ['+', '-', '×', '÷', '^', '√', 'ln', '!', 'sin', 'cos', 'tan', 'cot', 'asin', 'acos'];
 
 	constructor(numbers, opSymbols = Level.SYMBOLS, metaData = {}) {
         this.metaData = metaData;
@@ -56,6 +56,7 @@ class Level {
 					case 'tan': return a.tan();
 					case 'cot': return a.cot();
 					case 'acos': return a.acos();
+					case 'asin': return a.asin();
 					default:
 						console.log("INVALID OPERATOR CHARACTER");
 						return new Complex("INVALID OPERATOR CHARACTER");

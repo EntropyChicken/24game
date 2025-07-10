@@ -11,7 +11,7 @@ class Level {
 		this.firstIndex = null;
 		this.selectedOp = null;
 		this.history = [];
-		this.winTimer = 0; // Add win timer
+		this.winTimer = 0;
 		this.solved = false; // for external use
 	}
 
@@ -67,10 +67,13 @@ class Level {
 	}
 
 	draw() {
+		if (this.winTimer === 0 && this.boxes.length === 1 && this.boxes[0].value.equals(new Complex(24))) {
+			this.winTimer = 45;
+		}
         if (this.winTimer > 0) {
-            background(100, 240, 140); // Green background
+            background(100, 240, 140); // green
             this.winTimer--;
-            if (this.winTimer === 0) {
+            if (this.winTimer <= 0) {
 				this.solved = true;
                 return;
             }
@@ -316,11 +319,6 @@ class Level {
 		const newIndex = i1 < i2 ? i2 - 1 : i2;
 		this.firstIndex = newIndex;
 		this.selectedOp = null;  // remove this to easily repeat operation
-
-		// win condition
-		if (this.boxes.length === 1 && this.boxes[0].value.equals(new Complex(24))) {
-			this.winTimer = 45; // Start win timer
-		}
 	}
 
 	saveState() {

@@ -1,5 +1,5 @@
 class Level {
-	constructor(numbers, opSymbols = ['+', '-', '×', '÷', '^', '√', 'ln'], metaData = {}) {
+	constructor(numbers, opSymbols = ['+', '-', '×', '÷', '^', '√', 'ln', '!', 't'], metaData = {}) {
         this.metaData = metaData;
 		this.values = numbers.map(n => new Complex(n));
 		this.originalValues = numbers.map(n => new Complex(n));
@@ -49,6 +49,7 @@ class Level {
                     case '√': return a.power(new Complex(0.5));
                     case 'ln': return a.naturalLog();
 					case '!': return a.factorial();
+					default: return new Complex("INVALID OPERATOR CHARACTER USED");
 				}
 			},
 			spacing * (i + spaceConst) - btnW / 2,

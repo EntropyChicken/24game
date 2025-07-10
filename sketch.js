@@ -31,8 +31,8 @@ function preload() {
 function setup() {
 	createCanvas(windowWidth, windowHeight);
 
-	level = getClassicLevel(classicSets[0]);
-	// level = new Level([23,25,27,Math.PI,Math.E]);
+	// level = getClassicLevel(classicSets[0]);
+	level = new Level([-1,-Math.PI,3,4]);
 
 	Level.setupKeyboard(level);
 

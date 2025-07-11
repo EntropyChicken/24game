@@ -203,7 +203,7 @@ class Level {
                 return;
             }
         } else {
-            background(215, 200, 180);
+            background(210, 225, 250);
         }
 		this.drawOps();
 		this.drawBoxes();

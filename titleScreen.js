@@ -123,12 +123,22 @@ class TitleScreen {
 	}
 	
 	processBubbles() {
-		if(this.bubbles.length<12){
+		if(this.bubbles.length<12&&random(0,20)<1){
 			Bubble.spawnBubbleInBox(this.bubbles,0,0,width,height);
 		}
+		
+		// let newBubbles = [];
+		// for(let b of this.bubbles){
+		// 	// console.log(b);
+		// 	newBubbles.push(...b.process());
+		// }
+		// for(let i = this.bubbles.length-1; i>=0; i--){
+		// 	this.bubbles[i].spliceOutsideBox(this.bubbles,0,0,width,height);
+		// }
+		// this.bubbles.push(...newBubbles);
+		
 		for(let b of this.bubbles){
-			// console.log(b);
-			b.process();
+			b.process(this.bubbles);
 		}
 		for(let i = this.bubbles.length-1; i>=0; i--){
 			this.bubbles[i].spliceOutsideBox(this.bubbles,0,0,width,height);

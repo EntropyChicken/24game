@@ -27,7 +27,7 @@ class Operation {
 		translate(-this.x-this.w/2,-this.y-this.h/2);
 
 		if(transparent){
-			fill(255,255,255,80);
+			noFill();
 			stroke(100,93,85,80); strokeWeight(3);
 			rect(this.x, this.y, this.w, this.h, 12);
 		} else {

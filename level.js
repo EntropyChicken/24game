@@ -337,7 +337,14 @@ class Level {
         rotate(b.drawAngle);
         translate(-b.x-b.w/2,-b.y-b.h/2);
 
-        drawShadedButton(b.x, b.y, b.w, b.h, 10);
+		if(this.winTimer>0){
+			noFill();
+			stroke(100,93,85,80); strokeWeight(3);
+			rect(b.x, b.y, b.w, b.h, 10);
+		}
+		else{
+			drawShadedButton(b.x, b.y, b.w, b.h, 10);
+		}
         fill(0); noStroke();
         textAlign(CENTER, CENTER);
         textSize(height * 0.045);
@@ -366,7 +373,14 @@ class Level {
         rotate(b.drawAngle);
         translate(-b.x - b.w / 2, -b.y - b.h / 2);
 
-        drawShadedButton(b.x, b.y, b.w, b.h, 10);
+		if(this.winTimer>0){
+			noFill();
+			stroke(100,93,85,80); strokeWeight(3);
+			rect(b.x, b.y, b.w, b.h, 10);
+		}
+		else{
+			drawShadedButton(b.x, b.y, b.w, b.h, 10);
+		}
         let displayText = b.showHint ? this.getHint() : "Hint";
         drawTextInBox(displayText, b.x, b.y, b.w, b.h);
 
@@ -392,7 +406,15 @@ class Level {
         translate(0, b.drawOffset);
         rotate(b.drawAngle);
         translate(-b.x - b.w / 2, -b.y - b.h / 2);
-        drawShadedButton(b.x, b.y, b.w, b.h, 10);
+		
+		if(this.winTimer>0){
+			noFill();
+			stroke(100,93,85,80); strokeWeight(3);
+			rect(b.x, b.y, b.w, b.h, 10);
+		}
+		else{
+			drawShadedButton(b.x, b.y, b.w, b.h, 10);
+		}
 
 		if(b.showSolution){
 			if(this.metaData.sols){

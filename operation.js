@@ -7,7 +7,7 @@ class Operation {
 		this.w = w; this.h = h;
 	}
 
-	draw(selected) {
+	draw(selected, transparent) {
 		if(this.drawAngle === undefined){
 			this.drawAngle = 0;
 		}
@@ -27,7 +27,12 @@ class Operation {
 		rotate(this.drawAngle);
 		translate(-this.x-this.w/2,-this.y-this.h/2);
 
-        fill(selected ? color(225,255,180) : color(255,255,255));
+		if(transparent){
+			noFill();
+		}
+		else{
+			fill(selected ? color(225,255,180) : color(255,255,255));
+		}
 		stroke(100,93,85); strokeWeight(3);
 		rect(this.x, this.y, this.w, this.h, 12);
 		fill(0); noStroke();

@@ -175,9 +175,11 @@ class Level {
 			this.winTimer = WIN_TIMER_START;
 		}
         if (this.winTimer > 0) {
+			/*
 			for(let b of this.opButtons){
-				b.drawScale = smoothErp(0.4*this.winTimer/WIN_TIMER_START,3);
+				b.drawScale = smoothErp(this.winTimer/WIN_TIMER_START,3);
 			}
+			*/
 			for(let b of this.boxes){
 				if(b.value.equals(new Complex(24))){
 					let factor = constrain((WIN_TIMER_START-this.winTimer)*0.006-0.03,-0.02,1);
@@ -194,7 +196,7 @@ class Level {
 					// b.drawScale = 1+constrain(dist(0,0,vel.x,vel.y),0,10)*0.03;
 				}
 			}
-            background(200,230,155); // green
+            background(160,195,120); // green
             this.winTimer--;
             if (this.winTimer <= 0) {
 				this.solved = true;
@@ -311,7 +313,7 @@ class Level {
 
 
 	drawOps() {
-		this.opButtons.forEach(btn => btn.draw(this.selectedOp === btn));
+		this.opButtons.forEach(btn => btn.draw(this.selectedOp === btn, this.winTimer > 0));
 	}
 
 	drawUndo() {

@@ -4,6 +4,7 @@ class TitleScreen {
 		this.boxW = min(220, width * 0.3);
 		this.boxH = min(80, height * 0.1);
 		this.marginY = 16;
+		this.bubbles = [];
 
 		const labels = [
 			{ text: "Easy", set: 0 },
@@ -40,6 +41,12 @@ class TitleScreen {
 
 	draw() {
         background(255);
+
+		this.processBubbles();
+		noStroke();
+		fill(255,255,255,100);
+		rect(-1,-1,width+2,height+2);
+
 		textAlign(CENTER, CENTER);
 		fill(0);
 		textSize(60);
@@ -112,6 +119,19 @@ class TitleScreen {
 			b.drawAngle *= 0.8;
 			b.drawScale = 1 + (b.drawScale - 1) * 0.9;
 			b.drawOffset *= 0.8;
+		}
+	}
+	
+	processBubbles() {
+		if(this.bubbles.length<12){
+			Bubble.spawnBubbleInBox(this.bubbles,0,0,width,height);
+		}
+		for(let b of this.bubbles){
+			// console.log(b);
+			b.process();
+		}
+		for(let i = this.bubbles.length-1; i>=0; i--){
+			this.bubbles[i].spliceOutsideBox(this.bubbles,0,0,width,height);
 		}
 	}
 

@@ -82,7 +82,7 @@ class Complex {
     }
 
     factorial() {
-        if(this.imag===0&&this.real>=0&&this.real<=100&&this.real===round(this.real)&&this.real){
+        if(this.imag===0&&this.real>=0&&this.real<=100&&this.real===round(this.real)){
             return new Complex(factorialRecursive(round(this.real)));
         }
         return Complex.gamma(this.add(new Complex(1)));

@@ -1,5 +1,5 @@
 // shrink or make multiple lines to fit in a box
-const WRAP_BREAK_CHARS = ["+", "-", "×", "÷", "^", "√", "!", "*", "/", "(", ")", " ", ","];
+const WRAP_BREAK_CHARS = ["+", "-", "×", "÷", "^", "√", "!", "*", "/", "(", ")", " ", ",", ":"];
 function drawTextInBox(txt, x, y, w, h, maxFontSize = height * 0.045, minFontSize = 20) {
 	fill(0); noStroke();
 	textAlign(CENTER, CENTER);

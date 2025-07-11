@@ -44,7 +44,7 @@ class TitleScreen {
 
 		this.processBubbles();
 		noStroke();
-		fill(255,255,255,111);
+		fill(255,255,255,150);
 		rect(-1,-1,width+2,height+2);
 
 		textAlign(CENTER, CENTER);

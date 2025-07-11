@@ -44,16 +44,20 @@ class TitleScreen {
 
 		this.processBubbles();
 		noStroke();
-		fill(255,255,255,100);
+		fill(255,255,255,111);
 		rect(-1,-1,width+2,height+2);
 
 		textAlign(CENTER, CENTER);
-		fill(0);
-		textSize(60);
-		text("Make 24", width*0.5, height*0.08);
-		textSize(36);
-        text("Random",width*0.3, height*0.22-32);
-        text("Designed",width*0.7, height*0.22-32);
+        fill(100,93,85);
+		for(let y = 0; y<=1; y++){
+			for(let x = 0; x<=1; x++){
+				textSize(60);
+				text("Make 24", width*0.5+x, height*0.08+y);
+				textSize(36);
+				text("Random",width*0.3+x, height*0.22-32+y);
+				text("Designed",width*0.7+x, height*0.22-32+y);
+			}
+		}
 
 		this.drawBoxes();
 	}
@@ -138,10 +142,16 @@ class TitleScreen {
 		// this.bubbles.push(...newBubbles);
 		
 		for(let b of this.bubbles){
+			b.avoid(this.bubbles);
+		}
+		for(let b of this.bubbles){
 			b.process(this.bubbles);
 		}
 		for(let i = this.bubbles.length-1; i>=0; i--){
 			this.bubbles[i].spliceOutsideBox(this.bubbles,0,0,width,height);
+		}
+		for(let b of this.bubbles){
+			b.draw();
 		}
 	}
 

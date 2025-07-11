@@ -1,22 +1,28 @@
 class Bubble {
-    constructor(x,y,velAng,value,forcedPosition){
+    static PRIMES = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47];
+    static SPLITTING_TIME = 140;
+    constructor(x,y,vel,value,forcedPosition){
         this.x = x;
         this.y = y;
-        if(velAng===undefined){
-            this.velAng = random(0,2*PI);
+        if(vel===undefined){
+            this.vel = Bubble.velOfAng(random(0,2*PI));
         }
         else{
-            this.velAng = velAng;
+            this.vel = vel;
         }
         this.value = value;
         this.splittingTimer = 0;
+        this.spawnTimer = 50;
         
         let possibleOps;
         if(this.value===24){
-            possibleOps = ["+", "-", "×", "÷"];
+            possibleOps = ["+", "-", "×", "÷", "÷"];
+        }
+        else if(Bubble.PRIMES.includes(this.value)){
+            possibleOps = ["+"];
         }
         else{
-            possibleOps = ["+", "×", "×"];
+            possibleOps = ["+", "×", "×", "×"];
         }
         this.partsOp = possibleOps[floor(random(0,possibleOps.length))];
         this.parts = this.generateParts(this.partsOp);
@@ -41,20 +47,22 @@ class Bubble {
     }
 
     process(bubbles){
-        this.x += cos(this.velAng) * Bubble.speed;
-        this.y += sin(this.velAng) * Bubble.speed;
-        if(this.splittingTimer>0){
+        this.x += this.vel.x;
+        this.y += this.vel.y;
+        if(this.spawnTimer>0){
+            this.spawnTimer--;
+        }
+        else if(this.splittingTimer>0){
             this.splittingTimer--;
             if(this.splittingTimer===0){
                 this.endSplit(bubbles);
             }
         }
         else{
-            if(this.value>=4&&random(0,400)<1){
+            if(this.value>3&&random(0,80)<1){
                 this.startSplit();
             }
         }
-        this.draw();
     }
     draw(){
         // noFill();
@@ -66,24 +74,34 @@ class Bubble {
         // ellipse(this.x,this.y,Bubble.rad*2,Bubble.rad*2);
 
         textSize(Bubble.rad/2);
-        fill(0);
         noStroke();
         textAlign(CENTER,CENTER);
+        if(this.splittingTimer>0&&this.splittingTimer*2<=Bubble.SPLITTING_TIME){
+            fill(0,255*this.splittingTimer*2/Bubble.SPLITTING_TIME);
+        }
+        else{
+            fill(0);
+        }
         text(this.value,this.x+this.textXs[0],this.y);
         if(this.splittingTimer>0){
+            let mag = pow(sin(PI*(this.splittingTimer/Bubble.SPLITTING_TIME)),0.75);
+            fill(0,255*mag);
             text("=",this.x+this.textXs[1],this.y);
-            text(this.parts[0],this.x+this.textXs[2],this.y);
             text(this.partsOp,this.x+this.textXs[3],this.y);
+            if(this.splittingTimer*2<=Bubble.SPLITTING_TIME){
+                fill(0);
+            }
+            text(this.parts[0],this.x+this.textXs[2],this.y);
             text(this.parts[1],this.x+this.textXs[4],this.y);
         }
     }
     startSplit(){
-        this.splittingTimer = 90;
+        this.splittingTimer = Bubble.SPLITTING_TIME;
     }
     endSplit(bubbles){
         // these will process once in the same frame, which is necessary (otherwise there's a white flash at timer zero)
-        bubbles.push(new Bubble(this.x+this.textXs[2],this.y,this.velAng+random(-PI/5,PI/5),this.parts[0],false));
-        bubbles.push(new Bubble(this.x+this.textXs[4],this.y,this.velAng+random(-PI/5,PI/5),this.parts[1],false));
+        bubbles.push(new Bubble(this.x+this.textXs[2],this.y,this.vel,this.parts[0],false));
+        bubbles.push(new Bubble(this.x+this.textXs[4],this.y,this.vel,this.parts[1],false));
         this.x=-Infinity;
         this.y=-Infinity;
     }
@@ -115,7 +133,7 @@ class Bubble {
         let a;
         switch(opType){
             case "+":
-                a = floor(random(1,this.value));
+                a = floor(random(2,this.value-1)); // works for 1 or higher, funnily enough
                 return [this.value-a,a];
             case "-":
                 const cands = [1, 3, 6, 8, 12, 16, 25];
@@ -127,6 +145,22 @@ class Bubble {
             case "÷":
                 a = floor(random(1,3.6));
                 return [this.value*a,a];
+        }
+    }
+
+    avoid(bubbles){
+        for(let b of bubbles){
+            if(this===b){
+                continue;
+            }
+            let d = dist(this.x,this.y,b.x,b.y);
+            if(d<Bubble.rad*3){
+                let mag = pow(1-d/(Bubble.rad*3),2)*-0.08;
+                let avoidance = Bubble.velOfAng(atan2(b.y-this.y,b.x-this.x));
+                this.vel.x+=mag*avoidance.x;
+                this.vel.y+=mag*avoidance.y;
+                this.vel = Bubble.velNormal(this.vel);
+            }
         }
     }
 
@@ -158,12 +192,19 @@ class Bubble {
             sx = random(x,x+w);
         }
         let ang = atan2(y+h/2-sy,x+w/2-sx) + random(-PI/5,PI/5);
-        bubbles.push(new Bubble(sx,sy,ang,value,true));
+        bubbles.push(new Bubble(sx,sy,Bubble.velOfAng(ang),value,true));
+    }
+    static velOfAng(ang){
+        return {x:cos(ang)*Bubble.speed,y:sin(ang)*Bubble.speed};
+    }
+    static velNormal(vel){
+        let factor = Bubble.speed/dist(0,0,vel.x,vel.y);
+        return {x:vel.x*factor,y:vel.y*factor};
     }
     static get rad(){
-        return min(width,height)*0.07;
+        return sqrt(width*height)*0.07;
     }
     static get speed(){
-        return dist(0,0,width,height)*0.0007;
+        return dist(0,0,width,height)*0.0008;
     }
 }

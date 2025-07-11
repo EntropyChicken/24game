@@ -1,6 +1,6 @@
 class Bubble {
     static PRIMES = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47];
-    static SPLITTING_TIME = 140;
+    static SPLITTING_TIME = 160;
     constructor(x,y,vel,value,forcedPosition){
         this.x = x;
         this.y = y;
@@ -12,11 +12,11 @@ class Bubble {
         }
         this.value = value;
         this.splittingTimer = 0;
-        this.spawnTimer = 50;
+        this.spawnTimer = random(35,75)+(35*this.value===24);
         
         let possibleOps;
         if(this.value===24){
-            possibleOps = ["+", "-", "×", "÷", "÷"];
+            possibleOps = ["-", "×", "÷", "÷"];
         }
         else if(Bubble.PRIMES.includes(this.value)){
             possibleOps = ["+"];
@@ -49,6 +49,8 @@ class Bubble {
     process(bubbles){
         this.x += this.vel.x;
         this.y += this.vel.y;
+        let speed = (Bubble.speed+4*dist(0,0,this.vel.x,this.vel.y))/5; // speed decays to Bubble.speed regulation
+        this.vel = Bubble.velNormal(this.vel,speed);
         if(this.spawnTimer>0){
             this.spawnTimer--;
         }
@@ -59,18 +61,13 @@ class Bubble {
             }
         }
         else{
-            if(this.value>3&&random(0,80)<1){
+            if(this.value>3){
                 this.startSplit();
             }
         }
     }
     draw(){
-        // noFill();
-        // strokeWeight(3);
-        // stroke(100,93,85);
-
         // fill(255,0,0,40);
-
         // ellipse(this.x,this.y,Bubble.rad*2,Bubble.rad*2);
 
         textSize(Bubble.rad/2);
@@ -94,6 +91,10 @@ class Bubble {
             text(this.parts[0],this.x+this.textXs[2],this.y);
             text(this.parts[1],this.x+this.textXs[4],this.y);
         }
+
+        // noFill();
+        // stroke(255,0,0);
+        // ellipse(this.visualX(),this.y,this.visualRad()*2,this.visualRad()*2);
     }
     startSplit(){
         this.splittingTimer = Bubble.SPLITTING_TIME;
@@ -148,18 +149,36 @@ class Bubble {
         }
     }
 
+    visualX(){
+        let mag = 0;
+        if(this.splittingTimer>0){
+            mag = constrain(map(this.splittingTimer,Bubble.SPLITTING_TIME,Bubble.SPLITTING_TIME/2,0,1),0,1);
+        }
+        let ret = map(mag,0,1,this.x+this.textXs[0],this.x);
+        return ret;
+    }
+    visualRad(){
+        let rad = Bubble.rad*2;
+        if(this.splittingTimer>0){
+            rad = Bubble.rad*(2+min(0.8,(1-this.splittingTimer/Bubble.SPLITTING_TIME)));
+        }
+        return rad;
+    }
     avoid(bubbles){
+        const thisRad = this.visualRad();
         for(let b of bubbles){
+            const bRad = b.visualRad();
             if(this===b){
                 continue;
             }
-            let d = dist(this.x,this.y,b.x,b.y);
-            if(d<Bubble.rad*3){
-                let mag = pow(1-d/(Bubble.rad*3),2)*-0.08;
+            let d = dist(this.visualX(),this.y*1.5,b.visualX(),b.y*1.5); // Y IS STRETCHED TO BE LESS SIGNIFICANT
+            if(d<=(thisRad+bRad)/2){
+                let mag = pow(1-d/((thisRad+bRad)/2),1.6)*-0.1;
                 let avoidance = Bubble.velOfAng(atan2(b.y-this.y,b.x-this.x));
                 this.vel.x+=mag*avoidance.x;
                 this.vel.y+=mag*avoidance.y;
-                this.vel = Bubble.velNormal(this.vel);
+                // remove second parameter for forced fixed speed (makes collisions weird if head on)
+                // this.vel = Bubble.velNormal(this.vel,dist(0,0,this.vel.x,this.vel.y));
             }
         }
     }
@@ -194,11 +213,11 @@ class Bubble {
         let ang = atan2(y+h/2-sy,x+w/2-sx) + random(-PI/5,PI/5);
         bubbles.push(new Bubble(sx,sy,Bubble.velOfAng(ang),value,true));
     }
-    static velOfAng(ang){
-        return {x:cos(ang)*Bubble.speed,y:sin(ang)*Bubble.speed};
+    static velOfAng(ang,speed=Bubble.speed){
+        return {x:cos(ang)*speed,y:sin(ang)*speed};
     }
-    static velNormal(vel){
-        let factor = Bubble.speed/dist(0,0,vel.x,vel.y);
+    static velNormal(vel,speed=Bubble.speed){
+        let factor = speed/dist(0,0,vel.x,vel.y);
         return {x:vel.x*factor,y:vel.y*factor};
     }
     static get rad(){

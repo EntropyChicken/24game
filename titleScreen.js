@@ -4,7 +4,7 @@ class TitleScreen {
 		this.boxW = min(220, width * 0.3);
 		this.boxH = min(80, height * 0.1);
 		this.marginY = 16;
-		this.bubbles = [];
+		this.bubbleBox = new BubbleBox(0,0,width,height);
 
 		const labels = [
 			{ text: "Easy", set: 0 },
@@ -42,7 +42,8 @@ class TitleScreen {
 	draw() {
         background(255);
 
-		this.processBubbles();
+		this.bubbleBox.draw();
+
 		noStroke();
 		fill(255,255,255,150);
 		rect(-1,-1,width+2,height+2);
@@ -128,35 +129,6 @@ class TitleScreen {
 			b.drawAngle *= 0.8;
 			b.drawScale = 1 + (b.drawScale - 1) * 0.9;
 			b.drawOffset *= 0.8;
-		}
-	}
-	
-	processBubbles() {
-		if(this.bubbles.length<12&&random(0,20)<1){
-			Bubble.spawnBubbleInBox(this.bubbles,0,0,width,height);
-		}
-		
-		// let newBubbles = [];
-		// for(let b of this.bubbles){
-		// 	// console.log(b);
-		// 	newBubbles.push(...b.process());
-		// }
-		// for(let i = this.bubbles.length-1; i>=0; i--){
-		// 	this.bubbles[i].spliceOutsideBox(this.bubbles,0,0,width,height);
-		// }
-		// this.bubbles.push(...newBubbles);
-		
-		for(let b of this.bubbles){
-			b.avoid(this.bubbles);
-		}
-		for(let b of this.bubbles){
-			b.process(this.bubbles);
-		}
-		for(let i = this.bubbles.length-1; i>=0; i--){
-			this.bubbles[i].spliceOutsideBox(this.bubbles,0,0,width,height);
-		}
-		for(let b of this.bubbles){
-			b.draw();
 		}
 	}
 

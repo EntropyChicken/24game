@@ -103,8 +103,7 @@ class Bubble {
         // these will process once in the same frame, which is necessary (otherwise there's a white flash at timer zero)
         bubbles.push(new Bubble(this.x+this.textXs[2],this.y,this.vel,this.parts[0],false));
         bubbles.push(new Bubble(this.x+this.textXs[4],this.y,this.vel,this.parts[1],false));
-        this.x=-Infinity;
-        this.y=-Infinity;
+        this.shouldDelete = true;
     }
 
     generateFactor(maxTries=300){
@@ -183,40 +182,6 @@ class Bubble {
         }
     }
 
-    // DON'T USE IN THE MIDDLE OF FOR LOOP (preferably trigger external splicing)
-    splice(bubbles){
-        let index = bubbles.indexOf(this);
-        if(index===-1){
-            console.log("Bubble not in bubbles parameter for splice");
-        }
-        else{
-            bubbles.splice(index,1);
-        }
-    }
-    spliceOutsideBox(bubbles,x,y,w,h){
-        if(this.x>x+w+Bubble.rad||this.x<x-Bubble.rad||this.y>y+h+Bubble.rad||this.y<y-Bubble.rad){
-            this.splice(bubbles);
-        }
-    }
-    
-
-    static spawnBubbleInBox(bubbles,x,y,w,h,value=24){
-        let sx, sy;
-        if(random()<0.5){
-            sx = random()<0.5 ? x-Bubble.rad : x+w+Bubble.rad;
-            sy = random(y,y+h);
-        }
-        else{
-            sy = random()<0.5 ? y-Bubble.rad : y+h+Bubble.rad;
-            sx = random(x,x+w);
-        }
-        let ang = atan2(y+h/2-sy,x+w/2-sx) + random(-PI/5,PI/5);
-        let newBubble = new Bubble(sx,sy,Bubble.velOfAng(ang),value,true);
-        newBubble.spawnTimer += 90;
-        newBubble.vel.x *= 20;
-        newBubble.vel.y *= 20;
-        bubbles.push(newBubble);
-    }
     static velOfAng(ang,speed=Bubble.speed){
         return {x:cos(ang)*speed,y:sin(ang)*speed};
     }

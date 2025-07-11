@@ -242,9 +242,8 @@ class Level {
 			translate(-b.x-b.w/2,-b.y-b.h/2);
 
 
-			fill(i === this.firstIndex ? color(225,255,180) : color(255,255,255));
 			stroke(100,93,85); strokeWeight(3);
-			drawShadedButton(b.x,b.y,b.w,b.h,15);
+			drawShadedButton(b.x,b.y,b.w,b.h,15,this.firstIndex===i ? color(150,200,180) : color(180,210,255),this.firstIndex===i ? color(225,255,180) : color(255,255,255));
 
 			noStroke();
 			textAlign(CENTER, CENTER);
@@ -740,7 +739,7 @@ Level.setupKeyboard = function(levelInstance, override=true) {
 	}
 };
 
-function drawShadedButton(x, y, w, h, r = 8, shadeColor = color(180, 210, 255), mainColor = color(255,255,255), shadeHeightFrac = 0.1) {
+function drawShadedButton(x, y, w, h, r = 8, shadeColor = color(180,210,255), mainColor = color(255,255,255), shadeHeightFrac = 0.1) {
     fill(shadeColor); stroke(100,93,85); strokeWeight(3);
     rect(x, y, w, h, r);
 	noStroke();

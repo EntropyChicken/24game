@@ -20,13 +20,9 @@ class Operation {
 		if (selected || mouseX > this.x && mouseX < this.x + this.w && mouseY > this.y && mouseY < this.y + this.h) {
 			this.drawOffset += height*0.005;
 		}
-		this.drawAngle *= 0.8;
-		this.drawOffset *= 0.8;
-		this.drawScale = 1+(this.drawScale-1)*0.9;
-
 		push();
 		translate(this.x+this.w/2,this.y+this.h/2);
-		scale(this.drawScale);
+		scale(max(0,this.drawScale));
 		translate(0,this.drawOffset);
 		rotate(this.drawAngle);
 		translate(-this.x-this.w/2,-this.y-this.h/2);
@@ -44,6 +40,9 @@ class Operation {
 		text(this.symbol, this.x + this.w/2, this.y + this.h/2);
 
 		pop();
+		this.drawAngle *= 0.8;
+		this.drawOffset *= 0.8;
+		this.drawScale = 1+(this.drawScale-1)*0.9;
 	}
 
 	contains(px, py) {

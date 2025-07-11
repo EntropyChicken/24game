@@ -58,6 +58,14 @@ function drawTextInBox(txt, x, y, w, h, maxFontSize = height * 0.045, minFontSiz
 	}
 }
 
+function smoothErp(a,recursion=1){
+	a = constrain(a,0,1);
+	if(recursion>0){
+		return smoothErp((1-cos(PI*a))/2,recursion-1);
+	}
+	return a;
+}
+
 
 class Level {
 	static SYMBOLS = ["+","-","×","÷","^","√","ln","!","sin","cos","tan","cot","asin","acos"];
@@ -66,7 +74,6 @@ class Level {
         this.metaData = metaData;
 		this.values = numbers.map(n => new Complex(n));
 		this.originalValues = numbers.map(n => new Complex(n));
-		this.boxes = [];
 		this.opSymbols = opSymbols;
 		this.setupBoxes();
 		this.setupOps();
@@ -168,6 +175,9 @@ class Level {
 			this.winTimer = WIN_TIMER_START;
 		}
         if (this.winTimer > 0) {
+			for(let b of this.opButtons){
+				b.drawScale = smoothErp(0.4*this.winTimer/WIN_TIMER_START,3);
+			}
 			for(let b of this.boxes){
 				if(b.value.equals(new Complex(24))){
 					let factor = constrain((WIN_TIMER_START-this.winTimer)*0.006-0.03,-0.02,1);
@@ -222,11 +232,6 @@ class Level {
 				b.drawOffset -= height*0.005;
 				// alternative: b.drawAngle += b.locName%2 ? -0.02 : 0.02
 			}
-
-			b.drawAngle *= 0.8;
-			b.drawScale = 1+(b.drawScale-1)*0.9;
-			b.drawOffset *= 0.8;
-
 			push();
 			translate(b.x+b.w/2,b.y+b.h/2);
 			scale(b.drawScale);
@@ -296,6 +301,10 @@ class Level {
 				});
 			}
 			pop();
+
+			b.drawAngle *= 0.8;
+			b.drawScale = 1+(b.drawScale-1)*0.9;
+			b.drawOffset *= 0.8;
 		});
 	}
 
@@ -319,9 +328,6 @@ class Level {
 		if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
 			b.drawOffset += height*0.0045;
 		}
-		b.drawAngle *= 0.8;
-		b.drawScale = 1+(b.drawScale-1)*0.9;
-		b.drawOffset *= 0.8;
 
 		push();
 		translate(b.x+b.w/2,b.y+b.h/2);
@@ -337,6 +343,10 @@ class Level {
 		textSize(height * 0.045);
 		text("Undo", b.x + b.w/2, b.y + b.h/2);
 		pop();
+
+		b.drawAngle *= 0.8;
+		b.drawScale = 1+(b.drawScale-1)*0.9;
+		b.drawOffset *= 0.8;
 	}
 
 	drawHintButton() {
@@ -348,9 +358,6 @@ class Level {
 		if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
 			b.drawOffset += height * 0.0045;
 		}
-		b.drawAngle *= 0.8;
-		b.drawScale = 1 + (b.drawScale - 1) * 0.9;
-		b.drawOffset *= 0.8;
 
 		push();
 		translate(b.x + b.w / 2, b.y + b.h / 2);
@@ -368,6 +375,10 @@ class Level {
 		drawTextInBox(displayText, b.x, b.y, b.w, b.h);
 
 		pop();
+
+		b.drawAngle *= 0.8;
+		b.drawScale = 1 + (b.drawScale - 1) * 0.9;
+		b.drawOffset *= 0.8;
 	}
 
     drawSolutionButton() {
@@ -378,9 +389,7 @@ class Level {
         if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
             b.drawOffset += height * 0.0045;
         }
-        b.drawAngle *= 0.8;
-        b.drawScale = 1 + (b.drawScale - 1) * 0.9;
-        b.drawOffset *= 0.8;
+
         push();
         translate(b.x + b.w / 2, b.y + b.h / 2);
         scale(b.drawScale);
@@ -403,6 +412,10 @@ class Level {
 		}
 
         pop();
+
+        b.drawAngle *= 0.8;
+        b.drawScale = 1 + (b.drawScale - 1) * 0.9;
+        b.drawOffset *= 0.8;
     }
 
 	undo() {

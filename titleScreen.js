@@ -56,9 +56,6 @@ class TitleScreen {
 			if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
 				b.drawOffset += height * (b.isClassic ? 0.007 : -0.007);
 			}
-			b.drawAngle *= 0.8;
-			b.drawScale = 1 + (b.drawScale - 1) * 0.9;
-			b.drawOffset *= 0.8;
 
 			push();
 			translate(b.x + b.w / 2, b.y + b.h / 2);
@@ -111,6 +108,10 @@ class TitleScreen {
 			}
 
 			pop();
+			
+			b.drawAngle *= 0.8;
+			b.drawScale = 1 + (b.drawScale - 1) * 0.9;
+			b.drawOffset *= 0.8;
 		}
 	}
 

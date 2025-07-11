@@ -6,7 +6,7 @@ function drawTextInBox(txt, x, y, w, h, maxFontSize = height * 0.045, minFontSiz
 
 	let fontSize = maxFontSize;
 	textSize(fontSize);
-	const maxWidth = w - 4;
+	const maxWidth = w - 0.013*width;
 
 	// Shrink to minimum font size if necessary
 	while (textWidth(txt) > maxWidth && fontSize > minFontSize) {
@@ -390,8 +390,17 @@ class Level {
         noFill(); stroke(100,93,85); strokeWeight(3);
         rect(b.x, b.y, b.w, b.h, 10);
 
-		let displayText = b.showSolution && this.metaData.sols ? this.metaData.sols[0] : "Solution";
-		drawTextInBox(displayText, b.x, b.y, b.w, b.h);
+		if(b.showSolution){
+			if(this.metaData.sols){
+				drawTextInBox(this.metaData.sols[0], b.x, b.y, b.w, b.h, height * 0.065);
+			}
+			else{
+				drawTextInBox("Sorry, no solution 💀😭 Code is bugged", b.x, b.y, b.w, b.h, height * 0.065);
+			}
+		}
+		else{
+			drawTextInBox("Solution", b.x, b.y, b.w, b.h);
+		}
 
         pop();
     }

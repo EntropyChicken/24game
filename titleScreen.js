@@ -25,7 +25,7 @@ class TitleScreen {
 			const col = isClassic ? 0 : 1;
 			const row = isClassic ? i : i - 5;
 			const x = width * (0.3 + 0.4 * col) - this.boxW / 2;
-			const y = height*0.22 + row * (this.boxH + this.marginY);
+			const y = height*0.31 + row * (this.boxH + this.marginY);
 
 			this.boxes.push({
 				x, y, w: this.boxW, h: this.boxH,
@@ -51,11 +51,11 @@ class TitleScreen {
         fill(100,93,85);
 		for(let y = 0; y<=1; y++){
 			for(let x = 0; x<=1; x++){
-				textSize(60);
-				text("Make 24", width*0.5+x, height*0.08+y);
-				textSize(36);
-				text("Random",width*0.3+x, height*0.22-32+y);
-				text("Designed",width*0.7+x, height*0.22-32+y);
+				textSize(constrain(width*0.064,45,90));
+				text("Make 24", width*0.5+x, height*0.14+y);
+				textSize(constrain(width*0.036,25,45));
+				text("Random",width*0.3+x, height*0.3-32+y);
+				text("Designed",width*0.7+x, height*0.3-32+y);
 			}
 		}
 

@@ -1,4 +1,3 @@
-
 class Operation {
 	constructor(symbol, fn, x, y, w, h) {
 		this.symbol = symbol;
@@ -28,22 +27,22 @@ class Operation {
 		translate(-this.x-this.w/2,-this.y-this.h/2);
 
 		if(transparent){
-			noFill();
+			fill(255,255,255,80);
+			stroke(100,93,85,80); strokeWeight(3);
+			rect(this.x, this.y, this.w, this.h, 12);
+		} else {
+			if(typeof drawShadedButton === "function"){
+				drawShadedButton(this.x, this.y, this.w, this.h, 12);
+			} else {
+				fill(255,255,255);
+				stroke(0); strokeWeight(2);
+				rect(this.x, this.y, this.w, this.h, 12);
+			}
 		}
-		else{
-			fill(selected ? color(225,255,180) : color(255,255,255));
-		}
-		stroke(100,93,85); strokeWeight(3);
-		rect(this.x, this.y, this.w, this.h, 12);
 		fill(0); noStroke();
 		textAlign(CENTER, CENTER);
-		let ts = min(height * 0.1, width * 0.08);
-		if(this.symbol.length > 2){
-			ts /= pow(this.symbol.length-1,0.8);
-		}
-		textSize(ts);
+		textSize(height * 0.06);
 		text(this.symbol, this.x + this.w/2, this.y + this.h/2);
-
 		pop();
 		this.drawAngle *= 0.8;
 		this.drawOffset *= 0.8;

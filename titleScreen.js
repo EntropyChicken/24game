@@ -75,10 +75,15 @@ class TitleScreen {
 			rotate(b.drawAngle);
 			translate(-b.x - b.w / 2, -b.y - b.h / 2);
 
-			fill(255);
-			stroke(100, 93, 85);
-			strokeWeight(3);
-			rect(b.x, b.y, b.w, b.h, 15);
+			// Replace white button with shaded button
+			if(typeof drawShadedButton === "function"){
+				drawShadedButton(b.x, b.y, b.w, b.h, 15);
+			} else {
+				fill(255);
+				stroke(100, 93, 85);
+				strokeWeight(3);
+				rect(b.x, b.y, b.w, b.h, 15);
+			}
 
 			noStroke();
 			textAlign(CENTER, CENTER);

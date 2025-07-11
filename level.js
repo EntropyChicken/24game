@@ -244,7 +244,7 @@ class Level {
 
 			fill(i === this.firstIndex ? color(225,255,180) : color(255,255,255));
 			stroke(100,93,85); strokeWeight(3);
-			rect(b.x, b.y, b.w, b.h, 15);
+			drawShadedButton(b.x,b.y,b.w,b.h,15);
 
 			noStroke();
 			textAlign(CENTER, CENTER);
@@ -317,71 +317,66 @@ class Level {
 	}
 
 	drawUndo() {
-		const b = this.undoButton;
-		if(b.drawAngle === undefined){
-			b.drawAngle = 0;
-		}
-		if(b.drawScale === undefined){
-			b.drawScale = 1;
-		}
-		if(b.drawOffset === undefined){
-			b.drawOffset = 0;
-		}
-		if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
-			b.drawOffset += height*0.0045;
-		}
+        const b = this.undoButton;
+        if(b.drawAngle === undefined){
+            b.drawAngle = 0;
+        }
+        if(b.drawScale === undefined){
+            b.drawScale = 1;
+        }
+        if(b.drawOffset === undefined){
+            b.drawOffset = 0;
+        }
+        if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
+            b.drawOffset += height * 0.0045;
+        }
 
-		push();
-		translate(b.x+b.w/2,b.y+b.h/2);
-		scale(b.drawScale);
-		translate(0,b.drawOffset);
-		rotate(b.drawAngle);
-		translate(-b.x-b.w/2,-b.y-b.h/2);
+        push();
+        translate(b.x+b.w/2,b.y+b.h/2);
+        scale(b.drawScale);
+        translate(0,b.drawOffset);
+        rotate(b.drawAngle);
+        translate(-b.x-b.w/2,-b.y-b.h/2);
 
-		noFill(); stroke(100,93,85); strokeWeight(3);
-		rect(b.x, b.y, b.w, b.h, 10);
-		fill(0); noStroke();
-		textAlign(CENTER, CENTER);
-		textSize(height * 0.045);
-		text("Undo", b.x + b.w/2, b.y + b.h/2);
-		pop();
+        drawShadedButton(b.x, b.y, b.w, b.h, 10);
+        fill(0); noStroke();
+        textAlign(CENTER, CENTER);
+        textSize(height * 0.045);
+        text("Undo", b.x + b.w/2, b.y + b.h/2);
+        pop();
 
-		b.drawAngle *= 0.8;
-		b.drawScale = 1+(b.drawScale-1)*0.9;
-		b.drawOffset *= 0.8;
-	}
+        b.drawAngle *= 0.8;
+        b.drawScale = 1+(b.drawScale-1)*0.9;
+        b.drawOffset *= 0.8;
+    }
 
 	drawHintButton() {
-		const b = this.hintButton;
-		if (b.drawAngle === undefined) b.drawAngle = 0;
-		if (b.drawScale === undefined) b.drawScale = 1;
-		if (b.drawOffset === undefined) b.drawOffset = 0;
+        const b = this.hintButton;
+        if (b.drawAngle === undefined) b.drawAngle = 0;
+        if (b.drawScale === undefined) b.drawScale = 1;
+        if (b.drawOffset === undefined) b.drawOffset = 0;
 
-		if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
-			b.drawOffset += height * 0.0045;
-		}
+        if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
+            b.drawOffset += height * 0.0045;
+        }
 
-		push();
-		translate(b.x + b.w / 2, b.y + b.h / 2);
-		scale(b.drawScale);
-		translate(0, b.drawOffset);
-		rotate(b.drawAngle);
-		translate(-b.x - b.w / 2, -b.y - b.h / 2);
+        push();
+        translate(b.x + b.w / 2, b.y + b.h / 2);
+        scale(b.drawScale);
+        translate(0, b.drawOffset);
+        rotate(b.drawAngle);
+        translate(-b.x - b.w / 2, -b.y - b.h / 2);
 
-		noFill();
-		stroke(100, 93, 85);
-		strokeWeight(3);
-		rect(b.x, b.y, b.w, b.h, 10);
+        drawShadedButton(b.x, b.y, b.w, b.h, 10);
+        let displayText = b.showHint ? this.getHint() : "Hint";
+        drawTextInBox(displayText, b.x, b.y, b.w, b.h);
 
-		let displayText = b.showHint ? this.getHint() : "Hint";
-		drawTextInBox(displayText, b.x, b.y, b.w, b.h);
+        pop();
 
-		pop();
-
-		b.drawAngle *= 0.8;
-		b.drawScale = 1 + (b.drawScale - 1) * 0.9;
-		b.drawOffset *= 0.8;
-	}
+        b.drawAngle *= 0.8;
+        b.drawScale = 1 + (b.drawScale - 1) * 0.9;
+        b.drawOffset *= 0.8;
+    }
 
     drawSolutionButton() {
         const b = this.solutionButton;
@@ -398,8 +393,7 @@ class Level {
         translate(0, b.drawOffset);
         rotate(b.drawAngle);
         translate(-b.x - b.w / 2, -b.y - b.h / 2);
-        noFill(); stroke(100,93,85); strokeWeight(3);
-        rect(b.x, b.y, b.w, b.h, 10);
+        drawShadedButton(b.x, b.y, b.w, b.h, 10);
 
 		if(b.showSolution){
 			if(this.metaData.sols){
@@ -745,3 +739,14 @@ Level.setupKeyboard = function(levelInstance, override=true) {
 		window.addEventListener('keydown', window._levelKeyboardHandler);
 	}
 };
+
+function drawShadedButton(x, y, w, h, r = 8, shadeColor = color(180, 210, 255), mainColor = color(255,255,255), shadeHeightFrac = 0.1) {
+    fill(shadeColor); stroke(100,93,85); strokeWeight(3);
+    rect(x, y, w, h, r);
+	noStroke();
+    rect(x, y, w, h, r);
+    fill(mainColor); noStroke();
+
+    // or no round bottoms: rect(x, y, w, h * (1 - shadeHeightFrac), r, r, 0, 0);
+    rect(x, y, w, h * (1 - shadeHeightFrac), r);
+}

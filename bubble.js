@@ -12,7 +12,7 @@ class Bubble {
         }
         this.value = value;
         this.splittingTimer = 0;
-        this.spawnTimer = random(35,75)+(35*this.value===24);
+        this.spawnTimer = random(35,70); //+(40*this.value===24);
         
         let possibleOps;
         if(this.value===24){
@@ -211,7 +211,11 @@ class Bubble {
             sx = random(x,x+w);
         }
         let ang = atan2(y+h/2-sy,x+w/2-sx) + random(-PI/5,PI/5);
-        bubbles.push(new Bubble(sx,sy,Bubble.velOfAng(ang),value,true));
+        let newBubble = new Bubble(sx,sy,Bubble.velOfAng(ang),value,true);
+        newBubble.spawnTimer += 90;
+        newBubble.vel.x *= 20;
+        newBubble.vel.y *= 20;
+        bubbles.push(newBubble);
     }
     static velOfAng(ang,speed=Bubble.speed){
         return {x:cos(ang)*speed,y:sin(ang)*speed};

@@ -44,23 +44,23 @@ class TitleScreen {
 
 		this.bubbleBox.draw();
 
-		noStroke();
-		fill(255,255,255,150);
-		rect(-1,-1,width+2,height+2);
+		// noStroke();
+		// fill(255,255,255,150);
+		// rect(-1,-1,width+2,height+2);
 
-		textAlign(CENTER, CENTER);
-        fill(100,93,85);
-		for(let y = 0; y<=1; y++){
-			for(let x = 0; x<=1; x++){
-				textSize(constrain(width*0.064,45,90));
-				text("Make 24", width*0.5+x, height*0.14+y);
-				textSize(constrain(width*0.036,25,45));
-				text("Random",width*0.3+x, height*0.3-32+y);
-				text("Designed",width*0.7+x, height*0.3-32+y);
-			}
-		}
+		// textAlign(CENTER, CENTER);
+        // fill(100,93,85);
+		// for(let y = 0; y<=1; y++){
+		// 	for(let x = 0; x<=1; x++){
+		// 		textSize(constrain(width*0.064,45,90));
+		// 		text("Make 24", width*0.5+x, height*0.14+y);
+		// 		textSize(constrain(width*0.036,25,45));
+		// 		text("Random",width*0.3+x, height*0.3-32+y);
+		// 		text("Designed",width*0.7+x, height*0.3-32+y);
+		// 	}
+		// }
 
-		this.drawBoxes();
+		// this.drawBoxes();
 	}
 
 	drawBoxes() {

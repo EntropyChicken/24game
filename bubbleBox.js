@@ -1,4 +1,5 @@
 class BubbleBox {
+    static PHYSICS_ITERATIONS = 2;
     constructor(x,y,w,h) {
         this.x = x;
         this.y = y;
@@ -22,14 +23,21 @@ class BubbleBox {
 		// }
 		// this.bubbles.push(...newBubbles);
 		
-		for(let b of this.bubbles){
-			b.avoid(this.bubbles);
-		}
-		for(let b of this.bubbles){
-			b.process(this.bubbles);
-		}
+        
+        for(let iter = 0; iter<BubbleBox.PHYSICS_ITERATIONS; iter++){
+            for(let b of this.bubbles){
+                b.avoid(this.bubbles);
+            }
+            for(let b of this.bubbles){
+                b.physics();
+            }
+            this.deleteOutside();
+        }
+        for(let b of this.bubbles){
+            b.nature(this.bubbles);
+        }
         this.deleteShouldDelete();
-        this.deleteOutside();
+
 		for(let b of this.bubbles){
 			b.draw();
 		}
@@ -46,7 +54,7 @@ class BubbleBox {
     deleteOutside(){
         for(let i = this.bubbles.length-1; i>=0; i--){
             let b = this.bubbles[i];
-            if(b.x>this.x+this.w+Bubble.rad||b.x<this.x-Bubble.rad||b.y>this.y+this.h+Bubble.rad||b.y<this.y-Bubble.rad){
+            if(b.x>this.x+this.w+Bubble.rad*2||b.x<this.x-Bubble.rad*2||b.y>this.y+this.h+Bubble.rad*2||b.y<this.y-Bubble.rad*2){
                 this.bubbles.splice(i,1);
                 continue;
             }
@@ -63,11 +71,20 @@ class BubbleBox {
             sy = random()<0.5 ? this.y-Bubble.rad : this.y+this.h+Bubble.rad;
             sx = random(this.x,this.x+this.w);
         }
-        let ang = atan2(this.y+this.h/2-sy,this.x+this.w/2-sx) + random(-PI/5,PI/5);
-        let newBubble = new Bubble(sx,sy,Bubble.velOfAng(ang),value,true);
-        newBubble.spawnTimer += 90;
-        newBubble.vel.x *= 20;
-        newBubble.vel.y *= 20;
+        let ang = atan2(this.y+this.h/2-sy,this.x+this.w/2-sx) + random(-PI/6,PI/6);
+        sx += 0.8*Bubble.rad; // to anticipate the counter effect to make .value centered
+        let speed = Bubble.speed/BubbleBox.PHYSICS_ITERATIONS;
+        let newBubble = new Bubble(sx,sy,{x:speed*cos(ang),y:speed*sin(ang)},value,true,speed);
+        newBubble.spawnTimer += 60;
+
+        const stepSize = 5;
+        for(let steps = 0; steps<10; steps++){
+            let visualX = newBubble.visualX();
+            if(visualX<this.x-Bubble.rad*0.5||newBubble.y<this.y-Bubble.rad*0.3||visualX>this.x+this.w+Bubble.rad*0.5||newBubble.y>this.y+this.h+Bubble.rad*0.3){
+                newBubble.x += newBubble.vel.x * stepSize;
+                newBubble.y += newBubble.vel.y * stepSize;
+            }
+        }
         this.bubbles.push(newBubble);
     }
 }

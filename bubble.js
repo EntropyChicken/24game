@@ -42,7 +42,7 @@ class Bubble {
             this.vel = {x:vel.x,y:vel.y};
         }
         this.splittingTimer = 0;
-        this.spawnTimer = random(40,60) + (50*this.value===24);
+        this.spawnTimer = random(40,60) + (35*this.value===24);
 
         this.setupParts();
         this.setupTextXs();

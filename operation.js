@@ -32,7 +32,7 @@ class Operation {
 			rect(this.x, this.y, this.w, this.h, 12);
 		} else {
 			if(typeof drawShadedButton === "function"){
-				drawShadedButton(this.x, this.y, this.w, this.h, 12, selected ? color(150,200,180) : color(180,210,255), selected ? color(225,255,180) : color(255,255,255));
+				drawShadedButton(this.x, this.y, this.w, this.h, 12, selected ? color(150,200,180) : theme.shadeColor, selected ? color(225,255,180) : color(255,255,255));
 			} else {
 				fill(255,255,255);
 				stroke(0); strokeWeight(2);

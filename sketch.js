@@ -8,6 +8,7 @@ let puzzleSets = [[], [], [], []];
 let currentLevelSet = null;
 let currentUsedIndices = []; // Keeps track of used indices
 let currentIsClassic = true;
+let theme;
 
 function preload() {
 	loadJSON("levelData/classicLevelsEasy.json", data => { classicSets[0] = data; });
@@ -25,6 +26,10 @@ function setup() {
 	createCanvas(windowWidth, windowHeight);
 	titleScreen = new TitleScreen();
 	screen = "title";
+	theme = {
+		shadeColor : color(150,200,180),
+		backgroundColor : color(210,225,250)
+	};
 }
 
 function getRandomLevel(levelSet, previousCards, defaultOps = Level.SYMBOLS, overrideOps = false, usedIndices = [], shuffleCards) {

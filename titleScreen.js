@@ -93,7 +93,7 @@ class TitleScreen {
 
 			// Replace white button with shaded button
 			if(typeof drawShadedButton === "function"){
-				drawShadedButton(b.x, b.y, b.w, b.h, 15);
+				drawShadedButton(b.x, b.y, b.w, b.h, 15, b.isClassic ? color(255,210,160) : color(180,210,255));
 			} else {
 				fill(255);
 				stroke(100, 93, 85);
@@ -153,6 +153,9 @@ class TitleScreen {
                 currentLevelSet = b.set;
                 currentUsedIndices = [];
                 currentIsClassic = b.isClassic;
+				console.log(b.isClassic);
+				theme.shadeColor = (b.isClassic ? color(255,210,160) : color(180,210,255));
+				theme.backgroundColor = (b.isClassic ? color(255,225,190) : color(210,225,250));
                 level = getRandomLevel(currentLevelSet, [], currentIsClassic ? ["+","-","×","÷"] : Level.SYMBOLS, false, currentUsedIndices, !currentIsClassic);
                 Level.setupKeyboard(level);
                 screen = "game";

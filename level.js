@@ -510,9 +510,13 @@ class Level {
 	handleKey(e) {
 		const key = e.key;
 
-		if (key === '\\'){
-			this.solved = true;
-		}
+		// if (key === 'S'){
+		// 	this.solved = true;
+		// }
+		// if (key === 'H'){
+		// 	screen = "title";
+		// }
+		
 		if (key === 'o'){
 			this.opSymbols = Level.SYMBOLS;
 			this.setupOps();

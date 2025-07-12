@@ -30,15 +30,26 @@ class Complex {
         return new Complex(r, i);
     }
 
-    add(o) { return new Complex(this.real + o.real, this.imag + o.imag); }
-    subtract(o) { return new Complex(this.real - o.real, this.imag - o.imag); }
+    isNaN() {
+        return isNaN(this.real) || isNaN(this.imag);
+    }
+    add(o) {
+        if(this.isNaN()||o.isNaN()) return new Complex(NaN,NaN);
+        return new Complex(this.real + o.real, this.imag + o.imag);
+    }
+    subtract(o) {
+        if(this.isNaN()||o.isNaN()) return new Complex(NaN,NaN);
+        return new Complex(this.real - o.real, this.imag - o.imag);
+    }
     multiply(o) {
+        if(this.isNaN()||o.isNaN()) return new Complex(NaN,NaN);
         if(this.imag===0&&o.imag===0){
             return new Complex(this.real * o.real);
         }
         return new Complex(this.real * o.real - this.imag * o.imag, this.real * o.imag + this.imag * o.real);
     }
     divide(o) {
+        if(this.isNaN()||o.isNaN()) return new Complex(NaN,NaN);
         const d = o.real ** 2 + o.imag ** 2;
         if (d === 0) {
             return new Complex(NaN, NaN);
@@ -53,6 +64,7 @@ class Complex {
         return new Complex((this.real * o.real + this.imag * o.imag) / d, (this.imag * o.real - this.real * o.imag) / d);
     }
     power(o) {
+        if(this.isNaN()||o.isNaN()) return new Complex(NaN,NaN);
         if(this.equals(new Complex(0),DISPLAY_THRESHOLD)){
             if(o.real>0){
                 return new Complex(0);
@@ -93,14 +105,17 @@ class Complex {
         return new Complex(real,imag);
     }
     sqrt() {
+        if(this.isNaN()) return new Complex(NaN,NaN);
         return this.power(new Complex(0.5));
     };
 
     
     negate() {
+        if(this.isNaN()) return new Complex(NaN,NaN);
         return new Complex(-this.real, -this.imag);
     }
     naturalLog(checkReal = false) {
+        if(this.isNaN()) return new Complex(NaN,NaN);
         if (checkReal && this.round().imag === 0) {
             return new Complex(Math.log(this.real));
         }
@@ -109,6 +124,7 @@ class Complex {
         return new Complex(Math.log(r), theta);
     }    
     exp() {
+        if(this.isNaN()) return new Complex(NaN,NaN);
         const r = Math.exp(this.real);
         return new Complex(
             r * Math.cos(this.imag),
@@ -117,6 +133,7 @@ class Complex {
     }
 
     factorial() {
+        if(this.isNaN()) return new Complex(NaN,NaN);
         if(this.imag===0){
             if(this.real===Infinity){
                 return new Complex(Infinity);
@@ -200,6 +217,7 @@ class Complex {
     }
 
     sin() {
+        if(this.isNaN()) return new Complex(NaN,NaN);
         const iz = new Complex(-this.imag, this.real);
         const eiz = iz.exp();
         const e_iz = iz.negate().exp();
@@ -207,6 +225,7 @@ class Complex {
     }
 
     cos() {
+        if(this.isNaN()) return new Complex(NaN,NaN);
         const iz = new Complex(-this.imag, this.real);
         const eiz = iz.exp();
         const e_iz = iz.negate().exp();
@@ -214,17 +233,20 @@ class Complex {
     }
 
     tan() {
+        if(this.isNaN()) return new Complex(NaN,NaN);
         const s = this.sin();
         const c = this.cos();
         return s.divide(c);
     }
 
     cot() {
+        if(this.isNaN()) return new Complex(NaN,NaN);
         const s = this.sin();
         const c = this.cos();
         return c.divide(s);
     }
     asin() {
+        if(this.isNaN()) return new Complex(NaN,NaN);
         const i = new Complex(0, 1);
         const zSquared = this.multiply(this);
         const oneMinusZSquared = (new Complex(1, 0)).subtract(zSquared);
@@ -239,6 +261,7 @@ class Complex {
         return i.negate().multiply(inner.naturalLog());
     }
     acos() {
+        if(this.isNaN()) return new Complex(NaN,NaN);
         const i = new Complex(0, 1);
         const zSquared = this.multiply(this);
         const oneMinusZSquared = (new Complex(1, 0)).subtract(zSquared);
@@ -253,18 +276,21 @@ class Complex {
     }
 
     abs() {
+        if(this.isNaN()) return new Complex(NaN,NaN);
         if(this.imag===0){
             return new Complex(abs(this.real));
         }
         return new Complex(sqrt(this.real*this.real+this.imag*this.imag));
     }
     modulo(o) {
+        if(this.isNaN()||o.isNaN()) return new Complex(NaN,NaN);
         if(abs(this.imag)<DISPLAY_THRESHOLD&&abs(o.imag)<DISPLAY_THRESHOLD){
             return new Complex(this.real-o.real*Math.floor(this.real/o.real));
         }
         return new Complex(NaN,NaN);
     }
     floor() {
+        if(this.isNaN()) return new Complex(NaN,NaN);
         if(abs(this.imag)<DISPLAY_THRESHOLD){
             return new Complex(floor(this.real));
         }
@@ -272,12 +298,14 @@ class Complex {
     }
     // distinct from this.round(); which is for precision purposes
     mathDotRound() {
+        if(this.isNaN()) return new Complex(NaN,NaN);
         if(abs(this.imag)<DISPLAY_THRESHOLD){
             return new Complex(round(this.real));
         }
         return new Complex(NaN,NaN);
     }
     ceil() {
+        if(this.isNaN()) return new Complex(NaN,NaN);
         if(abs(this.imag)<DISPLAY_THRESHOLD){
             return new Complex(ceil(this.real));
         }

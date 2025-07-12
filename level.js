@@ -179,7 +179,7 @@ class Level {
 					case 'abs': return a.abs();
 					case '%': return a.modulo(b);
 					case 'floor': return a.floor();
-					case 'round': return a.round();
+					case 'round': return a.mathDotRound();
 					case 'ceil': return a.ceil();
 					default:
 						console.log("INVALID OPERATOR CHARACTER");
@@ -522,7 +522,7 @@ class Level {
 		// 	screen = "title";
 		// }
 
-		if (key === 'o'){
+		if (key === '\\'){
 			this.opSymbols = Level.SYMBOLS;
 			this.setupOps();
 		}

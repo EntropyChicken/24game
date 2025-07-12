@@ -32,6 +32,7 @@ function setup() {
 		backgroundColor : color(210,225,250),
 		backgroundColorCorrect : color(160,205,120)
 	};
+	console.log(new Complex(0,4).getText());
 }
 
 function getRandomLevel(levelSet, previousCards, defaultOps = Level.SYMBOLS, overrideOps = false, usedIndices = [], shuffleCards) {

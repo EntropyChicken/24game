@@ -41,7 +41,18 @@ class Operation {
 		}
 		fill(0); noStroke();
 		textAlign(CENTER, CENTER);
-		textSize(height * 0.06);
+		let ts = height * 0.06;
+		while(ts>14){
+			textSize(ts);
+			let tw = textWidth(this.symbol);
+			if(tw<this.w-5){
+				break;
+			}
+			if(ts<=20&&tw<this.w){
+				break;
+			}
+			ts--;
+		}
 		text(this.symbol, this.x + this.w/2, this.y + this.h/2);
 		pop();
 		this.drawAngle *= 0.8;

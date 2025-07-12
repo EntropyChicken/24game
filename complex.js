@@ -235,7 +235,8 @@ class Complex {
         }
         return new Complex(NaN,NaN);
     }
-    round() {
+    // distinct from this.round(); which is for precision purposes
+    mathDotRound() {
         if(abs(this.imag)<DISPLAY_THRESHOLD){
             return new Complex(round(this.real));
         }
@@ -272,7 +273,7 @@ class Complex {
             if(abs(this.real)>DISPLAY_THRESHOLD) {
                 txt = numToString(rounded.real);
             }
-            if (abs(this.imag)>DISPLAY_THRESHOLD) {
+            if(abs(this.imag)>DISPLAY_THRESHOLD) {
                 if(txt!==""&&rounded.imag>=0) {
                     txt += "+";
                 }

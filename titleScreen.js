@@ -103,7 +103,7 @@ class TitleScreen {
 
 			noStroke();
 			textAlign(CENTER, CENTER);
-			fill(b.isClassic ? color(255,130,0) : color(0,0,255));
+			fill(b.isClassic ? color(255,120,0) : color(30,60,255));
 
 			const maxWidth = b.w - 10;
 			const maxHeight = b.h - 10;
@@ -153,7 +153,6 @@ class TitleScreen {
                 currentLevelSet = b.set;
                 currentUsedIndices = [];
                 currentIsClassic = b.isClassic;
-				console.log(b.isClassic);
 				theme.shadeColor = (b.isClassic ? color(255,210,160) : color(180,210,255));
 				theme.backgroundColor = (b.isClassic ? color(255,225,190) : color(210,225,250));
                 level = getRandomLevel(currentLevelSet, [], currentIsClassic ? ["+","-","×","÷"] : Level.SYMBOLS, false, currentUsedIndices, !currentIsClassic);

@@ -65,50 +65,6 @@ function smoothErp(a,recursion=1){
 	}
 	return a;
 }
-class Button {
-	constructor({x, y, w, h, label, onClick, getText, drawAngle = 0, drawScale = 1, drawOffset = 0, style = {}, enabled = true}) {
-		this.x = x; this.y = y; this.w = w; this.h = h;
-		this.label = label;
-		this.onClick = onClick;
-		this.getText = getText || (() => label);
-		this.drawAngle = drawAngle;
-		this.drawScale = drawScale;
-		this.drawOffset = drawOffset;
-		this.style = style;
-		this.enabled = enabled;
-		this.state = {};
-	}
-	draw(winTimer = false) {
-		if (this.drawAngle === undefined) this.drawAngle = 0;
-		if (this.drawScale === undefined) this.drawScale = 1;
-		if (this.drawOffset === undefined) this.drawOffset = 0;
-		if (mouseX > this.x && mouseX < this.x + this.w && mouseY > this.y && mouseY < this.y + this.h) {
-			if(this.style.onHoverMovement === undefined) this.style.onHoverMovement = 0.0045;
-			this.drawOffset += height * this.style.onHoverMovement;
-		}
-		push();
-		translate(this.x + this.w / 2, this.y + this.h / 2);
-		scale(this.drawScale);
-		translate(0, this.drawOffset);
-		rotate(this.drawAngle);
-		translate(-this.x - this.w / 2, -this.y - this.h / 2);
-		if(winTimer && this.style.transparentOnWin){
-			noFill(); stroke(100,93,85,80); strokeWeight(3);
-			rect(this.x, this.y, this.w, this.h, this.style.r || 10);
-		} else {
-			drawShadedButton(this.x, this.y, this.w, this.h, this.style.r || 10, this.style.shadeColor || theme.shadeColor, this.style.mainColor || color(255,255,255));
-		}
-		let displayText = this.getText();
-		drawTextInBox(displayText, this.x, this.y, this.w, this.h, this.style.fontSize || height * 0.045);
-		pop();
-		this.drawAngle *= 0.8;
-		this.drawScale = 1 + (this.drawScale - 1) * 0.9;
-		this.drawOffset *= 0.8;
-	}
-	contains(mx, my) {
-		return mx > this.x && mx < this.x + this.w && my > this.y && my < this.y + this.h;
-	}
-}
 
 class Level {
 	static SYMBOLS = ["+","-","×","÷","^","√","ln","!","sin","cos","tan","cot","asin","acos"];
@@ -143,33 +99,35 @@ class Level {
 		this.hintButton = new Button({
 			x: width * 0.43, y: height * 0.77, w: width * 0.3, h: height * 0.18,
 			label: "Hint",
-			style: { r: 10 },
+			style: { r: 10, transparentOnWin: true },
 			getText: () => this.hintButton.state.showHint ? this.getHint() : "Hint",
 			onClick: () => { this.hintButton.state.showHint = !this.hintButton.state.showHint; }
 		});
 		this.solutionButton = new Button({
 			x: width * 0.75, y: height * 0.77, w: width * 0.2, h: height * 0.18,
 			label: "Solution",
-			style: { r: 10 },
+			style: { r: 10, transparentOnWin: true },
 			getText: () => this.solutionButton.state.showSolution ? (this.metaData.sols ? this.metaData.sols[0] : "Sorry, no solution 💀😭 Code is bugged") : "Solution",
 			onClick: () => { this.solutionButton.state.showSolution = !this.solutionButton.state.showSolution; }
 		});
 		this.homeButton = new Button({
-			x: width * 0.05, y: height * 0.05, w: width * 0.1, h: height * 0.1,
+			x: width * 0.05, y: height * 0.05, w: max(60, width * 0.1), h: height * 0.1,
 			label: "Home",
 			style: {
 				r: 10,
-				onHoverMovement: -0.004
+				onHoverMovement: -0.004,
+				transparentOnWin: true
 			},
 			getText: () => "Home",
 			onClick: () => { screen = "title"; }
 		});
 		this.skipButton = new Button({
-			x: width * 0.17, y: height * 0.05, w: width * 0.1, h: height * 0.1,
+			x: max(width * 0.17, this.homeButton.x+this.homeButton.w+width*0.02), y: height * 0.05, w: max(60, width * 0.1), h: height * 0.1,
 			label: "Skip",
 			style: {
 				r: 10,
-				onHoverMovement: -0.004
+				onHoverMovement: -0.004,
+				transparentOnWin: true
 			},
 			getText: () => "Skip",
 			onClick: () => { this.solved = true; },
@@ -260,7 +218,7 @@ class Level {
 					// b.drawScale = 1+constrain(dist(0,0,vel.x,vel.y),0,10)*0.03;
 				}
 			}
-			background(160,195,120); // green
+			background(theme.backgroundColorCorrect);
 			this.winTimer--;
 			if (this.winTimer <= 0) {
 				this.solved = true;
@@ -309,7 +267,7 @@ class Level {
 
 
 			stroke(100,93,85); strokeWeight(3);
-			drawShadedButton(b.x,b.y,b.w,b.h,15,this.firstIndex===i ? color(150,200,180) : theme.shadeColor,this.firstIndex===i ? color(225,255,180) : color(255,255,255));
+			drawShadedButton(b.x,b.y,b.w,b.h,15,this.firstIndex===i ? theme.shadeColorCorrect : theme.shadeColor,this.firstIndex===i ? color(225,255,180) : color(255,255,255));
 
 			noStroke();
 			textAlign(CENTER, CENTER);
@@ -379,126 +337,6 @@ class Level {
 
 	drawOps() {
 		this.opButtons.forEach(btn => btn.draw(this.selectedOp === btn, this.winTimer > 0));
-	}
-
-	drawUndo() {
-		const b = this.undoButton;
-		if(b.drawAngle === undefined){
-			b.drawAngle = 0;
-		}
-		if(b.drawScale === undefined){
-			b.drawScale = 1;
-		}
-		if(b.drawOffset === undefined){
-			b.drawOffset = 0;
-		}
-		if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
-			b.drawOffset += height * 0.0045;
-		}
-
-		push();
-		translate(b.x+b.w/2,b.y+b.h/2);
-		scale(b.drawScale);
-		translate(0,b.drawOffset);
-		rotate(b.drawAngle);
-		translate(-b.x-b.w/2,-b.y-b.h/2);
-
-		if(this.winTimer>0){
-			noFill();
-			stroke(100,93,85,80); strokeWeight(3);
-			rect(b.x, b.y, b.w, b.h, 10);
-		}
-		else{
-			drawShadedButton(b.x, b.y, b.w, b.h, 10);
-		}
-		fill(0); noStroke();
-		textAlign(CENTER, CENTER);
-		textSize(height * 0.045);
-		text("Undo", b.x + b.w/2, b.y + b.h/2);
-		pop();
-
-		b.drawAngle *= 0.8;
-		b.drawScale = 1+(b.drawScale-1)*0.9;
-		b.drawOffset *= 0.8;
-	}
-
-	drawHintButton() {
-		const b = this.hintButton;
-		if (b.drawAngle === undefined) b.drawAngle = 0;
-		if (b.drawScale === undefined) b.drawScale = 1;
-		if (b.drawOffset === undefined) b.drawOffset = 0;
-
-		if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
-			b.drawOffset += height * 0.0045;
-		}
-
-		push();
-		translate(b.x + b.w / 2, b.y + b.h / 2);
-		scale(b.drawScale);
-		translate(0, b.drawOffset);
-		rotate(b.drawAngle);
-		translate(-b.x - b.w / 2, -b.y - b.h / 2);
-
-		if(this.winTimer>0){
-			noFill();
-			stroke(100,93,85,80); strokeWeight(3);
-			rect(b.x, b.y, b.w, b.h, 10);
-		}
-		else{
-			drawShadedButton(b.x, b.y, b.w, b.h, 10);
-		}
-		let displayText = b.showHint ? this.getHint() : "Hint";
-		drawTextInBox(displayText, b.x, b.y, b.w, b.h);
-
-		pop();
-
-		b.drawAngle *= 0.8;
-		b.drawScale = 1 + (b.drawScale - 1) * 0.9;
-		b.drawOffset *= 0.8;
-	}
-
-	drawSolutionButton() {
-		const b = this.solutionButton;
-		if (b.drawAngle === undefined) b.drawAngle = 0;
-		if (b.drawScale === undefined) b.drawScale = 1;
-		if (b.drawOffset === undefined) b.drawOffset = 0;
-		if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
-			b.drawOffset += height * 0.0045;
-		}
-
-		push();
-		translate(b.x + b.w / 2, b.y + b.h / 2);
-		scale(b.drawScale);
-		translate(0, b.drawOffset);
-		rotate(b.drawAngle);
-		translate(-b.x - b.w / 2, -b.y - b.h / 2);
-		
-		if(this.winTimer>0){
-			noFill();
-			stroke(100,93,85,80); strokeWeight(3);
-			rect(b.x, b.y, b.w, b.h, 10);
-		}
-		else{
-			drawShadedButton(b.x, b.y, b.w, b.h, 10);
-		}
-
-		if(b.showSolution){
-			if(this.metaData.sols){
-				drawTextInBox(this.metaData.sols[0], b.x, b.y, b.w, b.h, height * 0.065);
-			}
-			else{
-				drawTextInBox("Sorry, no solution 💀😭 Code is bugged", b.x, b.y, b.w, b.h, height * 0.065);
-			}
-		}
-		else{
-			drawTextInBox("Solution", b.x, b.y, b.w, b.h);
-		}
-
-		pop();
-
-		b.drawAngle *= 0.8;
-		b.drawScale = 1 + (b.drawScale - 1) * 0.9;
-		b.drawOffset *= 0.8;
 	}
 
 	undo() {
@@ -810,14 +648,3 @@ Level.setupKeyboard = function(levelInstance, override=true) {
 		window.addEventListener('keydown', window._levelKeyboardHandler);
 	}
 };
-
-function drawShadedButton(x, y, w, h, r = 8, shadeColor = theme.shadeColor, mainColor = color(255,255,255), shadeHeightFrac = 0.1) {
-	fill(shadeColor); stroke(100,93,85); strokeWeight(3);
-	rect(x, y, w, h, r);
-	noStroke();
-	rect(x, y, w, h, r);
-	fill(mainColor); noStroke();
-
-	// or no round bottoms: rect(x, y, w, h * (1 - shadeHeightFrac), r, r, 0, 0);
-	rect(x, y, w, h * (1 - shadeHeightFrac), r);
-}

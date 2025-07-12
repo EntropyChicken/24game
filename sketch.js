@@ -27,8 +27,10 @@ function setup() {
 	titleScreen = new TitleScreen();
 	screen = "title";
 	theme = {
-		shadeColor : color(150,200,180),
-		backgroundColor : color(210,225,250)
+		shadeColor : color(255,0,255),
+		shadeColorCorrect : color(155,200,155),
+		backgroundColor : color(210,225,250),
+		backgroundColorCorrect : color(160,205,120)
 	};
 }
 

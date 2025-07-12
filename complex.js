@@ -32,7 +32,12 @@ class Complex {
 
     add(o) { return new Complex(this.real + o.real, this.imag + o.imag); }
     subtract(o) { return new Complex(this.real - o.real, this.imag - o.imag); }
-    multiply(o) { return new Complex(this.real * o.real - this.imag * o.imag, this.real * o.imag + this.imag * o.real); }
+    multiply(o) {
+        if(this.imag===0&&o.imag===0){
+            return new Complex(this.real * o.real);
+        }
+        return new Complex(this.real * o.real - this.imag * o.imag, this.real * o.imag + this.imag * o.real);
+    }
     divide(o) {
         const d = o.real ** 2 + o.imag ** 2;
         if (d === 0) {
@@ -40,6 +45,10 @@ class Complex {
         }
         if(o.equals(new Complex(0),DISPLAY_THRESHOLD)){
             return new Complex(NaN,NaN);
+        }
+        if(o.imag===0){
+            // assuming o being 0 is already confirmed to be false
+            return new Complex(this.real / o.real, this.imag / o.real);
         }
         return new Complex((this.real * o.real + this.imag * o.imag) / d, (this.imag * o.real - this.real * o.imag) / d);
     }
@@ -50,17 +59,43 @@ class Complex {
             }
             return new Complex(NaN,NaN);
         }
+        if(o.real===0&&o.imag===0){
+            // except if this is zero, which is handled above
+            return new Complex(1);
+        }
+        if (this.imag === 0 && o.imag === 0 && o.real >= 0 && this.real >= 0) {
+            return new Complex(pow(this.real, o.real));
+        }
+
+        
+        // complex
         let r = Math.sqrt(this.real * this.real + this.imag * this.imag);
         let theta = Math.atan2(this.imag, this.real);
         let a = o.real;
         let b = o.imag;
         let modulus = Math.exp(a * Math.log(r) - b * theta);
-        let angle = a * theta + b * Math.log(r);
-        return new Complex(
-            modulus * Math.cos(angle),
-            modulus * Math.sin(angle)
-        );
+        let angle;
+        if(b===0){
+            // guard for square root negative infinity
+            angle = a * theta;
+        }
+        else{
+            angle = a * theta + b * Math.log(r);
+        }
+
+        // guards for square root negative infinity
+        let real = cos(angle);
+        if(abs(real)>DISPLAY_THRESHOLD){real *= modulus;}
+        else{real = 0;}
+        let imag = sin(angle);
+        if(abs(imag)>DISPLAY_THRESHOLD){imag *= modulus;}
+        else{imag = 0;}
+        return new Complex(real,imag);
     }
+    sqrt() {
+        return this.power(new Complex(0.5));
+    };
+
     
     negate() {
         return new Complex(-this.real, -this.imag);
@@ -82,8 +117,16 @@ class Complex {
     }
 
     factorial() {
-        if(this.imag===0&&this.real>=0&&this.real<=100&&this.real===round(this.real)){
-            return new Complex(factorialRecursive(round(this.real)));
+        if(this.imag===0){
+            if(this.real===Infinity){
+                return new Complex(Infinity);
+            }
+            if(this.real===-Infinity){
+                return new Complex(NaN,NaN);
+            }
+            if(this.real>=0&&this.real<=100&&this.real===round(this.real)){
+                return new Complex(factorialRecursive(round(this.real)));
+            }
         }
         return Complex.gamma(this.add(new Complex(1)));
     }
@@ -155,14 +198,6 @@ class Complex {
             return A.multiply(term1).multiply(term2).multiply(sqrt2PI);
         }
     }
-
-    sqrt() {
-        return this.power(new Complex(0.5));
-        // const r = Math.sqrt(this.real * this.real + this.imag * this.imag);
-        // const realPart = Math.sqrt((r + this.real) / 2);
-        // const imagPart = Math.sign(this.imag) * Math.sqrt((r - this.real) / 2);
-        // return new Complex(realPart, imagPart);
-    };
 
     sin() {
         const iz = new Complex(-this.imag, this.real);
@@ -286,13 +321,13 @@ class Complex {
                         txt += sri;
                     }
                 }
-                txt += "i";
+                txt += "𝑖"; // or fallback to i
             }
             if(txt===""){
                 txt = "0";
             }
         }
-        return txt;
+        return txt.replaceAll("Infinity", "∞");
     }
 
     getColor(){

@@ -1,7 +1,7 @@
 class TitleScreen {
 	constructor() {
 		this.boxes = [];
-		this.boxW = min(220, width * 0.3);
+		this.boxW = min(220, width * 0.35);
 		this.boxH = min(80, height * 0.1);
 		this.marginY = 16;
 		this.bubbleBox = new BubbleBox(0,0,width,height,20,0);

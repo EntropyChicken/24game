@@ -379,15 +379,19 @@ class Level {
 		// when adding any non-unary operator, update this list
 		return !(symbol === '+' || symbol === '-' || symbol === '×' || symbol === '÷' || symbol === '^' || symbol === '%');
 	}
-
 	saveState() {
 		const snap = this.boxes.map(b => ({
 			x: b.x, y: b.y, w: b.w, h: b.h,
 			value: new Complex(b.value.real, b.value.imag),
 			locName: b.locName
 		}));
+
+		const last = this.history[this.history.length - 1];
+		if (last && JSON.stringify(snap) === JSON.stringify(last)) return;
+
 		this.history.push(snap);
-		if (this.history.length > 5000) this.history.shift();
+		
+		if (this.history.length > 5000) this.history.splice(1, 1); // preserve the original one
 	}
 
 	getHint() {

@@ -257,7 +257,7 @@ class Bubble {
         }
         const thisRad = this.visualRad();
         const thisX = this.visualX();
-        let d = dist(thisX*0.75,this.y*1.3,x*0.75,y*1.3);
+        let d = dist(thisX*0.9,this.y*1.1,x*0.9,y*1.1);
         if(d<=thisRad){
             let mag = pow(1-d/thisRad,0.8)*3.2;
             let avoidance = this.angToNaturalVel(atan2(y-this.y,x-thisX));

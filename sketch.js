@@ -169,6 +169,12 @@ function getFinalStep(expr) {
             }
         }
     }
+	function truncateTo8Decimals(x) {
+		if (typeof x !== 'number') return x;
+		const truncated = Math.floor(x * 1e8) / 1e8;
+		return parseFloat(truncated.toString()); // removes trailing zeroes
+	}
+
 
     let tokens = tokenize(expr);
     lastOp = null;
@@ -176,7 +182,8 @@ function getFinalStep(expr) {
 
     if (!lastOp) return "getFinalStep failed";
 
-    const step = `${lastOp.a}${lastOp.op}${lastOp.b}`;
+	const step = `${truncateTo8Decimals(lastOp.a)}${lastOp.op}${truncateTo8Decimals(lastOp.b)}`;
+
     return finalStepEquals24(step)
         ? step
         : "getFinalStep failed to equal 24";

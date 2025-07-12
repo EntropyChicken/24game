@@ -133,6 +133,8 @@ class Level {
 			onClick: () => { this.solved = true; },
 			onHoverMovement: -0.0035
 		});
+
+		console.log(this.getHint());
 	}
 
 	setupBoxes() {
@@ -182,8 +184,8 @@ class Level {
 					case 'round': return a.mathDotRound();
 					case 'ceil': return a.ceil();
 					default:
-						console.log("INVALID OPERATOR CHARACTER");
-						return new Complex("INVALID OPERATOR CHARACTER");
+						console.log("Invalid operator char");
+						return new Complex("Invalid operator char");
 				}
 			},
 			spacing * (i + spaceConst) - btnW / 2,
@@ -401,21 +403,57 @@ class Level {
 				hint += "s";
 			}
 			hint += ". ";
-			if(needsFrac!==undefined){
-				if(needsFrac){
-					hint += "You'll need to use fractions. ";
+			if(solCount!==0){
+				let sol = this.metaData.sols[0];
+				if(needsFrac!==undefined){
+					if(needsFrac){
+						hint += "Fractions are required. ";
+					}
+					else{
+						hint += "Solvable with integers (doesn't need fractions). ";
+					}
+				}
+				if(factorable!==undefined){
+					if(factorable){
+						// not a great hint lol
+						// hint += "It is also possible to make two numbers multiply to 24. ";
+					}
+					else{
+						hint += "The final step CAN'T be multiplication. ";
+					}
+				}
+
+				let finalStep;
+				// simplifcation for some classic levels
+				let shorten = false;
+				// remove 1s
+				while(sol.length>=2&&sol[sol.length-1]==="1"&&(["÷","×"].includes(sol[sol.length-2]))){
+					sol = sol.substring(0,sol.length-2);
+				}
+				while(sol.length>=2&&sol[0]==="1"&&(["÷","×"].includes(sol[1]))){
+					sol = sol.substring(2);
+				}
+				if(sol.length>=4&&sol[sol.length-1]===sol[sol.length-3]&&["1","2","3","4","5","6","7","8","9"].includes(sol[sol.length-1])){
+					if((sol[sol.length-2]==="÷"&&sol[sol.length-4]==="×")||(sol[sol.length-2]==="×"&&sol[sol.length-4]==="÷")){
+						// could just make 1 first and multiply 1
+						shorten = true;
+					}
+					if((sol[sol.length-2]==="-"&&sol[sol.length-4]==="+")||(sol[sol.length-2]==="+"&&sol[sol.length-4]==="-")){
+						// could just make 0 first and add 0
+						shorten = true;
+					}
+				}
+				if(shorten){
+					finalStep = getFinalStep(sol.substring(0,sol.length-4));
+					if(finalStep.startsWith("getFinalStep failed")){
+						console.log("getFinalStep failed on simplified sol. using original")
+						finalStep = getFinalStep(sol);
+					}
 				}
 				else{
-					hint += "It's solvable with integers (no fractions needed). "; // please no complex numbers lol
+					finalStep = getFinalStep(sol);
 				}
-			}
-			if(factorable!==undefined){
-				if(factorable){
-					hint += "You can make two numbers that multiply to 24. ";
-				}
-				else{
-					hint += "The solution's final step ISN'T multiplication. ";
-				}
+				hint += "Possible final step: " + finalStep; 
 			}
 		}
 		else{

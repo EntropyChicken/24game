@@ -67,7 +67,7 @@ function smoothErp(a,recursion=1){
 }
 
 class Level {
-	static SYMBOLS = ["+","-","×","÷","^","√","ln","!","sin","cos","tan","cot","asin","acos"];
+	static SYMBOLS = ["+","-","×","÷","^","√","ln","!","sin","cos","tan","cot","asin","acos","abs","%"];
 
 	constructor(numbers, opSymbols = Level.SYMBOLS, metaData = {}) {
 		this.metaData = metaData;
@@ -176,6 +176,11 @@ class Level {
 					case 'cot': return a.cot();
 					case 'acos': return a.acos();
 					case 'asin': return a.asin();
+					case 'abs': return a.abs();
+					case '%': return a.modulo(b);
+					case 'floor': return a.floor();
+					case 'round': return a.round();
+					case 'ceil': return a.ceil();
 					default:
 						console.log("INVALID OPERATOR CHARACTER");
 						return new Complex("INVALID OPERATOR CHARACTER");
@@ -372,7 +377,7 @@ class Level {
 
 	symbolIsUnary(symbol){
 		// when adding any non-unary operator, update this list
-		return !(symbol === '+' || symbol === '-' || symbol === '×' || symbol === '÷' || symbol === '^');
+		return !(symbol === '+' || symbol === '-' || symbol === '×' || symbol === '÷' || symbol === '^' || symbol === '%');
 	}
 
 	saveState() {
@@ -516,7 +521,7 @@ class Level {
 		// if (key === 'H'){
 		// 	screen = "title";
 		// }
-		
+
 		if (key === 'o'){
 			this.opSymbols = Level.SYMBOLS;
 			this.setupOps();
@@ -578,6 +583,8 @@ class Level {
 			's': '√',
 			'l': 'ln',
 			'!': '!',
+			'|': 'abs',
+			'%': '%',
 			'x': '×', // sus
 		};
 		if (key in opKeyMap) {

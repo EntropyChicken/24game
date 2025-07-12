@@ -216,6 +216,37 @@ class Complex {
         const inner = this.add(i.multiply(root));
         return i.negate().multiply(inner.naturalLog());
     }
+
+    abs() {
+        if(this.imag===0){
+            return new Complex(abs(this.real));
+        }
+        return new Complex(sqrt(this.real*this.real+this.imag*this.imag));
+    }
+    modulo(o) {
+        if(abs(this.imag)<DISPLAY_THRESHOLD&&abs(o.imag)<DISPLAY_THRESHOLD){
+            return new Complex(this.real-o.real*Math.floor(this.real/o.real));
+        }
+        return new Complex(NaN,NaN);
+    }
+    floor() {
+        if(abs(this.imag)<DISPLAY_THRESHOLD){
+            return new Complex(floor(this.real));
+        }
+        return new Complex(NaN,NaN);
+    }
+    round() {
+        if(abs(this.imag)<DISPLAY_THRESHOLD){
+            return new Complex(round(this.real));
+        }
+        return new Complex(NaN,NaN);
+    }
+    ceil() {
+        if(abs(this.imag)<DISPLAY_THRESHOLD){
+            return new Complex(ceil(this.real));
+        }
+        return new Complex(NaN,NaN);
+    }
     
     getText(){
         if(typeof(this.real)==="string"&&this.imag===0){

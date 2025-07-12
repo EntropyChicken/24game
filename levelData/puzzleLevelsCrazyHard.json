@@ -7,5 +7,6 @@
     {"cards":[3,3,32],"ops":["-","÷","√","ln"],"hint":"Final step is 32-8","sols":["32-ln(3)÷ln(√√√3)"]},
     {"cards":[2,2,2],"ops":["÷","√","ln"],"hint":"One possible solution starts by pressing the square root button 24 times. Use base change formula","sols":["ln(ln(2)÷ln(√√√2))÷ln(√√√2)","(ln(ln(2)÷ln(√√√√√√√√√√√√√√√√√√√√√√√√2)))÷ln(2)"]},
     {"cards":[7,7],"ops":["÷","√","ln","!"],"hint":"24 = 4! and 4 is a power of 2","sols":["(ln(7)÷ln(√√7))!"]},
-    {"cards":[0,0],"ops":["÷","√","ln","!","sin"],"hint":"Sine is actually useful here","sols":["(ln(sin(0!))÷ln(√√sin(0!)))!"]}
+    {"cards":[0,0],"ops":["÷","√","ln","!","sin"],"hint":"Sine is actually useful here","sols":["(ln(sin(0!))÷ln(√√sin(0!)))!"]},
+    {"cards":[-1,-1,2],"ops":["+","÷","√","ln"],"hint":"Make √2-(√2)i from √2+(√2)i and √2. Notice this has arg = 3π/4. Once we obtain 3, we're only off by a power of 2","sols":["ln(√√(-1)-√2)/ln(√√√√√(-1))","ln(ln(-1)÷ln(√√√(-1)))÷ln(√√√2)"]}
 ]

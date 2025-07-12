@@ -1,4 +1,4 @@
-[,
+[
     {"cards":[3,-16,-144,11],"ops":["+","√","abs"],"hint":"In the complex plane, you can make right triangles with side lengths 3, 4, 5, or with 5, 12, 13","sols":["abs(abs(3+√(-16))+√(-144))+11"]},
     {"cards":[2.718281828459045235,3.141592653589793238,23,-25],"ops":["-","^","√"],"hint":"Use Euler's identity (ln gives principal values)","sols":["23-(e^pi)^√(-25)"]},
     {"cards":[2.718281828459045235,3.141592653589793238,23,25,27],"ops":["-","^","√"],"hint":"Use Euler's identity (ln gives principal values)","sols":["25-(e^pi)^√(23-27)"]},

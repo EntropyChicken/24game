@@ -133,8 +133,6 @@ class Level {
 			onClick: () => { this.solved = true; },
 			onHoverMovement: -0.0035
 		});
-
-		console.log(this.getHint());
 	}
 
 	setupBoxes() {

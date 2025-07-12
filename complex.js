@@ -277,8 +277,14 @@ class Complex {
                 if(txt!==""&&rounded.imag>=0) {
                     txt += "+";
                 }
-                if(numToString(rounded.imag)!=="1"){
-                    txt += numToString(rounded.imag);
+                let sri = numToString(rounded.imag);
+                if(sri!=="1"){
+                    if(sri==="-1"){
+                        txt += "-";
+                    }
+                    else{
+                        txt += sri;
+                    }
                 }
                 txt += "i";
             }

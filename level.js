@@ -65,13 +65,56 @@ function smoothErp(a,recursion=1){
 	}
 	return a;
 }
-
+class Button {
+	constructor({x, y, w, h, label, onClick, getText, drawAngle = 0, drawScale = 1, drawOffset = 0, style = {}, enabled = true}) {
+		this.x = x; this.y = y; this.w = w; this.h = h;
+		this.label = label;
+		this.onClick = onClick;
+		this.getText = getText || (() => label);
+		this.drawAngle = drawAngle;
+		this.drawScale = drawScale;
+		this.drawOffset = drawOffset;
+		this.style = style;
+		this.enabled = enabled;
+		this.state = {};
+	}
+	draw(winTimer = false) {
+		if (this.drawAngle === undefined) this.drawAngle = 0;
+		if (this.drawScale === undefined) this.drawScale = 1;
+		if (this.drawOffset === undefined) this.drawOffset = 0;
+		if (mouseX > this.x && mouseX < this.x + this.w && mouseY > this.y && mouseY < this.y + this.h) {
+			if(this.style.onHoverMovement === undefined) this.style.onHoverMovement = 0.0045;
+			this.drawOffset += height * this.style.onHoverMovement;
+		}
+		push();
+		translate(this.x + this.w / 2, this.y + this.h / 2);
+		scale(this.drawScale);
+		translate(0, this.drawOffset);
+		rotate(this.drawAngle);
+		translate(-this.x - this.w / 2, -this.y - this.h / 2);
+		if(winTimer && this.style.transparentOnWin){
+			noFill(); stroke(100,93,85,80); strokeWeight(3);
+			rect(this.x, this.y, this.w, this.h, this.style.r || 10);
+		} else {
+			drawShadedButton(this.x, this.y, this.w, this.h, this.style.r || 10, this.style.shadeColor || theme.shadeColor, this.style.mainColor || color(255,255,255));
+		}
+		let displayText = this.getText();
+		drawTextInBox(displayText, this.x, this.y, this.w, this.h, this.style.fontSize || height * 0.045);
+		pop();
+		this.drawAngle *= 0.8;
+		this.drawScale = 1 + (this.drawScale - 1) * 0.9;
+		this.drawOffset *= 0.8;
+	}
+	contains(mx, my) {
+		return mx > this.x && mx < this.x + this.w && my > this.y && my < this.y + this.h;
+	}
+}
 
 class Level {
 	static SYMBOLS = ["+","-","×","÷","^","√","ln","!","sin","cos","tan","cot","asin","acos"];
 
 	constructor(numbers, opSymbols = Level.SYMBOLS, metaData = {}) {
-        this.metaData = metaData;
+		this.metaData = metaData;
 		this.values = numbers.map(n => new Complex(n));
 		this.originalValues = numbers.map(n => new Complex(n));
 		this.opSymbols = opSymbols;
@@ -83,45 +126,66 @@ class Level {
 		this.winTimer = 0;
 		this.solved = false; // for external use
 
-		this.undoButton = {
-			x: width * 0.05,
-			y: height * 0.77,
-			w: width * 0.22,
-			h: height * 0.18,
-		};
-        this.hintButton = {
-            x: width * 0.43,
-            y: height * 0.77,
-            w: width * 0.3,
-            h: height * 0.18,
-            drawScale: 1,
-            drawOffset: 0,
-            drawAngle: 0,
-            showHint: false,
-            text: "Hint"
-        };
-        this.solutionButton = {
-            x: width * 0.75,
-            y: height * 0.77,
-            w: width * 0.2,
-            h: height * 0.18,
-            drawScale: 1,
-            drawOffset: 0,
-            drawAngle: 0,
-            showSolution: false,
-            text: "Solution"
-        };
+		// Button instances
+		this.undoButton = new Button({
+			x: width * 0.05, y: height * 0.77, w: width * 0.22, h: height * 0.18,
+			label: "Undo",
+			style: { r: 10, transparentOnWin: true },
+			getText: () => "Undo",
+			onClick: () => {
+				if(this.history.length){
+					this.undo();
+				} else {
+					this.undoButton.drawAngle -= 0.16;
+				}
+			}
+		});
+		this.hintButton = new Button({
+			x: width * 0.43, y: height * 0.77, w: width * 0.3, h: height * 0.18,
+			label: "Hint",
+			style: { r: 10 },
+			getText: () => this.hintButton.state.showHint ? this.getHint() : "Hint",
+			onClick: () => { this.hintButton.state.showHint = !this.hintButton.state.showHint; }
+		});
+		this.solutionButton = new Button({
+			x: width * 0.75, y: height * 0.77, w: width * 0.2, h: height * 0.18,
+			label: "Solution",
+			style: { r: 10 },
+			getText: () => this.solutionButton.state.showSolution ? (this.metaData.sols ? this.metaData.sols[0] : "Sorry, no solution 💀😭 Code is bugged") : "Solution",
+			onClick: () => { this.solutionButton.state.showSolution = !this.solutionButton.state.showSolution; }
+		});
+		this.homeButton = new Button({
+			x: width * 0.05, y: height * 0.05, w: width * 0.1, h: height * 0.1,
+			label: "Home",
+			style: {
+				r: 10,
+				onHoverMovement: -0.004
+			},
+			getText: () => "Home",
+			onClick: () => { screen = "title"; }
+		});
+		this.skipButton = new Button({
+			x: width * 0.17, y: height * 0.05, w: width * 0.1, h: height * 0.1,
+			label: "Skip",
+			style: {
+				r: 10,
+				onHoverMovement: -0.004
+			},
+			getText: () => "Skip",
+			onClick: () => { this.solved = true; },
+			onHoverMovement: -0.0035
+		});
 	}
 
 	setupBoxes() {
-        const spaceConst = 0.8;
+		const spaceConst = 0.8;
 		const count = this.values.length;
 		const boxW = width / (this.values.length+1);
 		const boxH = height * 0.265;
 		const spacing = width / (count + 2*spaceConst-1);
 		this.boxes = this.values.map((v, i) => ({
 			x: spacing * (i + spaceConst) - boxW / 2,
-			y: height * 0.2,
+			y: height * 0.225,
 			w: boxW,
 			h: boxH,
 			value: v,
@@ -131,7 +195,7 @@ class Level {
 	}
 
 	setupOps() {
-        const spaceConst = this.opSymbols.length>=8 ? 0.6 : 1.9;
+		const spaceConst = this.opSymbols.length>=8 ? 0.6 : 1.9;
 		const syms = this.opSymbols;
 		const btnW = width * (this.opSymbols.length>=8 ? 1.18 : 0.91) / (this.opSymbols.length+3);
 		const btnH = height * 0.16;
@@ -144,9 +208,9 @@ class Level {
 					case '-': return a.subtract(b);
 					case '×': return a.multiply(b);
 					case '÷': return a.divide(b);
-                    case '^': return a.power(b);
-                    case '√': return a.sqrt();
-                    case 'ln': return a.naturalLog();
+					case '^': return a.power(b);
+					case '√': return a.sqrt();
+					case 'ln': return a.naturalLog();
 					case '!': return a.factorial();
 					case 'sin': return a.sin();
 					case 'cos': return a.cos();
@@ -160,7 +224,7 @@ class Level {
 				}
 			},
 			spacing * (i + spaceConst) - btnW / 2,
-			height * 0.5,
+			height * 0.525,
 			btnW,
 			btnH
 		));
@@ -174,7 +238,7 @@ class Level {
 		if (this.winTimer === 0 && this.boxes.length === 1 && this.boxes[0].value.equals(new Complex(24))) {
 			this.winTimer = WIN_TIMER_START;
 		}
-        if (this.winTimer > 0) {
+		if (this.winTimer > 0) {
 			/*
 			for(let b of this.opButtons){
 				b.drawScale = smoothErp(this.winTimer/WIN_TIMER_START,3);
@@ -196,22 +260,24 @@ class Level {
 					// b.drawScale = 1+constrain(dist(0,0,vel.x,vel.y),0,10)*0.03;
 				}
 			}
-            background(160,195,120); // green
-            this.winTimer--;
-            if (this.winTimer <= 0) {
+			background(160,195,120); // green
+			this.winTimer--;
+			if (this.winTimer <= 0) {
 				this.solved = true;
-                return;
-            }
-        } else {
-            background(theme.backgroundColor);
-        }
+				return;
+			}
+		} else {
+			background(theme.backgroundColor);
+		}
 		this.drawOps();
 		this.drawBoxes();
-		this.drawUndo();
-        this.drawHintButton();
-        this.drawSolutionButton();
+		this.undoButton.draw(this.winTimer > 0);
+		this.hintButton.draw(this.winTimer > 0);
+		this.solutionButton.draw(this.winTimer > 0);
+		this.homeButton.draw(this.winTimer > 0);
+		this.skipButton.draw(this.winTimer > 0);
 	}
-    drawBoxes() {
+	drawBoxes() {
 		let sorted = this.boxes
 			.map((b, i) => ({ b, i }))
 			.sort((a, b) => {
@@ -316,26 +382,26 @@ class Level {
 	}
 
 	drawUndo() {
-        const b = this.undoButton;
-        if(b.drawAngle === undefined){
-            b.drawAngle = 0;
-        }
-        if(b.drawScale === undefined){
-            b.drawScale = 1;
-        }
-        if(b.drawOffset === undefined){
-            b.drawOffset = 0;
-        }
-        if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
-            b.drawOffset += height * 0.0045;
-        }
+		const b = this.undoButton;
+		if(b.drawAngle === undefined){
+			b.drawAngle = 0;
+		}
+		if(b.drawScale === undefined){
+			b.drawScale = 1;
+		}
+		if(b.drawOffset === undefined){
+			b.drawOffset = 0;
+		}
+		if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
+			b.drawOffset += height * 0.0045;
+		}
 
-        push();
-        translate(b.x+b.w/2,b.y+b.h/2);
-        scale(b.drawScale);
-        translate(0,b.drawOffset);
-        rotate(b.drawAngle);
-        translate(-b.x-b.w/2,-b.y-b.h/2);
+		push();
+		translate(b.x+b.w/2,b.y+b.h/2);
+		scale(b.drawScale);
+		translate(0,b.drawOffset);
+		rotate(b.drawAngle);
+		translate(-b.x-b.w/2,-b.y-b.h/2);
 
 		if(this.winTimer>0){
 			noFill();
@@ -345,33 +411,33 @@ class Level {
 		else{
 			drawShadedButton(b.x, b.y, b.w, b.h, 10);
 		}
-        fill(0); noStroke();
-        textAlign(CENTER, CENTER);
-        textSize(height * 0.045);
-        text("Undo", b.x + b.w/2, b.y + b.h/2);
-        pop();
+		fill(0); noStroke();
+		textAlign(CENTER, CENTER);
+		textSize(height * 0.045);
+		text("Undo", b.x + b.w/2, b.y + b.h/2);
+		pop();
 
-        b.drawAngle *= 0.8;
-        b.drawScale = 1+(b.drawScale-1)*0.9;
-        b.drawOffset *= 0.8;
-    }
+		b.drawAngle *= 0.8;
+		b.drawScale = 1+(b.drawScale-1)*0.9;
+		b.drawOffset *= 0.8;
+	}
 
 	drawHintButton() {
-        const b = this.hintButton;
-        if (b.drawAngle === undefined) b.drawAngle = 0;
-        if (b.drawScale === undefined) b.drawScale = 1;
-        if (b.drawOffset === undefined) b.drawOffset = 0;
+		const b = this.hintButton;
+		if (b.drawAngle === undefined) b.drawAngle = 0;
+		if (b.drawScale === undefined) b.drawScale = 1;
+		if (b.drawOffset === undefined) b.drawOffset = 0;
 
-        if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
-            b.drawOffset += height * 0.0045;
-        }
+		if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
+			b.drawOffset += height * 0.0045;
+		}
 
-        push();
-        translate(b.x + b.w / 2, b.y + b.h / 2);
-        scale(b.drawScale);
-        translate(0, b.drawOffset);
-        rotate(b.drawAngle);
-        translate(-b.x - b.w / 2, -b.y - b.h / 2);
+		push();
+		translate(b.x + b.w / 2, b.y + b.h / 2);
+		scale(b.drawScale);
+		translate(0, b.drawOffset);
+		rotate(b.drawAngle);
+		translate(-b.x - b.w / 2, -b.y - b.h / 2);
 
 		if(this.winTimer>0){
 			noFill();
@@ -381,31 +447,31 @@ class Level {
 		else{
 			drawShadedButton(b.x, b.y, b.w, b.h, 10);
 		}
-        let displayText = b.showHint ? this.getHint() : "Hint";
-        drawTextInBox(displayText, b.x, b.y, b.w, b.h);
+		let displayText = b.showHint ? this.getHint() : "Hint";
+		drawTextInBox(displayText, b.x, b.y, b.w, b.h);
 
-        pop();
+		pop();
 
-        b.drawAngle *= 0.8;
-        b.drawScale = 1 + (b.drawScale - 1) * 0.9;
-        b.drawOffset *= 0.8;
-    }
+		b.drawAngle *= 0.8;
+		b.drawScale = 1 + (b.drawScale - 1) * 0.9;
+		b.drawOffset *= 0.8;
+	}
 
-    drawSolutionButton() {
-        const b = this.solutionButton;
-        if (b.drawAngle === undefined) b.drawAngle = 0;
-        if (b.drawScale === undefined) b.drawScale = 1;
-        if (b.drawOffset === undefined) b.drawOffset = 0;
-        if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
-            b.drawOffset += height * 0.0045;
-        }
+	drawSolutionButton() {
+		const b = this.solutionButton;
+		if (b.drawAngle === undefined) b.drawAngle = 0;
+		if (b.drawScale === undefined) b.drawScale = 1;
+		if (b.drawOffset === undefined) b.drawOffset = 0;
+		if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
+			b.drawOffset += height * 0.0045;
+		}
 
-        push();
-        translate(b.x + b.w / 2, b.y + b.h / 2);
-        scale(b.drawScale);
-        translate(0, b.drawOffset);
-        rotate(b.drawAngle);
-        translate(-b.x - b.w / 2, -b.y - b.h / 2);
+		push();
+		translate(b.x + b.w / 2, b.y + b.h / 2);
+		scale(b.drawScale);
+		translate(0, b.drawOffset);
+		rotate(b.drawAngle);
+		translate(-b.x - b.w / 2, -b.y - b.h / 2);
 		
 		if(this.winTimer>0){
 			noFill();
@@ -428,12 +494,12 @@ class Level {
 			drawTextInBox("Solution", b.x, b.y, b.w, b.h);
 		}
 
-        pop();
+		pop();
 
-        b.drawAngle *= 0.8;
-        b.drawScale = 1 + (b.drawScale - 1) * 0.9;
-        b.drawOffset *= 0.8;
-    }
+		b.drawAngle *= 0.8;
+		b.drawScale = 1 + (b.drawScale - 1) * 0.9;
+		b.drawOffset *= 0.8;
+	}
 
 	undo() {
 		if (!this.history.length) return;
@@ -516,31 +582,15 @@ class Level {
 	}
 
 	handleClick(mx, my) {
-		// Undo click
-		const u = this.undoButton;
-		if (mx > u.x && mx < u.x + u.w && my > u.y && my < u.y + u.h) {
-			if(this.history.length){
-				this.undo();
+		// General button clicks
+		const buttons = [this.undoButton, this.hintButton, this.solutionButton, this.homeButton, this.skipButton];
+		for(const btn of buttons) {
+			if(btn.contains(mx, my)) {
+				btn.drawScale -= 0.08;
+				btn.onClick();
+				return;
 			}
-			else{
-				u.drawAngle -= 0.16;
-			}
-			return;
 		}
-        // Hint button click
-        const hb = this.hintButton;
-        if (mx > hb.x && mx < hb.x + hb.w && my > hb.y && my < hb.y + hb.h) {
-            hb.drawScale -= 0.08;
-            hb.showHint = !hb.showHint;
-            return;
-        }
-        // Solution button click
-        const sb = this.solutionButton;
-        if (mx > sb.x && mx < sb.x + sb.w && my > sb.y && my < sb.y + sb.h) {
-            sb.drawScale -= 0.08;
-            sb.showSolution = !sb.showSolution;
-            return;
-        }
 		// Number box click
 		for (let i = 0; i < this.boxes.length; i++) {
 			const b = this.boxes[i];
@@ -579,23 +629,23 @@ class Level {
 		for (let btn of this.opButtons) {
 			if (btn.contains(mx, my)) {
 				// Check if this is a unary op (√ or ln)
-                if (this.symbolIsUnary(btn.symbol)) {
-                    if (this.firstIndex !== null) {
+				if (this.symbolIsUnary(btn.symbol)) {
+					if (this.firstIndex !== null) {
 						btn.drawScale -= 0.08;
-                        // Apply unary op immediately to selected box
-                        this.saveState();
-                        const a = this.boxes[this.firstIndex].value;
-                        // For unary, ignore b param
-                        const res = btn.apply(a, null);
-                        this.boxes[this.firstIndex].value = res;
+						// Apply unary op immediately to selected box
+						this.saveState();
+						const a = this.boxes[this.firstIndex].value;
+						// For unary, ignore b param
+						const res = btn.apply(a, null);
+						this.boxes[this.firstIndex].value = res;
 						this.boxes[this.firstIndex].drawScale += 0.1;
-                        this.selectedOp = null;
-                    }
+						this.selectedOp = null;
+					}
 					else{
 						btn.drawAngle -= 0.16;
 					}
-                    return;
-                } else {
+					return;
+				} else {
 					/*
 					OLD version where you can select op before any numbers
 					// Binary op: select/deselect
@@ -613,10 +663,10 @@ class Level {
 							btn.drawScale -= 0.065;
 						}
 					}
-                }
-                return;
-            }
-        }
+				}
+				return;
+			}
+		}
 	}
 
 	handleKey(e) {
@@ -651,20 +701,20 @@ class Level {
 			}
 		}
 		*/
-        if (/^[0-9]$/.test(key)) {
-            // Find first box with that number (real part, imag==0)
-            for (let i = 0; i < this.boxes.length; i++) {
-                let v = this.boxes[i].value;
-                if (v.imag === 0 && v.real.toString() === key && (i !== this.firstIndex || !(this.firstIndex !== null && this.selectedOp))) {
-                    if (this.firstIndex !== null && this.selectedOp) {
+		if (/^[0-9]$/.test(key)) {
+			// Find first box with that number (real part, imag==0)
+			for (let i = 0; i < this.boxes.length; i++) {
+				let v = this.boxes[i].value;
+				if (v.imag === 0 && v.real.toString() === key && (i !== this.firstIndex || !(this.firstIndex !== null && this.selectedOp))) {
+					if (this.firstIndex !== null && this.selectedOp) {
 						this.applyOperation(this.firstIndex, i, this.selectedOp);
-                    } else {
-                        this.firstIndex = i;
+					} else {
+						this.firstIndex = i;
 						this.boxes[i].drawScale -= 0.065;
-                    }
-                    return;
-                }
-            }
+					}
+					return;
+				}
+			}
 			// (didn't find it) deselection
 			if(this.firstIndex!==null&&this.selectedOp){
 				let v = this.boxes[this.firstIndex].value;
@@ -674,41 +724,41 @@ class Level {
 				}
 			}
 
-            return;
-        }
-        // Map keys to op symbols
-        const opKeyMap = {
-            '+': '+',
-            '-': '-',
-            '*': '×',
-            '/': '÷',
-            '^': '^',
-            's': '√',
-            'l': 'ln',
+			return;
+		}
+		// Map keys to op symbols
+		const opKeyMap = {
+			'+': '+',
+			'-': '-',
+			'*': '×',
+			'/': '÷',
+			'^': '^',
+			's': '√',
+			'l': 'ln',
 			'!': '!',
-            'x': '×', // sus
-        };
-        if (key in opKeyMap) {
-            const symbol = opKeyMap[key];
-            // Find op button with this symbol
-            for (let btn of this.opButtons) {
-                if (btn.symbol === symbol) {
-                    // For unary ops, apply immediately if number selected
-                    if (this.symbolIsUnary(symbol)) {
-                        if (this.firstIndex === null) {
+			'x': '×', // sus
+		};
+		if (key in opKeyMap) {
+			const symbol = opKeyMap[key];
+			// Find op button with this symbol
+			for (let btn of this.opButtons) {
+				if (btn.symbol === symbol) {
+					// For unary ops, apply immediately if number selected
+					if (this.symbolIsUnary(symbol)) {
+						if (this.firstIndex === null) {
 							btn.drawAngle -= 0.16;
 						}
 						else{
-                            this.saveState();
-                            const a = this.boxes[this.firstIndex].value;
-                            const res = btn.apply(a, null);
-                            this.boxes[this.firstIndex].value = res;
-                            this.boxes[this.firstIndex].drawScale += 0.1;
-                            this.selectedOp = null;
+							this.saveState();
+							const a = this.boxes[this.firstIndex].value;
+							const res = btn.apply(a, null);
+							this.boxes[this.firstIndex].value = res;
+							this.boxes[this.firstIndex].drawScale += 0.1;
+							this.selectedOp = null;
 							btn.drawScale -= 0.08;
-                        }
-                        return;
-                    } else {
+						}
+						return;
+					} else {
 						if(this.firstIndex===null){
 							btn.drawAngle -= 0.16;
 						}
@@ -718,12 +768,12 @@ class Level {
 								btn.drawScale -= 0.065;
 							}
 						}
-                    }
-                    return;
-                }
-            }
+					}
+					return;
+				}
+			}
 			return;
-        }
+		}
 
 		if (key.length === 1){
 			const code = key.toLowerCase().charCodeAt(0);
@@ -748,7 +798,7 @@ class Level {
 				}
 			}
 		}
-    }
+	}
 }
 
 Level.setupKeyboard = function(levelInstance, override=true) {
@@ -762,12 +812,12 @@ Level.setupKeyboard = function(levelInstance, override=true) {
 };
 
 function drawShadedButton(x, y, w, h, r = 8, shadeColor = theme.shadeColor, mainColor = color(255,255,255), shadeHeightFrac = 0.1) {
-    fill(shadeColor); stroke(100,93,85); strokeWeight(3);
-    rect(x, y, w, h, r);
+	fill(shadeColor); stroke(100,93,85); strokeWeight(3);
+	rect(x, y, w, h, r);
 	noStroke();
-    rect(x, y, w, h, r);
-    fill(mainColor); noStroke();
+	rect(x, y, w, h, r);
+	fill(mainColor); noStroke();
 
-    // or no round bottoms: rect(x, y, w, h * (1 - shadeHeightFrac), r, r, 0, 0);
-    rect(x, y, w, h * (1 - shadeHeightFrac), r);
+	// or no round bottoms: rect(x, y, w, h * (1 - shadeHeightFrac), r, r, 0, 0);
+	rect(x, y, w, h * (1 - shadeHeightFrac), r);
 }

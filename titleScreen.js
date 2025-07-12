@@ -53,9 +53,9 @@ class TitleScreen {
 		for(let y = 2; y>=-2; y-=2){
 			for(let x = y/3-1; x<y/3+1.1; x+=2){
 				fill(y<0 ? color(255,255,255) : color(100,93,85));
-				textSize(constrain(width*0.064,45,90));
+				textSize(constrain(width*0.07,45,90));
 				text("Make 24", width*0.5+x, height*0.14+y);
-				textSize(constrain(width*0.036,25,45));
+				textSize(constrain(width*0.035,25,45));
 				text("Random",width*0.3+x, height*0.3-32+y*0.8);
 				text("Designed",width*0.7+x, height*0.3-32+y*0.8);
 			}

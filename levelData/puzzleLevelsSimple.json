@@ -5,5 +5,7 @@
     {"cards":[3,3,3],"ops":["-","^"],"hint":"3 raised to the power of 3 equals 27","sols":["3^3-3"]},
     {"cards":[1,1,1,1,1,1,1,1],"ops":["+","×","^"],"hint":"2^3 = 8","sols":["(1+1+1)×(1+1)^(1+1+1)"]},
     {"cards":[0,0,0,0],"ops":["+","!"],"hint":"4! = 24","sols":["(0!+0!+0!+0!)!"]},
-    {"cards":[20,4],"ops":["√","tan","^","acos","ln","sin","!","cos","%","÷","+","cot","×","-","asin","abs"],"hint":"Near the middle, toward the right","sols":["20+4"]}
+    {"cards":[20,4],"ops":["√","tan","^","acos","ln","sin","!","cos","%","÷","+","cot","×","-","asin","abs"],"hint":"Near the middle, toward the right","sols":["20+4"]},
+    {"cards":[1e64,1e98],"ops":["-","√","round"],"hint":"34-10 = 24","sols":["round(√√√√√√(1e98))-√√√√√√(1e64)"]},
+    {"cards":[360588],"ops":["√","round"],"hint":"We need to end up under 24.5, but 24.5^2 = 600.25","sols":["round(√round(√360588))"]}
 ]

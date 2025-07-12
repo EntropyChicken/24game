@@ -1,32 +1,43 @@
 class BubbleBox {
     static PHYSICS_ITERATIONS = 2;
-    constructor(x,y,w,h) {
+    constructor(x,y,w,h,startCount,startIters=12) {
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
 		this.bubbles = [];
+        this.minBubbles = 10;
+        if(startCount===undefined){
+            startCount = round(2+sqrt(w*h)*0.012);
+        }
+        for(let i = 0; i<startCount; i++){
+            this.spawnBubble(false,24,random(0,120));
+        }
+        for(let i = 0; i<startIters; i++){
+            for(let b of this.bubbles){
+                b.avoidBubbles(this.bubbles);
+            }
+            for(let b of this.bubbles){
+                b.physics();
+            }
+        }
     }
     
-	draw() {
-		if(this.bubbles.length<12&&random(0,20)<1){
-			this.spawnBubble();
+	draw(mx,my) {
+        // to debug that reversed transforms are right lol
+        // fill(255,0,0);
+        // rect(mx-10,my-10,20,20);
+
+		if(this.bubbles.length<this.minBubbles&&random(0,10)<1){
+			this.spawnBubble(true);
 		}
-		
-		// let newBubbles = [];
-		// for(let b of this.bubbles){
-		// 	// console.log(b);
-		// 	newBubbles.push(...b.process());
-		// }
-		// for(let i = this.bubbles.length-1; i>=0; i--){
-		// 	this.bubbles[i].spliceOutsideBox(this.bubbles,0,0,width,height);
-		// }
-		// this.bubbles.push(...newBubbles);
-		
-        
+
         for(let iter = 0; iter<BubbleBox.PHYSICS_ITERATIONS; iter++){
             for(let b of this.bubbles){
-                b.avoid(this.bubbles);
+                b.avoidPos(mx,my);
+            }
+            for(let b of this.bubbles){
+                b.avoidBubbles(this.bubbles);
             }
             for(let b of this.bubbles){
                 b.physics();
@@ -61,28 +72,35 @@ class BubbleBox {
         }
     }
 
-    spawnBubble(value=24){
-        let sx, sy;
-        if(random()<0.5){
-            sx = random()<0.5 ? this.x-Bubble.rad : this.x+this.w+Bubble.rad;
-            sy = random(this.y,this.y+this.h);
+    spawnBubble(onEdge=false, value=24, spawnTimerOveride){
+        let sx = random(this.x,this.x+this.w);
+        let sy = random(this.y,this.y+this.h);
+        let ang = random(0,2*PI);
+        if(onEdge){
+            if(random()<0.5){
+                sx = random()<0.5 ? this.x-Bubble.rad : this.x+this.w+Bubble.rad;
+            }
+            else{
+                sy = random()<0.5 ? this.y-Bubble.rad : this.y+this.h+Bubble.rad;
+            }
+            ang = atan2(this.y+this.h/2-sy,this.x+this.w/2-sx) + random(-PI/6,PI/6);
         }
-        else{
-            sy = random()<0.5 ? this.y-Bubble.rad : this.y+this.h+Bubble.rad;
-            sx = random(this.x,this.x+this.w);
-        }
-        let ang = atan2(this.y+this.h/2-sy,this.x+this.w/2-sx) + random(-PI/6,PI/6);
         sx += 0.8*Bubble.rad; // to anticipate the counter effect to make .value centered
+        
         let speed = Bubble.speed/BubbleBox.PHYSICS_ITERATIONS;
         let newBubble = new Bubble(sx,sy,{x:speed*cos(ang),y:speed*sin(ang)},value,true,speed);
-        newBubble.spawnTimer += 60;
-
-        const stepSize = 5;
-        for(let steps = 0; steps<10; steps++){
-            let visualX = newBubble.visualX();
-            if(visualX<this.x-Bubble.rad*0.5||newBubble.y<this.y-Bubble.rad*0.3||visualX>this.x+this.w+Bubble.rad*0.5||newBubble.y>this.y+this.h+Bubble.rad*0.3){
-                newBubble.x += newBubble.vel.x * stepSize;
-                newBubble.y += newBubble.vel.y * stepSize;
+        if(spawnTimerOveride!==undefined){
+            newBubble.spawnTimer = spawnTimerOveride;
+        }
+        
+        if(onEdge){
+            const stepSize = 4;
+            for(let steps = 0; steps<12; steps++){
+                let visualX = newBubble.visualX();
+                if(visualX<this.x-Bubble.rad*0.5||newBubble.y<this.y-Bubble.rad*0.3||visualX>this.x+this.w+Bubble.rad*0.5||newBubble.y>this.y+this.h+Bubble.rad*0.3){
+                    newBubble.x += newBubble.vel.x * stepSize;
+                    newBubble.y += newBubble.vel.y * stepSize;
+                }
             }
         }
         this.bubbles.push(newBubble);

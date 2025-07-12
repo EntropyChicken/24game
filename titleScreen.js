@@ -4,7 +4,7 @@ class TitleScreen {
 		this.boxW = min(220, width * 0.3);
 		this.boxH = min(80, height * 0.1);
 		this.marginY = 16;
-		this.bubbleBox = new BubbleBox(0,0,width,height);
+		this.bubbleBox = new BubbleBox(0,0,width,height,20,0);
 
 		const labels = [
 			{ text: "Easy", set: 0 },
@@ -42,25 +42,40 @@ class TitleScreen {
 	draw() {
         background(255);
 
-		this.bubbleBox.draw();
+		this.drawBubbleBox();
 
-		// noStroke();
-		// fill(255,255,255,150);
-		// rect(-1,-1,width+2,height+2);
+		noStroke();
+		fill(100,93,85,120);
+		rect(-1,-1,width+2,height+2);
 
-		// textAlign(CENTER, CENTER);
-        // fill(100,93,85);
-		// for(let y = 0; y<=1; y++){
-		// 	for(let x = 0; x<=1; x++){
-		// 		textSize(constrain(width*0.064,45,90));
-		// 		text("Make 24", width*0.5+x, height*0.14+y);
-		// 		textSize(constrain(width*0.036,25,45));
-		// 		text("Random",width*0.3+x, height*0.3-32+y);
-		// 		text("Designed",width*0.7+x, height*0.3-32+y);
-		// 	}
-		// }
+		textAlign(CENTER, CENTER);
+		noStroke();
+		for(let y = 2; y>=-2; y-=2){
+			for(let x = y/3-1; x<y/3+1.1; x+=2){
+				fill(y<0 ? color(255,255,255) : color(100,93,85));
+				textSize(constrain(width*0.064,45,90));
+				text("Make 24", width*0.5+x, height*0.14+y);
+				textSize(constrain(width*0.036,25,45));
+				text("Random",width*0.3+x, height*0.3-32+y*0.8);
+				text("Designed",width*0.7+x, height*0.3-32+y*0.8);
+			}
+		}
 
-		// this.drawBoxes();
+		this.drawBoxes();
+	}
+
+	drawBubbleBox() {
+		let rotateAng = 0.16;
+		let scaleFactor = 1.05;
+		push();
+		translate(width/2,height/2);
+		rotate(rotateAng);
+		scale(scaleFactor);
+		translate(-width/2,-height/2);
+		let mAng = atan2(mouseY-height/2,mouseX-width/2)-rotateAng;
+		let mDst = dist(mouseX,mouseY,width/2,height/2)/scaleFactor;
+		this.bubbleBox.draw(width/2+mDst*cos(mAng),height/2+mDst*sin(mAng));
+		pop();
 	}
 
 	drawBoxes() {

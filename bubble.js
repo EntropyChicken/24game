@@ -28,7 +28,7 @@ function signOfCloserOrtho(a, b) {
 
 
 class Bubble {
-    static PRIMES = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47];
+    static PRIMES = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97];
     static SPLITTING_TIME = 130;
     constructor(x,y,vel,value,forcedPosition=false,naturalSpeed=Bubble.speed){
         this.x = x;
@@ -68,9 +68,9 @@ class Bubble {
             this.parts = this.generateParts(this.partsOp);
         }
         else{
-            if(random()<0.6){
+            if(random()<0.65){
                 this.partsOp = "÷";
-                this.parts = [this.value*24,24];
+                this.parts = [24,24/this.value];
             }
             else{
                 this.partsOp = "-";
@@ -121,7 +121,7 @@ class Bubble {
             }
         }
         else{
-            if(this.value>=4||random(0,360)<1){
+            if(this.value>=4||random(0,250)<1){
                 this.startSplit();
             }
         }

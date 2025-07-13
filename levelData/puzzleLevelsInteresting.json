@@ -6,6 +6,8 @@
     {"cards":[0.05,0.1,0.15,0.2,0.25],"ops":["÷"],"hint":"Divide by 1/3 (same as multiplying by 3)","sols":["0.2÷0.1÷(0.05÷0.15)÷0.25"]},
     {"cards":[3,4,5],"ops":["×","÷","!"],"hint":"6×4 = 24","sols":["(3!)!÷(5!) × 4"]},
     {"cards":[7,7,25,25],"ops":["-","×","√"],"hint":"There exists a right triangle with side lengths 7, 24, 25","sols":["√(25×25-7×7)"]},
+    {"cards":[1e64,1e98],"ops":["-","√","round"],"hint":"34-10 = 24","sols":["round(√√√√√√(1e98))-√√√√√√(1e64)"]},
     {"cards":[360588],"ops":["√","round"],"hint":"We need to end up under 24.5, but 24.5^2 = 600.25","sols":["round(√round(√360588))"]},
-    {"cards":[1e64,1e98],"ops":["-","√","round"],"hint":"34-10 = 24","sols":["round(√√√√√√(1e98))-√√√√√√(1e64)"]}
+    {"cards":[0.75,0.75,32],"ops":["×","cos","tan","asin"],"hint":"tan(a) = sin(a)÷cos(a) so tan(a)×cos(a) = sin(a)","sols":["asin(tan(0.75)×cos(0.75))×32"]},
+    {"cards":[3,3.141592653589793238,4,6],"ops":["÷","^","sin"],"hint":"","sols":["3÷((sin(π÷4))^6)"]}
 ]

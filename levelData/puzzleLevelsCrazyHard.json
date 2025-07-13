@@ -14,5 +14,5 @@
     {"cards":[-1,-1,-1,-2],"ops":["-","÷","√","ln"],"hint":"Make -√2-(√2)i and √2-(√2)i. From these, it is possible to obtain 3, which is only off by a power of 2","sols":["ln((√√-1)÷-1)÷ln(√√√((√√-1)-√-2))","ln(ln(-1)÷ln(√√√-1))÷ln(√√√(-2÷-1))"]},
 
     {"cards":[-1,-1,-1],"ops":["÷","√","ln"],"hint":"Make -√2-(√2)i out of two numbers and √2-(√2)i out of one number. Now, base change formula","sols":["ln(-1÷√√-1)÷ln(√√√√√-1)"]},
-    {"cards":[0,0,0],"ops":["÷","√","ln","cos"],"hint":"Generalize exploit: 24 from log base c^(1/32) of c^(3/4)","sols":["ln(-1÷√√-1)÷ln(√√√√√-1)"]}
+    {"cards":[0,0,0],"ops":["÷","√","ln","cos"],"hint":"Generalize exploit: 24 from log base c^(1/32) of c^(3/4)","sols":["ln(cos(cos(0))÷√√cos(cos(0)))÷ln(√√√√√cos(cos(0)))"]}
 ]

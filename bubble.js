@@ -1,5 +1,3 @@
-// future idea: make bubbles avoid each other by modifying angle, not vector, of movement (cross product needed?)
-
 function textAlpha(txt,x,y,alph){
     textSize(Bubble.rad*0.5);
     if(txt===24||txt==="24"){

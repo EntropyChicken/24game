@@ -105,6 +105,11 @@ function mousePressed() {
 	}
 }
 
+function touchStarted() {
+	mousePressed();
+	return false;
+}
+
 function getFinalStep(expr) {
     // remove spaces
     expr = expr.replace(/\s+/g, "");

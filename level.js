@@ -121,7 +121,7 @@ class Level {
 				transparentOnWin: true
 			},
 			getText: () => "Home",
-			onClick: () => { screen = "title"; }
+			onClick: () => { setScreen("title"); }
 		});
 		this.skipButton = new Button({
 			x: max(width * 0.17, this.homeButton.x+this.homeButton.w+width*0.02), y: height * 0.05, w: max(60, width * 0.1), h: height * 0.1,

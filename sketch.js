@@ -25,7 +25,7 @@ function preload() {
 function setup() {
 	createCanvas(windowWidth, windowHeight);
 	titleScreen = new TitleScreen();
-	screen = "title";
+	setScreen("title");
 	theme = {
 		shadeColor : color(255,0,255),
 		shadeColorCorrect : color(155,200,155),
@@ -88,32 +88,6 @@ function getRandomLevel(levelSet, previousCards, defaultOps = Level.SYMBOLS, ove
 
 
 
-function draw() {
-	if (screen === "title") {
-		titleScreen.draw();
-	} else if (screen === "game") {
-		background(220);
-		level.draw();
-		if (level.solved) {
-			level = getRandomLevel(currentLevelSet, level.originalValues.map(c => c.real),
-				currentIsClassic ? ["+", "-", "×", "÷"] : Level.SYMBOLS, false, currentUsedIndices, !currentIsClassic);
-			Level.setupKeyboard(level);
-		}
-	}
-}
-
-function mousePressed() {
-	if (screen === "game") {
-		level.handleClick(mouseX, mouseY);
-	} else if (screen === "title") {
-		titleScreen.handleClick(mouseX, mouseY);
-	}
-}
-
-function touchStarted() {
-	mousePressed();
-	return false;
-}
 
 function getFinalStep(expr) {
     // remove spaces
@@ -240,4 +214,53 @@ function finalStepEquals24(expression) {
 			return false;
 	}
 	return Math.abs(result - 24) < EQUALITY_THRESHOLD;
+}
+
+function setThemeColor(color) {
+  let metaThemeColor = document.querySelector("meta[name=theme-color]");
+  if (!metaThemeColor) {
+    metaThemeColor = document.createElement('meta');
+    metaThemeColor.name = "theme-color";
+    document.head.appendChild(metaThemeColor);
+  }
+  metaThemeColor.setAttribute("content", color);
+}
+function setScreen(s){
+	screen = s;
+	if(screen === "title"){
+		setThemeColor(color(184,180,172)); // or maybe theme.backgroundColorCorrect
+	}
+	else if(screen === "game"){
+		setThemeColor(theme.backgroundColor);
+	}
+	else{
+		setThemeColor(color(0,0,0));
+	}
+}
+
+function mousePressed() {
+	if (screen === "game") {
+		level.handleClick(mouseX, mouseY);
+	} else if (screen === "title") {
+		titleScreen.handleClick(mouseX, mouseY);
+	}
+}
+function touchStarted() {
+	mousePressed();
+	return false;
+}
+
+
+function draw() {
+	if (screen === "title") {
+		titleScreen.draw();
+	} else if (screen === "game") {
+		background(220);
+		level.draw();
+		if (level.solved) {
+			level = getRandomLevel(currentLevelSet, level.originalValues.map(c => c.real),
+				currentIsClassic ? ["+", "-", "×", "÷"] : Level.SYMBOLS, false, currentUsedIndices, !currentIsClassic);
+			Level.setupKeyboard(level);
+		}
+	}
 }

@@ -157,7 +157,7 @@ class TitleScreen {
 				theme.backgroundColor = (b.isClassic ? color(255,225,190) : color(210,225,250));
                 level = getRandomLevel(currentLevelSet, [], currentIsClassic ? ["+","-","×","÷"] : Level.SYMBOLS, false, currentUsedIndices, !currentIsClassic);
                 Level.setupKeyboard(level);
-                screen = "game";
+				setScreen("game");
                 return;
             }
         }

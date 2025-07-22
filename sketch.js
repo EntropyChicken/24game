@@ -33,6 +33,15 @@ function setup() {
 		backgroundColorCorrect : color(160,205,120)
 	};
 }
+function windowResized() {
+	resizeCanvas(windowWidth, windowHeight);
+	if (screen === "title") {
+		titleScreen = new TitleScreen();
+	} else if (screen === "game") {
+		level.setupLayout();
+	}
+}
+
 
 function getRandomLevel(levelSet, previousCards, defaultOps = Level.SYMBOLS, overrideOps = false, usedIndices = [], shuffleCards) {
 	let lvl, index;
@@ -77,11 +86,7 @@ function getRandomLevel(levelSet, previousCards, defaultOps = Level.SYMBOLS, ove
 	return new Level(cards, ops, lvl);
 }
 
-/*
-function windowResized() {
-	resizeCanvas(windowWidth, windowHeight);
-}
-*/
+
 
 function draw() {
 	if (screen === "title") {

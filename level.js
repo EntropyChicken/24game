@@ -74,15 +74,17 @@ class Level {
 		this.values = numbers.map(n => new Complex(n));
 		this.originalValues = numbers.map(n => new Complex(n));
 		this.opSymbols = opSymbols;
-		this.setupBoxes();
-		this.setupOps();
 		this.firstIndex = null;
 		this.selectedOp = null;
 		this.history = [];
 		this.winTimer = 0;
 		this.solved = false; // for external use
+		this.setupLayout();
+	}
 
-		// Button instances
+	setupLayout() {
+		this.setupBoxes();
+		this.setupOps();
 		this.undoButton = new Button({
 			x: width * 0.05, y: height * 0.77, w: width * 0.22, h: height * 0.18,
 			label: "Undo",

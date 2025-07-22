@@ -35,9 +35,9 @@ function setup() {
 }
 function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
-	if (screen === "title") {
-		titleScreen = new TitleScreen();
-	} else if (screen === "game") {
+	
+	titleScreen = new TitleScreen();
+	if(level!==undefined){
 		level.setupLayout();
 	}
 }

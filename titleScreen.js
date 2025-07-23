@@ -65,15 +65,15 @@ class TitleScreen {
 	}
 
 	drawBubbleBox() {
-		let rotateAng = 0.16;
+		let rotateAng = 0.17;
 		let scaleFactor = 1.05;
 		push();
 		translate(width/2,height/2);
 		rotate(rotateAng);
 		scale(scaleFactor);
 		translate(-width/2,-height/2);
-		let mAng = atan2(my-height/2,mx-width/2)-rotateAng;
-		let mDst = dist(mx,my,width/2,height/2)/scaleFactor;
+		let mAng = atan2(mouseY-height/2,mouseX-width/2)-rotateAng;
+		let mDst = dist(mouseX,mouseY,width/2,height/2)/scaleFactor;
 		this.bubbleBox.draw(width/2+mDst*cos(mAng),height/2+mDst*sin(mAng));
 		pop();
 	}

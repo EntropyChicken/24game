@@ -3,13 +3,13 @@ function textAlpha(txt,x,y,alph){
     if(txt===24||txt==="24"){
         // textSize(Bubble.rad*0.6);
         alph = alph+255*0.2*sin(PI*alph/255); // more alpha
-        fill(lerpColor(color(255,255,255),color(100,185,70),alph/255));
+        fill(lerpColor(color(255,255,255),color(40,180,20),alph/255));
         text(txt,x,y+1);
         text(txt,x,y);
     }
     else{
         // textSize(Bubble.rad*0.45);
-        fill(lerpColor(color(255,255,255),color(120,120,120),alph/255));
+        fill(lerpColor(color(255,255,255),color(100,100,100),alph/255));
         text(txt,x,y);
     }
 }

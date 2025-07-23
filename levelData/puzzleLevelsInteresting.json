@@ -9,5 +9,5 @@
     {"cards":[1e64,1e98],"ops":["-","√","round"],"hint":"34-10 = 24","sols":["round(√√√√√√(1e98))-√√√√√√(1e64)"]},
     {"cards":[360588],"ops":["√","round"],"hint":"We need to end up under 24.5, but 24.5^2 = 600.25","sols":["round(√round(√360588))"]},
     {"cards":[0.75,0.75,32],"ops":["×","cos","tan","asin"],"hint":"tan(a) = sin(a)÷cos(a) so tan(a)×cos(a) = sin(a)","sols":["asin(tan(0.75)×cos(0.75))×32"]},
-    {"cards":[3,3.141592653589793238,4,6],"ops":["÷","^","sin"],"hint":"","sols":["3÷((sin(π÷4))^6)"]}
+    {"cards":[3,3.141592653589793238,4,6],"ops":["÷","^","sin"],"hint":"The solution involves sin(π÷4), which equals (√2)/2","sols":["3÷((sin(π÷4))^6)"]}
 ]

@@ -26,7 +26,7 @@ class Button {
 		if (this.drawAngle === undefined) this.drawAngle = 0;
 		if (this.drawScale === undefined) this.drawScale = 1;
 		if (this.drawOffset === undefined) this.drawOffset = 0;
-		if (mouseX > this.x && mouseX < this.x + this.w && mouseY > this.y && mouseY < this.y + this.h) {
+		if (mx > this.x && mx < this.x + this.w && my > this.y && my < this.y + this.h) {
 			if(this.style.onHoverMovement === undefined) this.style.onHoverMovement = 0.0045;
 			this.drawOffset += height * this.style.onHoverMovement;
 		}

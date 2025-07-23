@@ -9,6 +9,8 @@ let currentLevelSet = null;
 let currentUsedIndices = []; // Keeps track of used indices
 let currentIsClassic = true;
 let theme;
+let canHover;
+let mx = -1, my = -1;
 
 function preload() {
 	loadJSON("levelData/classicLevelsEasy.json", data => { classicSets[0] = data; });
@@ -23,6 +25,7 @@ function preload() {
 }
 
 function setup() {
+	canHover = window.matchMedia('(hover: hover)').matches;
 	createCanvas(windowWidth, windowHeight);
 	titleScreen = new TitleScreen();
 	setScreen("title");
@@ -238,6 +241,12 @@ function setScreen(s){
 	}
 }
 
+function mouseMoved() {
+	if (canHover) {
+		mx = mouseX;
+		my = mouseY;
+	}
+}
 function mousePressed() {
 	if (screen === "game") {
 		level.handleClick(mouseX, mouseY);

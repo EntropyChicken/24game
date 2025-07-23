@@ -16,7 +16,7 @@ class Operation {
 		if(this.drawScale === undefined){
 			this.drawScale = 1;
 		}
-		if (selected || mouseX > this.x && mouseX < this.x + this.w && mouseY > this.y && mouseY < this.y + this.h) {
+		if (selected || mx > this.x && mx < this.x + this.w && my > this.y && my < this.y + this.h) {
 			this.drawOffset += height*0.005;
 		}
 		push();

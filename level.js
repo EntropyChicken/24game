@@ -262,7 +262,7 @@ class Level {
 			if(b.drawOffset === undefined){
 				b.drawOffset = 0;
 			}
-			if (i === this.firstIndex || mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
+			if (i === this.firstIndex || mx > b.x && mx < b.x + b.w && my > b.y && my < b.y + b.h) {
 				b.drawOffset -= height*0.005;
 				// alternative: b.drawAngle += b.locName%2 ? -0.02 : 0.02
 			}

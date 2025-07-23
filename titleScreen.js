@@ -72,15 +72,15 @@ class TitleScreen {
 		rotate(rotateAng);
 		scale(scaleFactor);
 		translate(-width/2,-height/2);
-		let mAng = atan2(mouseY-height/2,mouseX-width/2)-rotateAng;
-		let mDst = dist(mouseX,mouseY,width/2,height/2)/scaleFactor;
+		let mAng = atan2(my-height/2,mx-width/2)-rotateAng;
+		let mDst = dist(mx,my,width/2,height/2)/scaleFactor;
 		this.bubbleBox.draw(width/2+mDst*cos(mAng),height/2+mDst*sin(mAng));
 		pop();
 	}
 
 	drawBoxes() {
 		for (let b of this.boxes) {
-			if (mouseX > b.x && mouseX < b.x + b.w && mouseY > b.y && mouseY < b.y + b.h) {
+			if (mx > b.x && mx < b.x + b.w && my > b.y && my < b.y + b.h) {
 				b.drawOffset += height * (b.isClassic ? 0.007 : -0.007);
 			}
 

@@ -228,7 +228,7 @@ function setThemeColor(color) {
 function setScreen(s){
 	screen = s;
 	if(screen === "title"){
-		setThemeColor(color(184,180,172)); // or maybe theme.backgroundColorCorrect
+		setThemeColor(color(175,175,175)); // or maybe theme.backgroundColorCorrect
 	}
 	else if(screen === "game"){
 		setThemeColor(theme.backgroundColor);
@@ -261,6 +261,7 @@ function draw() {
 			level = getRandomLevel(currentLevelSet, level.originalValues.map(c => c.real),
 				currentIsClassic ? ["+", "-", "×", "÷"] : Level.SYMBOLS, false, currentUsedIndices, !currentIsClassic);
 			Level.setupKeyboard(level);
+			setThemeColor(theme.backgroundColor);
 		}
 	}
 }

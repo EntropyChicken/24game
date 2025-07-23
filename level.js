@@ -202,6 +202,7 @@ class Level {
 		const WIN_TIMER_START = 75;
 		if (this.winTimer === 0 && this.boxes.length === 1 && this.boxes[0].value.equals(new Complex(24))) {
 			this.winTimer = WIN_TIMER_START;
+			setThemeColor(theme.backgroundColorCorrect);
 		}
 		if (this.winTimer > 0) {
 			/*

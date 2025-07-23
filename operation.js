@@ -41,8 +41,8 @@ class Operation {
 		}
 		fill(0); noStroke();
 		textAlign(CENTER, CENTER);
-		let ts = height * 0.06;
-		while(ts>14){
+		let ts = (height+width/2) * 0.05;
+		while(ts>12){
 			textSize(ts);
 			let tw = textWidth(this.symbol);
 			if(tw<this.w-5){

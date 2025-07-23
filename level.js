@@ -1,62 +1,5 @@
 // shrink or make multiple lines to fit in a box
 const WRAP_BREAK_CHARS = ["+", "-", "×", "÷", "^", "√", "!", "*", "/", "(", ")", " ", ",", ":"];
-function drawTextInBox(txt, x, y, w, h, maxFontSize = height * 0.045, minFontSize = 20) {
-	fill(0); noStroke();
-	textAlign(CENTER, CENTER);
-
-	let fontSize = maxFontSize;
-	textSize(fontSize);
-	const maxWidth = w - 0.013*width;
-
-	// Shrink to minimum font size if necessary
-	while (textWidth(txt) > maxWidth && fontSize > minFontSize) {
-		fontSize -= 1;
-		textSize(fontSize);
-	}
-
-	// If text fits, draw it directly
-	if (textWidth(txt) <= maxWidth) {
-		text(txt, x + w / 2, y + h / 2);
-		return;
-	}
-
-	// Custom line-breaking logic
-	let lines = [];
-	let currentLine = '';
-	for (let i = 0; i < txt.length; i++) {
-		currentLine += txt[i];
-		if (textWidth(currentLine) > maxWidth) {
-			// Too long: backtrack to last break char
-			let j = currentLine.length - 1;
-			while (j > 0 && !WRAP_BREAK_CHARS.includes(currentLine[j])) {
-				j--;
-			}
-			if (j === 0) {
-				// No break point found—force break
-				lines.push(currentLine.trim());
-				currentLine = '';
-			} else {
-				lines.push(currentLine.slice(0, j + 1).trim());
-				currentLine = currentLine.slice(j + 1).trimStart();
-			}
-		}
-	}
-	if (currentLine.length > 0) lines.push(currentLine.trim());
-
-	// Draw each line centered
-	let lineHeight = fontSize * 1.15;
-	let totalHeight = lines.length * lineHeight;
-	let startY = y + h / 2 - totalHeight / 2 + lineHeight / 2;
-
-	if(minFontSize>16&&lines.length>=6){
-		drawTextInBox(txt,x,y,w,h,maxFontSize,16);
-		return;
-	}
-	
-	for (let i = 0; i < lines.length; i++) {
-		text(lines[i], x + w / 2, startY + i * lineHeight);
-	}
-}
 
 function smoothErp(a,recursion=1){
 	a = constrain(a,0,1);
@@ -294,7 +237,7 @@ class Level {
 
 			if (fallbackWidth <= maxWidth && fallbackHeight <= maxHeight) {
 				// Try to find largest size that fits in one line
-				let low = fallbackFontSize, high = height * 0.12, bestSize = fallbackFontSize;
+				let low = fallbackFontSize, high = (height+width/2) * 0.08, bestSize = fallbackFontSize;
 				while (low <= high) {
 					let mid = (low + high) >> 1;
 					textSize(mid);
@@ -326,7 +269,7 @@ class Level {
 				}
 				if (currentLine.length > 0) lines.push(currentLine);
 
-				const lineHeight = fallbackFontSize * 1.1;
+				const lineHeight = fallbackFontSize * 1.05;
 				const startY = b.y + b.h / 2 - (lines.length - 1) * lineHeight / 2 + 3;
 
 				lines.forEach((line, j) => {
@@ -415,7 +358,7 @@ class Level {
 						hint += "Fractions are required. ";
 					}
 					else{
-						hint += "Solvable with integers (doesn't need fractions). ";
+						hint += "Doesn't need fractions. ";
 					}
 				}
 				if(factorable!==undefined){
@@ -424,7 +367,7 @@ class Level {
 						// hint += "It is also possible to make two numbers multiply to 24. ";
 					}
 					else{
-						hint += "The final step CAN'T be multiplication. ";
+						hint += "Final step CAN'T be multiplication. ";
 					}
 				}
 

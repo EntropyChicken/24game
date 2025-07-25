@@ -47,10 +47,10 @@ function windowResized() {
 	titleScreen = newTitleScreen;
 	
 	if(level!==undefined){
-		level.setupLayout();
+		level.reSetupLayout();
 	}
 	if(duel!==undefined){
-		duel.setupLayout();
+		duel.reSetupLayout();
 	}
 }
 

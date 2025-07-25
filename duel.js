@@ -18,10 +18,10 @@ class Duel {
         this.solved = false;
         this.winAlphas = [0.0];
 
-        this.setupLayout();
+        this.reSetupLayout();
 	}
 
-    setupLayout(){
+    reSetupLayout(){
         if(width>=height){
             this.width = width;
             this.height = height;
@@ -35,7 +35,7 @@ class Duel {
 
         for(let i = 0; i<2; i++){
             let l = this.levels[i];
-            l.setupLayout(this.height,this.width/2);
+            l.reSetupLayout(this.height,this.width/2);
             l.hintButton.draw = function(w){};
             l.hintButton.onClick = function(){};
             l.solutionButton.draw = function(w){};

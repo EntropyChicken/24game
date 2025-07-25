@@ -23,15 +23,20 @@ class Level {
 		this.winTimer = 0;
 		this.solved = false; // for external use
 		this.useRational = useRational;
-		this.setupLayout(width,height);
+
+		this.setupBoxes();
+		this.setupOps(); // redundant, done again in reSetupLayout
+		this.reSetupLayout(width,height);
 	}
 
-	setupLayout(w=width,h=height) {
+	reSetupLayout(w=width,h=height) {
 		this.width = w;
 		this.height = h;
 
-		this.setupBoxes();
-		this.setupOps();
+		this.selectedOp = null;
+		this.firstIndex = null;
+		this.reSetupBoxes();
+		this.reSetupOps();
 		this.undoButton = new Button({
 			x: this.width * 0.05, y: this.height * 0.77, w: this.width * 0.22, h: this.height * 0.18,
 			label: "Undo",
@@ -100,8 +105,28 @@ class Level {
 			drawScale: 0.7
 		}));
 	}
+	reSetupBoxes() {
+		const spaceConst = 0.8;
+		const count = this.values.length;
+		const boxW = this.width / (this.values.length+1);
+		const boxH = this.height * 0.265;
+		const spacing = this.width / (count + 2*spaceConst-1);
+		for(let b of this.boxes){
+			let i = b.locName;
+			b.x = spacing * (i + spaceConst) - boxW / 2;
+			b.y = this.height * 0.225;
+			b.w = boxW;
+			b.h = boxH;
+		}
+	}
 
 	setupOps() {
+		this.reSetupOps(); // scuffed but yeah this is just that but with the animation
+		for(let btn of this.opButtons){
+			btn.drawScale = 0.7;
+		}
+	}
+	reSetupOps() {
 		const spaceConst = this.opSymbols.length>=8 ? 0.6 : 1.9;
 		const syms = this.opSymbols;
 		const btnW = this.width * (this.opSymbols.length>=8 ? 1.18 : 0.91) / (this.opSymbols.length+3);
@@ -140,9 +165,6 @@ class Level {
 			btnW,
 			btnH
 		));
-		for(let btn of this.opButtons){
-			btn.drawScale = 0.7;
-		}
 	}
 
 	draw(showBackground = true) {

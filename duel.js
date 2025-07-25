@@ -54,7 +54,14 @@ class Duel {
                     transparentOnWin: true
                 },
                 getText: () => "Home",
-                onClick: () => { setScreen("title"); }
+                onClick: () => {
+                    if(this.levels[0].winTimer===0&&this.levels[1].winTimer===0){
+                        setScreen("title");
+                    }
+                    else{
+                        this.homeButton.drawAngle -= 0.16;
+                    }
+                }
             });
             this.skipButton = new Button({
                 x: this.width * 0.45, y: this.height * 0.5, w: this.width * 0.1, h: this.height * 0.1,
@@ -65,7 +72,14 @@ class Duel {
                     transparentOnWin: true,
                 },
                 getText: () => "Skip",
-                onClick: () => { this.solved = true; }
+                onClick: () => {
+                    if(this.levels[0].winTimer===0&&this.levels[1].winTimer===0){
+                        this.solved = true;
+                    }
+                    else{
+                        this.skipButton.drawAngle -= 0.16;
+                    }
+                }
             });
         }
     }

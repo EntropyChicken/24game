@@ -132,12 +132,13 @@ class Duel {
         pop();
     }
     handleClick(mx,my){
-        for(let i = 0; i<2; i++){
+        let iot = this.inverseOuterTransform(mx,my);
+        {
+            let i = (iot.x>this.width/2)+0;
             let it = this.inverseTransform(mx,my,i);
             this.levels[i].handleClick(it.x,it.y);
         }
         
-        let iot = this.inverseOuterTransform(mx,my);
         const buttons = [this.homeButton, this.skipButton];
 		for(const btn of buttons) {
 			if(btn.contains(iot.x, iot.y)) {

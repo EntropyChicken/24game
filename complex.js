@@ -22,6 +22,9 @@ class Complex {
     equals(other, threshold = EQUALITY_THRESHOLD) {
         return abs(this.real - other.real) < threshold && abs(this.imag - other.imag) < threshold;
     }
+    equals24() {
+        return this.equals(new Complex(24));
+    }
 
     round(threshold = DISPLAY_THRESHOLD) {
         let r = this.real, i = this.imag;

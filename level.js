@@ -147,7 +147,7 @@ class Level {
 
 	draw(showBackground = true) {
 		const WIN_TIMER_START = 75;
-		if (this.winTimer === 0 && this.boxes.length === 1 && this.boxes[0].value.equals(new Complex(24))) {
+		if (this.winTimer === 0 && this.boxes.length === 1 && this.boxes[0].value.equals24()) {
 			this.winTimer = WIN_TIMER_START;
 			setThemeColor(theme.backgroundColorCorrect);
 		}
@@ -158,7 +158,7 @@ class Level {
 			}
 			*/
 			for(let b of this.boxes){
-				if(b.value.equals(new Complex(24))){
+				if(b.value.equals24()){
 					let factor = constrain((WIN_TIMER_START-this.winTimer)*0.006-0.03,-0.02,1);
 					let vel = {
 						x:(this.width/2-b.w/2-b.x)*factor,

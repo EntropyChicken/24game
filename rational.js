@@ -64,6 +64,9 @@ class Rational {
         }
         return this.numerator === other.numerator && this.denominator === other.denominator;
     }
+    equals24() {
+        return this.isInteger()&&this.numerator===24;
+    }
     
     getColor(){
         return color(0,0,0);

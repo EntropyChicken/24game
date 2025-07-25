@@ -7,7 +7,7 @@ let puzzleSets = [[], [], [], []];
 let currentLevelSet = null;
 let currentUsedIndices = []; // Keeps track of used indices
 let currentIsClassic = true;
-let theme;
+let theme = {};
 let canHover;
 let mx = -1, my = -1;
 
@@ -25,15 +25,17 @@ function preload() {
 
 function setup() {
 	canHover = window.matchMedia('(hover: hover)').matches;
-	createCanvas(windowWidth, windowHeight);
-	titleScreen = new TitleScreen();
-	setScreen("title");
+	
 	theme = {
 		shadeColor : color(255,0,255),
 		shadeColorCorrect : color(155,200,155),
 		backgroundColor : color(210,225,250),
 		backgroundColorCorrect : color(160,205,120)
 	};
+
+	createCanvas(windowWidth, windowHeight);
+	titleScreen = new TitleScreen();
+	setScreen("title");
 }
 function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
@@ -237,6 +239,7 @@ function setThemeColor(color) {
 function setScreen(s){
 	screen = s;
 	if(screen === "title"){
+		theme.shadeColor = color(210,210,210);
 		setThemeColor(color(175,175,175)); // or maybe theme.backgroundColorCorrect
 	}
 	else if(screen === "game" || screen === "duel"){

@@ -3,15 +3,16 @@ class TitleScreen {
 		this.boxes = [];
 		this.boxW = min(220, width * 0.35);
 		this.boxH = min(80, height * 0.1);
-		this.marginY = 16;
+		this.marginY = 10;
 		this.bubbleBox = new BubbleBox(0,0,width,height,20,0);
+		this.duelMode = false;
 
 		const labels = [
 			{ text: "Easy", set: 0 },
 			{ text: "Medium", set: 1 },
 			{ text: "Hard", set: 2 },
 			{ text: "Tricky", set: 3 },
-			{ text: "Cooked", set: 4 },
+			{ text: "Very Hard", set: 4 },
             
 			{ text: "Simple", set: 0 },
 			{ text: "Interesting", set: 1 },
@@ -25,7 +26,7 @@ class TitleScreen {
 			const col = isClassic ? 0 : 1;
 			const row = isClassic ? i : i - 5;
 			const x = width * (0.3 + 0.4 * col) - this.boxW / 2;
-			const y = height*0.31 + row * (this.boxH + this.marginY);
+			const y = height*0.4 + row * (this.boxH + this.marginY);
 
 			this.boxes.push({
 				x, y, w: this.boxW, h: this.boxH,
@@ -37,6 +38,31 @@ class TitleScreen {
 				drawScale: 1
 			});
 		}
+
+		this.duelButton = new Button({
+			x: width * 0.5-this.boxes[0].w/2, y: height * 0.2, w: this.boxes[0].w, h: this.boxes[0].h,
+			label: "Duel button",
+			style: {
+				r: 15,
+				onHoverMovement: 0.003,
+				textColor: color(60,60,60),
+				predraw: () => {
+					if(titleScreen.duelMode){
+						titleScreen.duelButton.style.mainColor = color(225,255,180);
+						titleScreen.duelButton.style.shadeColor = theme.shadeColorCorrect;
+						titleScreen.duelButton.style.hovering = true;
+					}
+					else{
+						titleScreen.duelButton.style.mainColor = color(255,255,255);
+						titleScreen.duelButton.style.shadeColor = theme.shadeColor;
+						titleScreen.duelButton.style.hovering = false;
+					}
+				}
+			},
+			getText: () => "Two player mode",
+			onClick: () => { titleScreen.duelMode = !titleScreen.duelMode }
+		});
+
 	}
 
 	draw() {
@@ -56,12 +82,13 @@ class TitleScreen {
 				textSize(constrain(width*0.07,45,90));
 				text("Make 24", width*0.5+x, height*0.14+y);
 				textSize(constrain(width*0.035,25,45));
-				text("Random",width*0.3+x, height*0.3-32+y*0.8);
-				text("Designed",width*0.7+x, height*0.3-32+y*0.8);
+				text("Random",width*0.3+x, height*0.363+y*0.8);
+				text("Designed",width*0.7+x, height*0.363+y*0.8);
 			}
 		}
 
 		this.drawBoxes();
+		this.duelButton.draw();
 	}
 
 	drawBubbleBox() {
@@ -157,16 +184,27 @@ class TitleScreen {
 				theme.backgroundColor = (b.isClassic ? color(255,225,190) : color(210,225,250));
                 let levelData = getRandomLevel(currentLevelSet, [], currentIsClassic ? ["+","-","×","÷"] : Level.SYMBOLS, false, currentUsedIndices, !currentIsClassic);
 
-                // level = new Level(levelData.cards,levelData.ops,levelData.lvl);
-				// Level.setupKeyboard(level);
-				// setScreen("game");
-
-                duel = new Duel(levelData.cards,levelData.ops,levelData.lvl);
-				setScreen("duel");
+				if(this.duelMode){
+					duel = new Duel(levelData.cards,levelData.ops,levelData.lvl);
+					setScreen("duel");
+				}
+				else{
+					level = new Level(levelData.cards,levelData.ops,levelData.lvl);
+					Level.setupKeyboard(level);
+					setScreen("game");
+				}
 
                 return;
             }
         }
+		const buttons = [this.duelButton];
+		for(const btn of buttons) {
+			if(btn.contains(mx, my)) {
+				btn.drawScale -= 0.08;
+				btn.onClick();
+				return;
+			}
+		}
     }
 
 }

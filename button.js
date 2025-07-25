@@ -8,8 +8,8 @@ function drawShadedButton(x, y, w, h, r = 8, shadeColor = theme.shadeColor, main
 	// or no round bottoms: rect(x, y, w, h * (1 - shadeHeightFrac), r, r, 0, 0);
 	rect(x, y, w, h - min(16,h*shadeHeightFrac), r);
 }
-function drawTextInBox(txt, x, y, w, h, maxFontSize = height * 0.045, minFontSize = 20) {
-	fill(0); noStroke();
+function drawTextInBox(txt, x, y, w, h, maxFontSize = height * 0.045, minFontSize = 20, textColor = color(0,0,0)) {
+	fill(textColor); noStroke();
 	textAlign(CENTER, CENTER);
 
 	let fontSize = maxFontSize;
@@ -83,7 +83,7 @@ class Button {
 		if (this.drawAngle === undefined) this.drawAngle = 0;
 		if (this.drawScale === undefined) this.drawScale = 1;
 		if (this.drawOffset === undefined) this.drawOffset = 0;
-		if (mx > this.x && mx < this.x + this.w && my > this.y && my < this.y + this.h) {
+		if (mx > this.x && mx < this.x + this.w && my > this.y && my < this.y + this.h || this.style.hovering) {
 			if(this.style.onHoverMovement === undefined) this.style.onHoverMovement = 0.0045;
 			this.drawOffset += height * this.style.onHoverMovement;
 		}
@@ -100,7 +100,10 @@ class Button {
 			drawShadedButton(this.x, this.y, this.w, this.h, this.style.r || 10, this.style.shadeColor || theme.shadeColor, this.style.mainColor || color(255,255,255));
 		}
 		let displayText = this.getText();
-		drawTextInBox(displayText, this.x, this.y, this.w, this.h, this.style.fontSize || height * 0.045, 16);
+		if(typeof this.style.predraw === "function"){
+			this.style.predraw();
+		}
+		drawTextInBox(displayText, this.x, this.y, this.w, this.h, this.style.fontSize || height * 0.045, 16, this.style.textColor);
 		pop();
 		this.drawAngle *= 0.8;
 		this.drawScale = 1 + (this.drawScale - 1) * 0.9;

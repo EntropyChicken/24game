@@ -1,4 +1,4 @@
-const CACHE_NAME = "24game-cache-v1";
+const CACHE_NAME = "24game-cache-v4";
 const CACHE_FILES = [
 	"./index.html",
 	"./style.css",
@@ -17,7 +17,7 @@ const CACHE_FILES = [
 	"./duel.js",
 	"./level.js",
 	"./titleScreen.js",
-	"./serviceWorker.js",
+	"./serviceWorker.js", // sus? unless you want to ctrl shift r every time you make a change
 
 	// libraries
 	"./libraries/p5.min.js",
@@ -49,6 +49,20 @@ self.addEventListener("fetch", (event) => {
 	event.respondWith(
 		caches.match(event.request).then((response) => {
 			return response || fetch(event.request);
+		})
+	);
+});
+
+self.addEventListener('activate', event => {
+	event.waitUntil(
+		caches.keys().then(cacheNames => {
+			return Promise.all(
+				cacheNames.map(name => {
+					if (name !== CACHE_NAME) {
+						return caches.delete(name);
+					}
+				})
+			);
 		})
 	);
 });

@@ -239,13 +239,10 @@ function setScreen(s){
 	if(screen === "title"){
 		setThemeColor(color(175,175,175)); // or maybe theme.backgroundColorCorrect
 	}
-	else if(screen === "game"){
+	else if(screen === "game" || screen === "duel"){
 		setThemeColor(theme.backgroundColor);
 	}
 	else{
-		// if(screen === "duel"){
-		// 	requestLandscape();
-		// }
 		setThemeColor(color(0,0,0));
 	}
 }
@@ -333,6 +330,7 @@ function draw() {
 			let levelArgs = getRandomLevel(currentLevelSet, duel.levels[0].originalValues.map(c => c.real),
 				currentIsClassic ? ["+", "-", "×", "÷"] : Level.SYMBOLS, false, currentUsedIndices, !currentIsClassic);
 			duel = new Duel(levelArgs.cards,levelArgs.ops,levelArgs.lvl,duel.scores);
+			setThemeColor(theme.backgroundColor);
 		}
 	}
 }

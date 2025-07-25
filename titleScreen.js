@@ -3,7 +3,7 @@ class TitleScreen {
 		this.boxes = [];
 		this.boxW = min(220, width * 0.35);
 		this.boxH = min(80, height * 0.1);
-		this.marginY = 10;
+		this.marginY = min(16,height*0.016);
 		this.bubbleBox = new BubbleBox(0,0,width,height,20,0);
 		this.duelMode = false;
 

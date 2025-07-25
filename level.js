@@ -22,14 +22,17 @@ class Level {
 		this.history = [];
 		this.winTimer = 0;
 		this.solved = false; // for external use
-		this.setupLayout();
+		this.setupLayout(width,height);
 	}
 
-	setupLayout() {
+	setupLayout(w=width,h=height) {
+		this.width = w;
+		this.height = h;
+
 		this.setupBoxes();
 		this.setupOps();
 		this.undoButton = new Button({
-			x: width * 0.05, y: height * 0.77, w: width * 0.22, h: height * 0.18,
+			x: this.width * 0.05, y: this.height * 0.77, w: this.width * 0.22, h: this.height * 0.18,
 			label: "Undo",
 			style: { r: 10, transparentOnWin: true },
 			getText: () => "Undo",
@@ -42,21 +45,21 @@ class Level {
 			}
 		});
 		this.hintButton = new Button({
-			x: width * 0.43, y: height * 0.77, w: width * 0.3, h: height * 0.18,
+			x: this.width * 0.43, y: this.height * 0.77, w: this.width * 0.3, h: this.height * 0.18,
 			label: "Hint",
 			style: { r: 10, transparentOnWin: true },
 			getText: () => this.hintButton.state.showHint ? this.getHint() : "Hint",
 			onClick: () => { this.hintButton.state.showHint = !this.hintButton.state.showHint; }
 		});
 		this.solutionButton = new Button({
-			x: width * 0.75, y: height * 0.77, w: width * 0.2, h: height * 0.18,
+			x: this.width * 0.75, y: this.height * 0.77, w: this.width * 0.2, h: this.height * 0.18,
 			label: "Solution",
 			style: { r: 10, transparentOnWin: true },
 			getText: () => this.solutionButton.state.showSolution ? (this.metaData.sols ? this.metaData.sols[0] : "Sorry, no solution 💀😭 Code is bugged") : "Solution",
 			onClick: () => { this.solutionButton.state.showSolution = !this.solutionButton.state.showSolution; }
 		});
 		this.homeButton = new Button({
-			x: width * 0.05, y: height * 0.05, w: max(60, width * 0.1), h: height * 0.1,
+			x: this.width * 0.05, y: this.height * 0.05, w: max(60, this.width * 0.1), h: this.height * 0.1,
 			label: "Home",
 			style: {
 				r: 10,
@@ -67,7 +70,7 @@ class Level {
 			onClick: () => { setScreen("title"); }
 		});
 		this.skipButton = new Button({
-			x: max(width * 0.17, this.homeButton.x+this.homeButton.w+width*0.02), y: height * 0.05, w: max(60, width * 0.1), h: height * 0.1,
+			x: max(this.width * 0.17, this.homeButton.x+this.homeButton.w+this.width*0.02), y: this.height * 0.05, w: max(60, this.width * 0.1), h: this.height * 0.1,
 			label: "Skip",
 			style: {
 				r: 10,
@@ -83,12 +86,12 @@ class Level {
 	setupBoxes() {
 		const spaceConst = 0.8;
 		const count = this.values.length;
-		const boxW = width / (this.values.length+1);
-		const boxH = height * 0.265;
-		const spacing = width / (count + 2*spaceConst-1);
+		const boxW = this.width / (this.values.length+1);
+		const boxH = this.height * 0.265;
+		const spacing = this.width / (count + 2*spaceConst-1);
 		this.boxes = this.values.map((v, i) => ({
 			x: spacing * (i + spaceConst) - boxW / 2,
-			y: height * 0.225,
+			y: this.height * 0.225,
 			w: boxW,
 			h: boxH,
 			value: v,
@@ -100,9 +103,9 @@ class Level {
 	setupOps() {
 		const spaceConst = this.opSymbols.length>=8 ? 0.6 : 1.9;
 		const syms = this.opSymbols;
-		const btnW = width * (this.opSymbols.length>=8 ? 1.18 : 0.91) / (this.opSymbols.length+3);
-		const btnH = height * 0.16;
-		const spacing = width / (syms.length + 2*spaceConst-1);
+		const btnW = this.width * (this.opSymbols.length>=8 ? 1.18 : 0.91) / (this.opSymbols.length+3);
+		const btnH = this.height * 0.16;
+		const spacing = this.width / (syms.length + 2*spaceConst-1);
 		this.opButtons = syms.map((s, i) => new Operation(
 			s,
 			(a, b) => {
@@ -132,7 +135,7 @@ class Level {
 				}
 			},
 			spacing * (i + spaceConst) - btnW / 2,
-			height * 0.525,
+			this.height * 0.525,
 			btnW,
 			btnH
 		));
@@ -141,7 +144,7 @@ class Level {
 		}
 	}
 
-	draw() {
+	draw(showBackground = true) {
 		const WIN_TIMER_START = 75;
 		if (this.winTimer === 0 && this.boxes.length === 1 && this.boxes[0].value.equals(new Complex(24))) {
 			this.winTimer = WIN_TIMER_START;
@@ -157,8 +160,8 @@ class Level {
 				if(b.value.equals(new Complex(24))){
 					let factor = constrain((WIN_TIMER_START-this.winTimer)*0.006-0.03,-0.02,1);
 					let vel = {
-						x:(width/2-b.w/2-b.x)*factor,
-						y:(height*0.32-b.h/2-b.y)*factor
+						x:(this.width/2-b.w/2-b.x)*factor,
+						y:(this.height*0.32-b.h/2-b.y)*factor
 					};
 					b.x += vel.x;
 					b.y += vel.y;
@@ -169,14 +172,18 @@ class Level {
 					// b.drawScale = 1+constrain(dist(0,0,vel.x,vel.y),0,10)*0.03;
 				}
 			}
-			background(theme.backgroundColorCorrect);
+			if(showBackground){
+				background(theme.backgroundColorCorrect);
+			}
 			this.winTimer--;
 			if (this.winTimer <= 0) {
 				this.solved = true;
 				return;
 			}
 		} else {
-			background(theme.backgroundColor);
+			if(showBackground){
+				background(theme.backgroundColor);
+			}
 		}
 		this.drawOps();
 		this.drawBoxes();
@@ -206,7 +213,7 @@ class Level {
 				b.drawOffset = 0;
 			}
 			if (i === this.firstIndex || mx > b.x && mx < b.x + b.w && my > b.y && my < b.y + b.h) {
-				b.drawOffset -= height*0.005;
+				b.drawOffset -= this.height*0.005;
 				// alternative: b.drawAngle += b.locName%2 ? -0.02 : 0.02
 			}
 			push();
@@ -228,7 +235,7 @@ class Level {
 
 			const maxWidth = b.w - 7;
 			const maxHeight = b.h - 7;
-			const fallbackFontSize = min(height * 0.05, width * 0.07);
+			const fallbackFontSize = min(this.height * 0.05, this.width * 0.07);
 
 			// First check if fallback size is enough for one-line fit
 			textSize(fallbackFontSize);
@@ -237,7 +244,7 @@ class Level {
 
 			if (fallbackWidth <= maxWidth && fallbackHeight <= maxHeight) {
 				// Try to find largest size that fits in one line
-				let low = fallbackFontSize, high = (height+width/2) * 0.08, bestSize = fallbackFontSize;
+				let low = fallbackFontSize, high = (this.height+this.width/2) * 0.08, bestSize = fallbackFontSize;
 				while (low <= high) {
 					let mid = (low + high) >> 1;
 					textSize(mid);

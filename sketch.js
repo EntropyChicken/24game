@@ -1,8 +1,7 @@
 const EQUALITY_THRESHOLD = 1e-6;
 const DISPLAY_THRESHOLD = 7e-9;
 let screen = "title";
-let level;
-let titleScreen;
+let level, duel, titleScreen;
 let classicSets = [[], [], [], [], []];
 let puzzleSets = [[], [], [], []];
 let currentLevelSet = null;
@@ -42,6 +41,9 @@ function windowResized() {
 	titleScreen = new TitleScreen();
 	if(level!==undefined){
 		level.setupLayout();
+	}
+	if(duel!==undefined){
+		duel.setupLayout();
 	}
 }
 
@@ -86,7 +88,11 @@ function getRandomLevel(levelSet, previousCards, defaultOps = Level.SYMBOLS, ove
 	else{
 		cards = lvl.cards;
 	}
-	return new Level(cards, ops, lvl);
+	return {
+		cards:cards,
+		ops:ops,
+		lvl:lvl
+	};
 }
 
 
@@ -237,6 +243,9 @@ function setScreen(s){
 		setThemeColor(theme.backgroundColor);
 	}
 	else{
+		if(screen === "duel"){
+			requestLandscape();
+		}
 		setThemeColor(color(0,0,0));
 	}
 }
@@ -252,25 +261,65 @@ function mousePressed() {
 		level.handleClick(mouseX, mouseY);
 	} else if (screen === "title") {
 		titleScreen.handleClick(mouseX, mouseY);
+	} else if (screen === "duel") {
+		duel.handleClick(mouseX, mouseY);
 	}
 }
 function touchStarted() {
-	mousePressed();
-	return false;
+	if (screen === "game") {
+		for (let t of touches) {
+			level.handleClick(t.x, t.y);
+		}
+	} else if (screen === "title") {
+		for (let t of touches) {
+			titleScreen.handleClick(t.x, t.y);
+		}
+	} else if (screen === "duel") {
+		for (let t of touches) {
+			duel.handleClick(t.x, t.y);
+		}
+	}
+	return false; // don't default behavior (like scroll or zoom or smth)
+}
+function requestLandscape() {
+	if (screen.orientation && screen.orientation.lock) {
+		screen.orientation.lock('landscape')
+			.then(() => console.log("Landscape locked"))
+			.catch(err => console.warn("Could not lock orientation:", err));
+	}
+	else {
+		alert("Please rotate device to landscape mode");
+	}
 }
 
 
+
+
 function draw() {
+	if (canHover) {
+		mx = mouseX;
+		my = mouseY;
+	}
+	
 	if (screen === "title") {
 		titleScreen.draw();
 	} else if (screen === "game") {
 		background(220);
 		level.draw();
 		if (level.solved) {
-			level = getRandomLevel(currentLevelSet, level.originalValues.map(c => c.real),
+			let levelArgs = getRandomLevel(currentLevelSet, level.originalValues.map(c => c.real),
 				currentIsClassic ? ["+", "-", "×", "÷"] : Level.SYMBOLS, false, currentUsedIndices, !currentIsClassic);
+			level = new Level(levelArgs.cards,levelArgs.ops,levelArgs.lvl);
 			Level.setupKeyboard(level);
 			setThemeColor(theme.backgroundColor);
+		}
+	} else if (screen === "duel") {
+		background(220);
+		duel.draw();
+		if (duel.solved) {
+			let levelArgs = getRandomLevel(currentLevelSet, duel.levels[0].originalValues.map(c => c.real),
+				currentIsClassic ? ["+", "-", "×", "÷"] : Level.SYMBOLS, false, currentUsedIndices, !currentIsClassic);
+			duel = new Duel(levelArgs.cards,levelArgs.ops,levelArgs.lvl,duel.scores);
 		}
 	}
 }

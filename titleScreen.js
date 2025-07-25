@@ -155,9 +155,15 @@ class TitleScreen {
                 currentIsClassic = b.isClassic;
 				theme.shadeColor = (b.isClassic ? color(255,210,160) : color(180,210,255));
 				theme.backgroundColor = (b.isClassic ? color(255,225,190) : color(210,225,250));
-                level = getRandomLevel(currentLevelSet, [], currentIsClassic ? ["+","-","×","÷"] : Level.SYMBOLS, false, currentUsedIndices, !currentIsClassic);
-                Level.setupKeyboard(level);
-				setScreen("game");
+                let levelData = getRandomLevel(currentLevelSet, [], currentIsClassic ? ["+","-","×","÷"] : Level.SYMBOLS, false, currentUsedIndices, !currentIsClassic);
+
+                // level = new Level(levelData.cards,levelData.ops,levelData.lvl);
+				// Level.setupKeyboard(level);
+				// setScreen("game");
+
+                duel = new Duel(levelData.cards,levelData.ops,levelData.lvl);
+				setScreen("duel");
+
                 return;
             }
         }

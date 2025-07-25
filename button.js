@@ -25,7 +25,13 @@ function drawTextInBox(txt, x, y, w, h, maxFontSize = height * 0.045, minFontSiz
 	// If text fits, draw it directly
 	if (textWidth(txt) <= maxWidth) {
 		text(txt, x + w / 2, y + h / 2);
-		return;
+		/*
+		// debug rectangle outline
+		fill(0,0,255,100);
+		stroke(255,0,255);
+		rect(x,y,w,h);
+		*/
+		return textWidth(txt);
 	}
 
 	// Custom line-breaking logic
@@ -57,13 +63,15 @@ function drawTextInBox(txt, x, y, w, h, maxFontSize = height * 0.045, minFontSiz
 	let startY = y + h / 2 - totalHeight / 2 + lineHeight / 2;
 
 	if(minFontSize>14&&lines.length>=5){
-		drawTextInBox(txt,x,y,w,h,maxFontSize,14);
-		return;
+		return drawTextInBox(txt,x,y,w,h,maxFontSize,14);
 	}
 	
+	let maxLineWidth = 0;
 	for (let i = 0; i < lines.length; i++) {
+		maxLineWidth = max(maxLineWidth,textWidth(lines[i]));
 		text(lines[i], x + w / 2, startY + i * lineHeight);
 	}
+	return maxLineWidth;
 }
 
 class Button {

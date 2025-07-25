@@ -12,16 +12,17 @@ function smoothErp(a,recursion=1){
 class Level {
 	static SYMBOLS = ["+","-","×","÷","^","√","ln","!","sin","cos","tan","cot","asin","acos","abs","%"];
 
-	constructor(numbers, opSymbols = Level.SYMBOLS, metaData = {}) {
+	constructor(numbers, opSymbols = Level.SYMBOLS, metaData = {}, useRational = false) {
 		this.metaData = metaData;
-		this.values = numbers.map(n => new Complex(n));
-		this.originalValues = numbers.map(n => new Complex(n));
+		this.values = numbers.map(n => useRational ? new Rational(n, 1) : new Complex(n));
+		this.originalValues = numbers.map(n => useRational ? new Rational(n, 1) : new Complex(n));
 		this.opSymbols = opSymbols;
 		this.firstIndex = null;
 		this.selectedOp = null;
 		this.history = [];
 		this.winTimer = 0;
 		this.solved = false; // for external use
+		this.useRational = useRational;
 		this.setupLayout(width,height);
 	}
 
@@ -214,7 +215,6 @@ class Level {
 			}
 			if (i === this.firstIndex || mx > b.x && mx < b.x + b.w && my > b.y && my < b.y + b.h) {
 				b.drawOffset -= this.height*0.005;
-				// alternative: b.drawAngle += b.locName%2 ? -0.02 : 0.02
 			}
 			push();
 			translate(b.x+b.w/2,b.y+b.h/2);
@@ -230,58 +230,91 @@ class Level {
 			noStroke();
 			textAlign(CENTER, CENTER);
 
-			fill(b.value.getColor());
-			let txt = b.value.getText();
+			let minFontSize = min(this.height * 0.05, this.width * 0.07);
+			let maxFontSize = max(minFontSize,min((this.height+this.width/2) * 0.08, this.height*0.22));
 
-			const maxWidth = b.w - 7;
-			const maxHeight = b.h - 7;
-			const fallbackFontSize = min(this.height * 0.05, this.width * 0.07);
-
-			// First check if fallback size is enough for one-line fit
-			textSize(fallbackFontSize);
-			let fallbackWidth = textWidth(txt);
-			let fallbackHeight = fallbackFontSize * 1.2;
-
-			if (fallbackWidth <= maxWidth && fallbackHeight <= maxHeight) {
-				// Try to find largest size that fits in one line
-				let low = fallbackFontSize, high = (this.height+this.width/2) * 0.08, bestSize = fallbackFontSize;
-				while (low <= high) {
-					let mid = (low + high) >> 1;
-					textSize(mid);
-					let w = textWidth(txt);
-					let h = mid * 1.2;
-
-					if (w <= maxWidth && h <= maxHeight) {
-						bestSize = mid;
-						low = mid + 1;
-					} else {
-						high = mid - 1;
-					}
+			if (b.value instanceof Rational) {
+				fill(b.value.getColor());
+				let numerator = b.value.numerator;
+				let denominator = b.value.denominator;
+				if(isNaN(numerator)){
+					numerator = "🤯⁉️";
 				}
-				textSize(bestSize);
-				text(txt, b.x + b.w/2, b.y + b.h/2);
+				if(isNaN(denominator)){
+					denominator = "😭🥀";
+				}
+				if (b.value.isInteger()) {
+					drawTextInBox(numerator,b.x+b.w*0.015,b.y,b.w*0.97,b.h,maxFontSize,minFontSize,b.value.getColor());
+				} else {
+					let maxLineWidth = b.w*0.4;
+					maxLineWidth=max(maxLineWidth,drawTextInBox(numerator,b.x+b.w*0.015,b.y,b.w*0.97,b.h*0.485,max(minFontSize,maxFontSize*0.75),minFontSize,b.value.getColor()));
+					maxLineWidth=max(maxLineWidth,drawTextInBox(denominator,b.x+b.w*0.015,b.y+b.h*0.485,b.w*0.97,b.h*0.485,max(minFontSize,maxFontSize*0.75),minFontSize,b.value.getColor()));
+					maxLineWidth=min(maxLineWidth,b.w*0.97);
+					
+					const lineY = b.y + b.h / 2 - textDescent()/2; // compensate for missing "bottom" of numerical chars to be truly centered
+					push();
+					strokeWeight(this.height*0.008);
+					stroke(0);
+					line(b.x + (b.w-maxLineWidth)/2, lineY, b.x + (b.w+maxLineWidth)/2, lineY);
+					pop();
+				}
 			} else {
-				// Wrapping fallback
-				textSize(fallbackFontSize);
-				let lines = [];
-				let currentLine = '';
-				for (let char of txt) {
-					let testLine = currentLine + char;
-					if (textWidth(testLine) > maxWidth && currentLine.length > 0) {
-						lines.push(currentLine);
-						currentLine = char;
+				drawTextInBox(b.value.getText(),b.x+b.w*0.015,b.y,b.w*0.97,b.h,(this.height+this.width/2) * 0.08,min(this.height * 0.05, this.width * 0.07),b.value.getColor());
+				
+				/*
+					// older version slightly different
+
+					fill(b.value.getColor());
+					fill(0,255,0,150);
+					let txt = b.value.getText();
+					const maxWidth = b.w - 7;
+					const maxHeight = b.h - 7;
+					const fallbackFontSize = min(this.height * 0.05, this.width * 0.07);
+
+					textSize(fallbackFontSize);
+					let fallbackWidth = textWidth(txt);
+					let fallbackHeight = fallbackFontSize * 1.2;
+
+					if (fallbackWidth <= maxWidth && fallbackHeight <= maxHeight) {
+						let low = fallbackFontSize, high = (this.height+this.width/2) * 0.08, bestSize = fallbackFontSize;
+						while (low <= high) {
+							let mid = (low + high) >> 1;
+							textSize(mid);
+							let w = textWidth(txt);
+							let h = mid * 1.2;
+
+							if (w <= maxWidth && h <= maxHeight) {
+								bestSize = mid;
+								low = mid + 1;
+							} else {
+								high = mid - 1;
+							}
+						}
+						textSize(bestSize);
+						text(txt, b.x + b.w/2, b.y + b.h/2);
 					} else {
-						currentLine = testLine;
+						textSize(fallbackFontSize);
+						let lines = [];
+						let currentLine = '';
+						for (let char of txt) {
+							let testLine = currentLine + char;
+							if (textWidth(testLine) > maxWidth && currentLine.length > 0) {
+								lines.push(currentLine);
+								currentLine = char;
+							} else {
+								currentLine = testLine;
+							}
+						}
+						if (currentLine.length > 0) lines.push(currentLine);
+
+						const lineHeight = fallbackFontSize * 1.05;
+						const startY = b.y + b.h / 2 - (lines.length - 1) * lineHeight / 2 + 3;
+
+						lines.forEach((line, j) => {
+							text(line, b.x + b.w/2, startY + j * lineHeight);
+						});
 					}
-				}
-				if (currentLine.length > 0) lines.push(currentLine);
-
-				const lineHeight = fallbackFontSize * 1.05;
-				const startY = b.y + b.h / 2 - (lines.length - 1) * lineHeight / 2 + 3;
-
-				lines.forEach((line, j) => {
-					text(line, b.x + b.w/2, startY + j * lineHeight);
-				});
+				*/
 			}
 			pop();
 
@@ -304,11 +337,20 @@ class Level {
 		}
 		this.undoButton.drawScale -= 0.08;
 		const prev = this.history.pop();
-		this.boxes = prev.map(b => ({
-			x: b.x, y: b.y, w: b.w, h: b.h,
-			value: new Complex(b.value.real, b.value.imag),
-			locName: b.locName
-		}));
+		if(this.useRational){
+			this.boxes = prev.map(b => ({
+				x: b.x, y: b.y, w: b.w, h: b.h,
+				value: new Rational(b.value.numerator, b.value.denominator),
+				locName: b.locName
+			}));
+		}
+		else{
+			this.boxes = prev.map(b => ({
+				x: b.x, y: b.y, w: b.w, h: b.h,
+				value: new Complex(b.value.real, b.value.imag),
+				locName: b.locName
+			}));
+		}
 		this.firstIndex = null;
 		this.selectedOp = null;
 	}
@@ -317,7 +359,29 @@ class Level {
 		this.saveState();
 		const a = this.boxes[i1].value;
 		const b = this.boxes[i2].value;
-		const res = opBtn.apply(a, b);
+
+		let res;
+		if (a instanceof Rational && b instanceof Rational) {
+			switch (opBtn.symbol) {
+				case '+':
+					res = a.add(b);
+					break;
+				case '-':
+					res = a.subtract(b);
+					break;
+				case '×':
+					res = a.multiply(b);
+					break;
+				case '÷':
+					res = a.divide(b);
+					break;
+				default:
+					throw new Error(`Unsupported operator for Rational: ${opBtn.symbol}`);
+			}
+		} else {
+			res = opBtn.apply(a, b);
+		}
+
 		this.boxes[i2].value = res;
 		this.boxes[i2].drawScale += 0.1;
 		this.boxes.splice(i1, 1);
@@ -333,11 +397,21 @@ class Level {
 		return !(symbol === '+' || symbol === '-' || symbol === '×' || symbol === '÷' || symbol === '^' || symbol === '%');
 	}
 	saveState() {
-		const snap = this.boxes.map(b => ({
-			x: b.x, y: b.y, w: b.w, h: b.h,
-			value: new Complex(b.value.real, b.value.imag),
-			locName: b.locName
-		}));
+		let snap;
+		if(this.useRational){
+			snap = this.boxes.map(b => ({
+				x: b.x, y: b.y, w: b.w, h: b.h,
+				value: new Rational(b.value.numerator, b.value.denominator),
+				locName: b.locName
+			}));
+		}
+		else{
+			snap = this.boxes.map(b => ({
+				x: b.x, y: b.y, w: b.w, h: b.h,
+				value: new Complex(b.value.real, b.value.imag),
+				locName: b.locName
+			}));
+		}
 
 		const last = this.history[this.history.length - 1];
 		if (last && JSON.stringify(snap) === JSON.stringify(last)) return;
@@ -545,7 +619,14 @@ class Level {
 			// Find first box with that number (real part, imag==0)
 			for (let i = 0; i < this.boxes.length; i++) {
 				let v = this.boxes[i].value;
-				if (v.imag === 0 && v.real.toString() === key && (i !== this.firstIndex || !(this.firstIndex !== null && this.selectedOp))) {
+				let valMatch;
+				if(this.useRational){
+					valMatch = (v.isInteger() && v.numerator.toString() === key);
+				}
+				else{
+					valMatch = (v.imag === 0 && v.real.toString() === key);
+				}
+				if (valMatch && (i !== this.firstIndex || !(this.firstIndex !== null && this.selectedOp))) {
 					if (this.firstIndex !== null && this.selectedOp) {
 						this.applyOperation(this.firstIndex, i, this.selectedOp);
 					} else {
@@ -558,7 +639,16 @@ class Level {
 			// (didn't find it) deselection
 			if(this.firstIndex!==null&&this.selectedOp){
 				let v = this.boxes[this.firstIndex].value;
-				if (v.imag === 0 && v.real.toString() === key){
+
+				let valMatch;
+				if(this.useRational){
+					valMatch = (v.isInteger() && v.numerator.toString() === key);
+				}
+				else{
+					valMatch = (v.imag === 0 && v.real.toString() === key);
+				}
+
+				if (valMatch){
 					this.firstIndex = null;
 					this.selectedOp = null;
 				}

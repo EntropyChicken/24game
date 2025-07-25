@@ -327,7 +327,7 @@ function draw() {
 		if (level.solved) {
 			let levelArgs = getRandomLevel(currentLevelSet, level.originalValues.map(c => c.real),
 				currentIsClassic ? ["+", "-", "×", "÷"] : Level.SYMBOLS, false, currentUsedIndices, !currentIsClassic);
-			level = new Level(levelArgs.cards,levelArgs.ops,levelArgs.lvl);
+			level = new Level(levelArgs.cards,levelArgs.ops,levelArgs.lvl,currentIsClassic);
 			Level.setupKeyboard(level);
 			setThemeColor(theme.backgroundColor);
 		}

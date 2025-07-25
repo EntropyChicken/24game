@@ -9,6 +9,7 @@
 
         // js
         "./sketch.js",
+        "./rational.js",
         "./complex.js",
         "./operation.js",
         "./bubble.js",

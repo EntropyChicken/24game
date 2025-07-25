@@ -11,7 +11,7 @@ class Duel {
 	constructor(numbers, opSymbols = Level.SYMBOLS, metaData = {}, scores = [0,0]) {
         this.levels = [];
         for(let i = 0; i<2; i++){
-            this.levels.push(new Level(numbers,opSymbols,metaData));
+            this.levels.push(new Level(numbers,opSymbols,metaData,currentIsClassic));
         }
         
         this.scores = scores;

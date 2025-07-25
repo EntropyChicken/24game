@@ -180,8 +180,8 @@ class TitleScreen {
                 currentLevelSet = b.set;
                 currentUsedIndices = [];
                 currentIsClassic = b.isClassic;
-				theme.shadeColor = (b.isClassic ? color(255,210,160) : color(180,210,255));
-				theme.backgroundColor = (b.isClassic ? color(255,225,190) : color(210,225,250));
+                theme.shadeColor = (b.isClassic ? color(255,210,160) : color(180,210,255));
+                theme.backgroundColor = (b.isClassic ? color(255,225,190) : color(210,225,250));
                 let levelData = getRandomLevel(currentLevelSet, [], currentIsClassic ? ["+","-","×","÷"] : Level.SYMBOLS, false, currentUsedIndices, !currentIsClassic);
 
 				if(this.duelMode){
@@ -189,7 +189,7 @@ class TitleScreen {
 					setScreen("duel");
 				}
 				else{
-					level = new Level(levelData.cards,levelData.ops,levelData.lvl);
+					level = new Level(levelData.cards,levelData.ops,levelData.lvl, b.isClassic);
 					Level.setupKeyboard(level);
 					setScreen("game");
 				}

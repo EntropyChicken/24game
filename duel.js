@@ -126,6 +126,9 @@ class Duel {
             // fill(255,0,0);ellipse(mx,my,200,200);
             pop();
         }
+        fill(100,93,85,30);
+        noStroke();
+        rect(this.width*0.49,0,this.width*0.02,this.height);
 
         let iot = this.inverseOuterTransform(trueMx, trueMy);
         mx = iot.x;

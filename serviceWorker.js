@@ -1,4 +1,4 @@
-const CACHE_NAME = "24game-cache-v5";
+const CACHE_NAME = "24game-cache-v6";
 const CACHE_FILES = [
 	"./index.html",
 	"./style.css",
@@ -17,7 +17,7 @@ const CACHE_FILES = [
 	"./duel.js",
 	"./level.js",
 	"./titleScreen.js",
-	"./serviceWorker.js", // sus? unless you want to ctrl shift r every time you make a change
+	// "./serviceWorker.js", // sus? unless you want to ctrl shift r every time you make a change
 
 	// libraries
 	"./libraries/p5.min.js",

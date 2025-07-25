@@ -1,6 +1,6 @@
 {
-	"name": "24 Game",
-	"short_name": "24",
+	"name": "Make 24",
+	"short_name": "Make 24",
 	"start_url": ".",
 	"display": "standalone",
 	"background_color": "#ffffff",

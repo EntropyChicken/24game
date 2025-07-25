@@ -243,9 +243,9 @@ function setScreen(s){
 		setThemeColor(theme.backgroundColor);
 	}
 	else{
-		if(screen === "duel"){
-			requestLandscape();
-		}
+		// if(screen === "duel"){
+		// 	requestLandscape();
+		// }
 		setThemeColor(color(0,0,0));
 	}
 }
@@ -281,6 +281,8 @@ function touchStarted() {
 	}
 	return false; // don't default behavior (like scroll or zoom or smth)
 }
+
+// unused, just automatically find longer side
 function requestLandscape() {
 	if (screen.orientation && screen.orientation.lock) {
 		screen.orientation.lock('landscape')

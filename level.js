@@ -234,7 +234,8 @@ class Level {
 			let maxFontSize = max(minFontSize,min((this.height+this.width/2) * 0.08, this.height*0.22));
 
 			if (b.value instanceof Rational) {
-				fill(b.value.getColor());
+				let col = b.value.getColor();
+				fill(col);
 				let numerator = b.value.numerator;
 				let denominator = b.value.denominator;
 				if(isNaN(numerator)){
@@ -254,7 +255,7 @@ class Level {
 					const lineY = b.y + b.h / 2 - textDescent()/2; // compensate for missing "bottom" of numerical chars to be truly centered
 					push();
 					strokeWeight(this.height*0.008);
-					stroke(0);
+					stroke(col);
 					line(b.x + (b.w-maxLineWidth)/2, lineY, b.x + (b.w+maxLineWidth)/2, lineY);
 					pop();
 				}

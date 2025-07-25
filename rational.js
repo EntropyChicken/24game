@@ -69,6 +69,15 @@ class Rational {
     }
     
     getColor(){
+        if(isNaN(this.numerator)||isNaN(this.denominator||typeof(this.numerator)!=="number"||typeof(this.denominator)!=="number")||!isFinite(this.numerator)||!isFinite(this.denominator)){
+            return color(120,120,120);
+        }
+        if(this.numerator<0){
+            return color(255,0,100);
+        }
+        if(!this.isInteger()){
+            return color(200,120,0);
+        }
         return color(0,0,0);
     }
 }

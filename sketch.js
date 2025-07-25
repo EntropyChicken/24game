@@ -265,22 +265,33 @@ function mousePressed() {
 		duel.handleClick(mouseX, mouseY);
 	}
 }
+
+let processedTouchIds = new Set();
+
 function touchStarted() {
-	if (screen === "game") {
-		for (let t of touches) {
-			level.handleClick(t.x, t.y);
-		}
-	} else if (screen === "title") {
-		for (let t of touches) {
-			titleScreen.handleClick(t.x, t.y);
-		}
-	} else if (screen === "duel") {
-		for (let t of touches) {
-			duel.handleClick(t.x, t.y);
+	for (let t of touches) {
+		if (!processedTouchIds.has(t.id)) {
+			processedTouchIds.add(t.id);
+			
+			if (screen === "game") {
+				level.handleClick(t.x, t.y);
+			} else if (screen === "title") {
+				titleScreen.handleClick(t.x, t.y);
+			} else if (screen === "duel") {
+				duel.handleClick(t.x, t.y);
+			}
 		}
 	}
-	return false; // don't default behavior (like scroll or zoom or smth)
+	return false;
 }
+
+// Hook into raw touchend events
+window.addEventListener("touchend", (e) => {
+	for (let t of e.changedTouches) {
+		processedTouchIds.delete(t.identifier);
+	}
+});
+
 
 // unused, just automatically find longer side
 function requestLandscape() {

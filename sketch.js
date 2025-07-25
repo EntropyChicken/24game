@@ -40,7 +40,12 @@ function setup() {
 function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
 	
-	titleScreen = new TitleScreen();
+	let newTitleScreen = new TitleScreen();
+	if(titleScreen!==undefined){
+		newTitleScreen.duelMode = titleScreen.duelMode;
+	}
+	titleScreen = newTitleScreen;
+	
 	if(level!==undefined){
 		level.setupLayout();
 	}

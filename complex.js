@@ -119,6 +119,9 @@ class Complex {
     }
     naturalLog(checkReal = false) {
         if(this.isNaN()) return new Complex(NaN,NaN);
+        if(this.equals(new Complex(0),DISPLAY_THRESHOLD)){
+            return new Complex(NaN,NaN);
+        }
         if (checkReal && this.round().imag === 0) {
             return new Complex(Math.log(this.real));
         }
@@ -255,7 +258,7 @@ class Complex {
         const oneMinusZSquared = (new Complex(1, 0)).subtract(zSquared);
 
         // Handle edge case where |z| ≈ 1 (e.g., z = 1 or z = -1)
-        if (oneMinusZSquared.round().equals(new Complex(0, 0))) {
+        if (oneMinusZSquared.round().equals(new Complex(0),DISPLAY_THRESHOLD)) {
             return new Complex(Math.PI / 2 * Math.sign(this.real), 0);
         }
 
@@ -269,11 +272,11 @@ class Complex {
         const zSquared = this.multiply(this);
         const oneMinusZSquared = (new Complex(1, 0)).subtract(zSquared);
 
-        if (oneMinusZSquared.round().equals(new Complex(0, 0))) {
+        if (oneMinusZSquared.round().equals(new Complex(0),DISPLAY_THRESHOLD)) {
             return new Complex((this.real > 0) ? 0 : Math.PI, 0);
         }
 
-        const root = oneMinusZSquared.power(new Complex(0.5, 0));
+        const root = oneMinusZSquared.power(new Complex(0.5));
         const inner = this.add(i.multiply(root));
         return i.negate().multiply(inner.naturalLog());
     }

@@ -121,17 +121,26 @@ class Level {
 	}
 
 	setupOps() {
-		this.reSetupOps(); // scuffed but yeah this is just that but with the animation
-		for(let btn of this.opButtons){
-			btn.drawScale = 0.7;
-		}
+		this.reSetupOps(0.7); // scuffed but yeah this is just that but with the animation
 	}
-	reSetupOps() {
+	reSetupOps(drawScale) {
 		const spaceConst = this.opSymbols.length>=8 ? 0.6 : 1.9;
 		const syms = this.opSymbols;
 		const btnW = this.width * (this.opSymbols.length>=8 ? 1.18 : 0.91) / (this.opSymbols.length+3);
 		const btnH = this.height * 0.16;
 		const spacing = this.width / (syms.length + 2*spaceConst-1);
+		let drawScales = [];
+		for(let i = 0; i<syms.length; i++){
+			if(drawScale!==undefined){
+				drawScales.push(drawScale);
+			}
+			else if(this.opButtons!==undefined&&i<this.opButtons.length&&this.opButtons[i].drawScale!==undefined){
+				drawScales.push(this.opButtons[i].drawScale);
+			}
+			else{
+				drawScales.push(1);
+			}
+		}
 		this.opButtons = syms.map((s, i) => new Operation(
 			s,
 			(a, b) => {
@@ -163,8 +172,11 @@ class Level {
 			spacing * (i + spaceConst) - btnW / 2,
 			this.height * 0.525,
 			btnW,
-			btnH
+			btnH,
 		));
+		for(let i = 0; i<this.opButtons.length; i++){
+			this.opButtons[i].drawScale = drawScales[i];
+		}
 	}
 
 	draw(showBackground = true) {

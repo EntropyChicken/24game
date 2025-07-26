@@ -10,6 +10,7 @@ let currentIsClassic = true;
 let theme = {};
 let canHover;
 let mx = -1, my = -1;
+let canSetThemeColor = true;
 
 function preload() {
 	loadJSON("levelData/classicLevelsEasy.json", data => { classicSets[0] = data; });
@@ -25,6 +26,9 @@ function preload() {
 
 function setup() {
 	canHover = window.matchMedia('(hover: hover)').matches;
+	if(canHover){
+		canSetThemeColor = false;
+	}
 	
 	theme = {
 		shadeColor : color(255,0,255),
@@ -233,13 +237,14 @@ function finalStepEquals24(expression) {
 }
 
 function setThemeColor(color) {
-  let metaThemeColor = document.querySelector("meta[name=theme-color]");
-  if (!metaThemeColor) {
-    metaThemeColor = document.createElement('meta');
-    metaThemeColor.name = "theme-color";
-    document.head.appendChild(metaThemeColor);
-  }
-  metaThemeColor.setAttribute("content", color);
+	if(!canSetThemeColor) return;
+	let metaThemeColor = document.querySelector("meta[name=theme-color]");
+	if (!metaThemeColor) {
+		metaThemeColor = document.createElement('meta');
+		metaThemeColor.name = "theme-color";
+		document.head.appendChild(metaThemeColor);
+	}
+	metaThemeColor.setAttribute("content", color);
 }
 function setScreen(s){
 	screen = s;

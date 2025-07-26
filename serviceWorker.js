@@ -1,4 +1,4 @@
-    const CACHE_NAME = "24game-cache-v8";
+    const CACHE_NAME = "24game-cache-v9";
     const CACHE_FILES = [
         "./index.html",
         "./style.css",
@@ -39,6 +39,7 @@
 
 
     self.addEventListener("install", (event) => {
+        self.skipWaiting();
         event.waitUntil(
             caches.open(CACHE_NAME).then((cache) => {
                 return Promise.all(

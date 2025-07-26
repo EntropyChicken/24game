@@ -22,8 +22,15 @@
         navigator.serviceWorker.register("serviceWorker.js")
           .then(() => console.log("Service Worker registered"))
           .catch(err => console.error("SW registration failed:", err));
+
+        // reload the page when a new service worker takes over
+        navigator.serviceWorker.addEventListener("controllerchange", () => {
+          console.log("New service worker activated. Reloading page...");
+          location.reload();
+        });
       }
     </script>
+
 
   </head>
 

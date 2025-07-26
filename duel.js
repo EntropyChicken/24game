@@ -8,6 +8,10 @@ function inverseRotate(x,y,ang){
 }
 
 class Duel {
+    static SKIP_LOSER = false;
+    static LOSER_WIN_ANIMATION = false;
+    static WIN_TIMER_FREEZE = 3;
+
 	constructor(numbers, opSymbols = Level.SYMBOLS, metaData = {}, scores = [0,0]) {
         this.levels = [];
         for(let i = 0; i<2; i++){
@@ -55,7 +59,7 @@ class Duel {
                 },
                 getText: () => "Home",
                 onClick: () => {
-                    if(this.levels[0].winTimer===0&&this.levels[1].winTimer===0){
+                    if((!Duel.SKIP_LOSER)||this.levels[0].winTimer===0&&this.levels[1].winTimer===0){
                         setScreen("title");
                     }
                     else{
@@ -73,7 +77,7 @@ class Duel {
                 },
                 getText: () => "Skip",
                 onClick: () => {
-                    if(this.levels[0].winTimer===0&&this.levels[1].winTimer===0){
+                    if((!Duel.SKIP_LOSER)||this.levels[0].winTimer===0&&this.levels[1].winTimer===0){
                         this.solved = true;
                     }
                     else{
@@ -99,6 +103,9 @@ class Duel {
         background(theme.backgroundColor);
         
         for(let i = 0; i<2; i++){
+            if((!Duel.SKIP_LOSER)&&this.isSolved(i)&&this.levels[i].winTimer<=Duel.WIN_TIMER_FREEZE){
+                this.levels[i].winTimer = Duel.WIN_TIMER_FREEZE;
+            }
             push();
             noStroke();
             if(i===0){
@@ -112,7 +119,7 @@ class Duel {
             let it = this.inverseTransform(trueMx,trueMy,i);
             mx = it.x;
             my = it.y;
-            if(this.levels[i].winTimer>0){
+            if(this.levels[i].winTimer>0){ // since this is before draw() this won't apply on the first frame of win
                 fill(theme.backgroundColorCorrect);
                 rect(0,0,this.height,this.width/2);
             }
@@ -139,14 +146,42 @@ class Duel {
 
         mx = trueMx;
         my = trueMy;
+        pop();
 
-        for(let i = 0; i<2; i++){ // this will actually award both a point if there is a frame perfect tie
-            if(this.levels[i].solved){
-                this.solved = true;
-                this.scores[i]++;
+        if(Duel.SKIP_LOSER){
+            for(let i = 0; i<2; i++){ // this will actually award both a point if there is a frame perfect tie
+                if(this.levels[i].solved){
+                    this.solved = true;
+                    this.scores[i]++;
+                }
             }
         }
-        pop();
+        else{
+            if(this.isJustSolved(0)&&this.isJustSolved(1)){ // frame perfect tie
+                this.scores[0]++;
+                this.scores[1]++;
+                this.solved = true;
+            }
+            else{
+                for(let i = 0; i<2; i++){
+                    if(this.isJustSolved(i)){
+                        if(this.isSolved(1-i)){
+                            if(!Duel.LOSER_WIN_ANIMATION){
+                                this.solved = true;
+                            }
+                        }
+                        else{
+                            this.scores[i]++;
+                        }
+                    }
+                }
+            }
+            if(Duel.LOSER_WIN_ANIMATION){
+                if(this.isSolved(0)&&this.isSolved(1)&&this.levels[0].winTimer<=Duel.WIN_TIMER_FREEZE&&this.levels[1].winTimer<=Duel.WIN_TIMER_FREEZE){
+                    this.solved = true;
+                }
+            }
+        }
     }
     handleClick(mx,my){
         let iot = this.inverseOuterTransform(mx,my);
@@ -181,5 +216,19 @@ class Duel {
             let ty = y - this.height;
             return inverseRotate(tx, ty, -PI / 2);
         }
+    }
+    isJustSolved(i){
+        if(this.levels===undefined||i>=this.levels.length){
+            return false;
+        }
+        // if(Level.WIN_TIMER_START>1){
+            return this.levels[i].winTimer === Level.WIN_TIMER_START-1;
+        // }
+        // else{
+        //     return this.levels[i].solved; // scuffed
+        // }
+    }
+    isSolved(i){
+        return this.levels[i].solved||this.levels[i].winTimer>0;
     }
 }

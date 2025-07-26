@@ -11,6 +11,7 @@ function smoothErp(a,recursion=1){
 
 class Level {
 	static SYMBOLS = ["+","-","×","÷","^","√","ln","!","sin","cos","tan","cot","asin","acos","abs","%"];
+	static WIN_TIMER_START = 75;
 
 	constructor(numbers, opSymbols = Level.SYMBOLS, metaData = {}, useRational = false) {
 		this.metaData = metaData;
@@ -180,20 +181,36 @@ class Level {
 	}
 
 	draw(showBackground = true) {
-		const WIN_TIMER_START = 75;
+		if(showBackground){
+			if (this.winTimer > 0) {
+				background(theme.backgroundColorCorrect);
+			}
+			else {
+				background(theme.backgroundColor);
+			}
+		}
+		this.drawOps();
+		this.drawBoxes();
+		this.undoButton.draw(this.winTimer > 0);
+		this.hintButton.draw(this.winTimer > 0);
+		this.solutionButton.draw(this.winTimer > 0);
+		this.homeButton.draw(this.winTimer > 0);
+		this.skipButton.draw(this.winTimer > 0);
+
+		
 		if (this.winTimer === 0 && this.boxes.length === 1 && this.boxes[0].value.equals24()) {
-			this.winTimer = WIN_TIMER_START;
+			this.winTimer = Level.WIN_TIMER_START;
 			setThemeColor(theme.backgroundColorCorrect);
 		}
 		if (this.winTimer > 0) {
 			/*
 			for(let b of this.opButtons){
-				b.drawScale = smoothErp(this.winTimer/WIN_TIMER_START,3);
+				b.drawScale = smoothErp(this.winTimer/Level.WIN_TIMER_START,3);
 			}
 			*/
 			for(let b of this.boxes){
 				if(b.value.equals24()){
-					let factor = constrain((WIN_TIMER_START-this.winTimer)*0.006-0.03,-0.02,1);
+					let factor = constrain((Level.WIN_TIMER_START-this.winTimer)*0.006-0.03,-0.02,1);
 					let vel = {
 						x:(this.width/2-b.w/2-b.x)*factor,
 						y:(this.height*0.32-b.h/2-b.y)*factor
@@ -207,26 +224,12 @@ class Level {
 					// b.drawScale = 1+constrain(dist(0,0,vel.x,vel.y),0,10)*0.03;
 				}
 			}
-			if(showBackground){
-				background(theme.backgroundColorCorrect);
-			}
 			this.winTimer--;
 			if (this.winTimer <= 0) {
 				this.solved = true;
 				return;
 			}
-		} else {
-			if(showBackground){
-				background(theme.backgroundColor);
-			}
 		}
-		this.drawOps();
-		this.drawBoxes();
-		this.undoButton.draw(this.winTimer > 0);
-		this.hintButton.draw(this.winTimer > 0);
-		this.solutionButton.draw(this.winTimer > 0);
-		this.homeButton.draw(this.winTimer > 0);
-		this.skipButton.draw(this.winTimer > 0);
 	}
 	drawBoxes() {
 		let sorted = this.boxes

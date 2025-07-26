@@ -276,10 +276,10 @@ class Level {
 				let numerator = b.value.numerator;
 				let denominator = b.value.denominator;
 				if(isNaN(numerator)){
-					numerator = "🤯⁉️";
+					numerator = "🤯";
 				}
 				if(isNaN(denominator)){
-					denominator = "😭🥀";
+					denominator = "⁉️";
 				}
 				if (b.value.isInteger()) {
 					drawTextInBox(numerator,b.x+b.w*0.015,b.y,b.w*0.97,b.h,maxFontSize,minFontSize,b.value.getColor());

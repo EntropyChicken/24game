@@ -520,7 +520,7 @@ class Level {
 				else{
 					finalStep = getFinalStep(sol);
 				}
-				hint += "Possible final step: " + finalStep; 
+				hint += (solCount===1 ? "Final step: " : "Possible final step: ") + finalStep; 
 			}
 		}
 		else{

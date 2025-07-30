@@ -68,6 +68,18 @@ class Rational {
         return this.isInteger()&&this.numerator===24;
     }
     
+    operation(s,b) {
+        switch (s) {
+            case '+': return this.add(b);
+            case '-': return this.subtract(b);
+            case '×': return this.multiply(b);
+            case '÷': return this.divide(b);
+            default:
+                console.log("Invalid operator char");
+                return new Complex("Invalid operator char");
+        }
+    }
+
     getColor(){
         if(isNaN(this.numerator)||isNaN(this.denominator||typeof(this.numerator)!=="number"||typeof(this.denominator)!=="number")||!isFinite(this.numerator)||!isFinite(this.denominator)){
             return color(120,120,120);

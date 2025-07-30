@@ -107,8 +107,14 @@ function getRandomLevel(levelSet, previousCards, defaultOps = Level.SYMBOLS, ove
 }
 
 
-
-
+function symbolIsUnary(symbol) {
+	const unaryOperators = ['√', 'ln', '!', 'sin', 'cos', 'tan', 'cot', 'asin', 'acos', 'abs', 'floor', 'round', 'ceil'];
+	return unaryOperators.includes(symbol);
+}
+function symbolIsBinary(symbol) {
+	const binaryOperators = ['+', '-', '×', '÷', '%', '^'];
+	return binaryOperators.includes(symbol);
+}
 function getFinalStep(expr) {
     // remove spaces
     expr = expr.replace(/\s+/g, "");

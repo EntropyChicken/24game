@@ -15,6 +15,12 @@ function factorialRecursive(int){
 
 class Complex {
     constructor(real, imag = 0) {
+        if(isNaN(real)){
+            imag = NaN;
+        }
+        if(isNaN(imag)){
+            real = NaN;
+        }
         this.real = real;
         this.imag = imag;
     }
@@ -316,6 +322,33 @@ class Complex {
             return new Complex(ceil(this.real));
         }
         return new Complex(NaN,NaN);
+    }
+
+    operation(s,b) {
+        switch (s) {
+            case '+': return this.add(b);
+            case '-': return this.subtract(b);
+            case '×': return this.multiply(b);
+            case '÷': return this.divide(b);
+            case '^': return this.power(b);
+            case '√': return this.sqrt();
+            case 'ln': return this.naturalLog();
+            case '!': return this.factorial();
+            case 'sin': return this.sin();
+            case 'cos': return this.cos();
+            case 'tan': return this.tan();
+            case 'cot': return this.cot();
+            case 'acos': return this.acos();
+            case 'asin': return this.asin();
+            case 'abs': return this.abs();
+            case '%': return this.modulo(b);
+            case 'floor': return this.floor();
+            case 'round': return this.mathDotRound();
+            case 'ceil': return this.ceil();
+            default:
+                console.log("Invalid operator char");
+                return new Complex("Invalid operator char");
+        }
     }
     
     getText(){

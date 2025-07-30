@@ -10,7 +10,7 @@ function smoothErp(a,recursion=1){
 }
 
 class Level {
-	static SYMBOLS = ["+","-","×","÷","^","√","ln","!","sin","cos","tan","cot","asin","acos","abs","%"];
+	static SYMBOLS = ["+","-","×","÷","^","√","ln","!","sin","cos","tan","cot","asin","acos","abs","%"]; // round, floor, and ceil are not included for space purposes
 	static WIN_TIMER_START = 75;
 
 	constructor(numbers, opSymbols = Level.SYMBOLS, metaData = {}, useRational = false) {
@@ -26,7 +26,7 @@ class Level {
 		this.useRational = useRational;
 
 		this.setupBoxes();
-		this.setupOps(); // redundant, done again in reSetupLayout
+		this.setupOps();
 		this.reSetupLayout(width,height);
 	}
 
@@ -430,10 +430,6 @@ class Level {
 		this.selectedOp = null;  // remove this to easily repeat operation
 	}
 
-	symbolIsUnary(symbol){
-		// when adding any non-unary operator, update this list
-		return !(symbol === '+' || symbol === '-' || symbol === '×' || symbol === '÷' || symbol === '^' || symbol === '%');
-	}
 	saveState() {
 		let snap;
 		if(this.useRational){
@@ -577,7 +573,7 @@ class Level {
 		for (let btn of this.opButtons) {
 			if (btn.contains(mx, my)) {
 				// Check if this is a unary op (√ or ln)
-				if (this.symbolIsUnary(btn.symbol)) {
+				if (symbolIsUnary(btn.symbol)) {
 					if (this.firstIndex !== null) {
 						btn.drawScale -= 0.08;
 						// Apply unary op immediately to selected box
@@ -714,7 +710,7 @@ class Level {
 			for (let btn of this.opButtons) {
 				if (btn.symbol === symbol) {
 					// For unary ops, apply immediately if number selected
-					if (this.symbolIsUnary(symbol)) {
+					if (symbolIsUnary(symbol)) {
 						if (this.firstIndex === null) {
 							btn.drawAngle -= 0.16;
 						}

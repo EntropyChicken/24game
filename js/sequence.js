@@ -2,7 +2,9 @@ class Sequence {
     static SYMBOLS = ["+","-","×","÷","^","√","ln","!","sin","cos","tan","cot","asin","acos","abs","%","round","ceil","floor"];
 
     constructor(expr) {
+        // indexing is crucial for toExpr()
         this.actions = [];
+
         if(expr !== undefined) {
             this.fromExpr(expr);
         }
@@ -13,6 +15,7 @@ class Sequence {
         expr = expr.replace(/\s+/g, ''); // remove spaces
         expr = expr.replace(/\*/g, '×').replace(/\//g, '÷'); // fix asterisks or slashes into actual signs
         expr = replaceUnaryMinusWithUnderscore(expr);
+        expr = replaceScientificNumbers(expr);
 
         // sets this.actions to carry out the mathematical expression (guaranteed to be valid, uses parentheses)
         this.actions = []; // a list of objects
@@ -29,51 +32,55 @@ class Sequence {
         
         // cringe doubled computation but cost is negligible
         let leftVal; // Complex
+        let leftSource = -1;
         if(topSplitExpr(parts.left)===null){
             leftVal = new Complex(stringToNum(parts.left)); // this is actually ZERO if the string is empty, but it is ignored for unary operator case anyway
         }
         else{
             leftVal = this.fromExprRecursive(parts.left);
+            leftSource = this.actions.length-1; // the action just made by the call above
         }
         let rightVal; // Complex
+        let rightSource = -1;
         if(topSplitExpr(parts.right)===null){
             rightVal = new Complex(stringToNum(parts.right));
         }
         else{
             rightVal = this.fromExprRecursive(parts.right);
+            rightSource = this.actions.length-1;
         }
 
 
         if(symbolIsBinary(parts.splitter)){
-            let r = leftVal.operation(parts.splitter,rightVal);
             this.actions.push({
                 a:leftVal,
                 s:parts.splitter,
                 b:rightVal,
-                r:r
+                aId:leftSource,
+                bId:rightSource
             });
-            return r;
+            return leftVal.operation(parts.splitter,rightVal);
         }
         else if(symbolIsUnary(parts.splitter)){
             if(parts.splitter==="!"){
                 // content is to the left
-                let r = leftVal.operation(parts.splitter);
                 this.actions.push({
                     a:leftVal,
                     s:parts.splitter,
-                    r:r
+                    aId:leftSource,
+                    bId:rightSource
                 });
-                return r;
+                return leftVal.operation(parts.splitter);
             }
             else{
                 // content is to the right
-                let r = rightVal.operation(parts.splitter);
                 this.actions.push({
                     s:parts.splitter,
                     b:rightVal,
-                    r:r
+                    aId:leftSource,
+                    bId:rightSource
                 });
-                return r;
+                return rightVal.operation(parts.splitter);
             }
         }
         else{
@@ -82,7 +89,98 @@ class Sequence {
         }
     }
     toExpr() {
-        // returns the expression that describes this series of actions (guaranteed to exist)
+        // returns an expression that describes this series of actions (guaranteed to exist)
+        // hopefully but not guaranteed to be the inverse of fromExpr)
+        
+        return this.toExprRecursive(this.actions.length-1);
+    }
+    toExprRecursive(id) {
+        if(id===-1){
+            return null;
+        }
+        console.assert(id<this.actions.length,id,this.actions.length);
+        let t = this.actions[id];
+        if(t.a===undefined){
+            console.assert(t.b!==undefined);
+            let right = this.toExprRecursive(t.bId);
+            let rs = "";
+            if(right===null){
+                right = t.b.getText();
+                if(t.s==="√"){
+                    return t.s + right;
+                }
+            }
+            else{
+                rs = topSplitExpr(right).splitter;
+            }
+
+            // prefer √√√ over √(√(√(
+            if(!(symbolIsUnary(rs)&&right.charAt(0)==="√"&&t.s==="√")){
+                // general case: wrap
+                right = "("+right+")";
+            }
+            return t.s + right;
+        }
+        else if(t.b===undefined){
+            console.assert(t.a!==undefined);
+            let left = this.toExprRecursive(t.aId);
+            let isNumberName = false;
+            if(left===null){
+                left = t.a.getText();
+                isNumberName = true;
+            }
+            // )!)!)! is clearer than )!!! because it's not a triple factorial
+            if(!(t.s==="!"&&isNumberName)){
+                left = "("+left+")";
+            }
+            return left + t.s;
+        }
+        else{
+            console.assert(symbolIsBinary(t.s));
+            let precedence = binarySymbolPrecedence(t.s);
+
+            let left = this.toExprRecursive(t.aId);
+            let right = this.toExprRecursive(t.bId);
+
+            if(left===null){
+                left = t.a.getText();
+            }
+            else{
+                let ls = topSplitExpr(left).splitter;
+                if(symbolIsBinary(ls)){
+                    let leftPrecedence = binarySymbolPrecedence(ls);
+                    if(leftPrecedence<precedence){
+                        // if they're equal, left will evaluate first so no need
+                        left = "("+left+")";
+                    }
+                }
+            }
+
+            if(right===null){
+                right = t.b.getText();
+            }
+            else{
+                let rs = topSplitExpr(right).splitter;
+                if(symbolIsBinary(rs)){
+                    let rightPrecedence = binarySymbolPrecedence(rs);
+                    if(rightPrecedence<=precedence){
+                        // if they're equal, right MUST EVALUATE FIRST so NEED PARENTHESES
+                        right = "("+right+")";
+                    }
+                }
+            }
+
+            if(t.s==="^"){ // extra clarity for exponentiation
+                if(left.charAt(0)!=="("){
+                    left = "("+left+")";
+                }
+                if(right.charAt(0)!=="("){
+                    right = "("+right+")";
+                }
+            }
+
+            return left + t.s + right;
+        }
     }
 }
 
@@ -225,6 +323,22 @@ function replaceUnaryMinusWithUnderscore(expr) {
 
 	return result;
 }
+// for big scientific numbers, remove the plus sign. for small scientific numbers, write them out and/or round to 11 decimal points
+function replaceScientificNumbers(str) {
+	return str.replace(/\b-?\d+(\.\d+)?e[+-]?\d+\b/gi, match => {
+		const num = Number(match);
+
+		if (Math.abs(num) >= 1e5) {
+			// Keep scientific notation, but strip "+", keep "-"
+			return num.toExponential().replace(/e\+/, 'e');
+		} else {
+			// Convert to decimal form with up to 11 digits of precision (AFTER DECIMAL POINT)
+			let fixed = num.toFixed(11);
+			// Remove trailing zeros and possible trailing dot
+			return fixed.replace(/\.?0+$/, '');
+		}
+	});
+}
 function stringToNum(s){
     while(s.length>0&&s.charAt(0)==="("&&s.charAt(s.length-1)===")"){
         s = s.substring(1,s.length-1);
@@ -250,25 +364,35 @@ function stringToNum(s){
 // evaluates all expressions for all classics and puzzles except for js puzzles, sees if they're 24
 function testSolutions() {
     let problemSets = puzzleSets.slice(0, 3).concat(puzzleSets.slice(4), classicSets);
+    // let problemSets = puzzleSets.slice(0,3).concat(puzzleSets.slice(4));
 
     for(let problemSet of problemSets){
         for(let problem of problemSet){
             for(let sol of problem.sols){
                 let aug = sol+"+0";
-                console.log(aug);
-                let seq = new Sequence(aug);
-                if(seq.actions.length!==0){
-                    console.log(seq.actions);
-                    console.assert(seq.actions[seq.actions.length-1].a.equals24());
+                let ogAug = aug;
 
-                    // more obvious in console
-                    if(!seq.actions[seq.actions.length-1].a.equals24()){
-                        for(let asdf = 0; asdf<100; asdf++){
-                            console.log(random());
-                        }
+                for(let iter = 6; iter>0; iter--){
+                    // if(iter===1){
+                    //     console.log(iter,aug,ogAug);
+                    // }
+
+                    let seq = new Sequence(aug);
+                    console.assert(seq.actions.length!==0);
+                    console.assert(seq.actions[seq.actions.length-1].a.equals24());
+                    // // more obvious in console
+                    // if(!seq.actions[seq.actions.length-1].a.equals24()){
+                    //     for(let asdf = 0; asdf<100; asdf++){
+                    //         console.log(random());
+                    //     }
+                    // }
+                    aug = seq.toExpr();
+                    if(aug===ogAug){
+                        break;
                     }
                 }
             }
         }
     }
+    console.assert(false,"all done!");
 }

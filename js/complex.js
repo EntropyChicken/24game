@@ -351,13 +351,13 @@ class Complex {
         }
     }
     
-    getText(){
+    getText(checkDebug = false){
         if(typeof(this.real)==="string"&&this.imag===0){
             return "\""+this.real+"\"";
         }
 
         let txt = "";
-        if(keyIsDown(32)){
+        if(checkDebug&&keyIsDown(32)){
             txt = this.real.toString()+"+"+this.imag.toString()+"i";
             fill(0,100,0);
         }

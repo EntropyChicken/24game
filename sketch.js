@@ -25,6 +25,13 @@ function preload() {
 }
 
 function setup() {
+	// let seq = new Sequence("ln(√√(-1)÷-1)÷ln(√√√√√(-1)-√(-2))+0");
+	// console.log(seq);
+	// console.log(seq.toExpr());
+	// console.log(topSplitExpr("√√(-1)^√√(-2)"));
+
+	testSolutions();
+
 	canHover = window.matchMedia('(hover: hover)').matches;
 	if(canHover){
 		canSetThemeColor = false;

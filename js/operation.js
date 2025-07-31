@@ -1,9 +1,10 @@
 class Operation {
-	constructor(symbol, fn, x, y, w, h) {
+	constructor(symbol, fn, x, y, w, h, watcherSequence) {
 		this.symbol = symbol;
 		this.fn = fn;
 		this.x = x; this.y = y;
 		this.w = w; this.h = h;
+		this.watcherSequence = watcherSequence;
 	}
 
 	draw(selected, transparent) {
@@ -64,5 +65,33 @@ class Operation {
 		return px > this.x && px < this.x + this.w && py > this.y && py < this.y + this.h;
 	}
 
-	apply(a, b) { return this.fn(a, b); }
+	apply(a, b, id1, id2) {
+		if(symbolIsBinary(this.symbol)){
+			this.watcherSequence.actions.push({
+				a:a,
+				s:this.symbol,
+				b:b,
+				aId:id1,
+				bId:id2
+			});
+		}
+		else if(this.symbol === "!"){
+			this.watcherSequence.actions.push({
+				a:a,
+				s:this.symbol,
+				aId:id1
+			});
+		}
+		else{
+			console.assert(symbolIsUnary(this.symbol));
+			this.watcherSequence.actions.push({
+				s:this.symbol,
+				b:b,
+				bId:id1
+			});
+		}
+		// console.log(this.watcherSequence.actions);
+		// console.log(this.watcherSequence.toExpr());
+		return this.fn(a, b);
+	}
 }

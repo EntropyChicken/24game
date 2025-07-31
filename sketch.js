@@ -25,12 +25,7 @@ function preload() {
 }
 
 function setup() {
-	// let seq = new Sequence("ln(√√(-1)÷-1)÷ln(√√√√√(-1)-√(-2))+0");
-	// console.log(seq);
-	// console.log(seq.toExpr());
-	// console.log(topSplitExpr("√√(-1)^√√(-2)"));
-
-	testSolutions();
+	// testSolutions();
 
 	canHover = window.matchMedia('(hover: hover)').matches;
 	if(canHover){
@@ -71,7 +66,7 @@ function getRandomLevel(levelSet, previousCards, defaultOps = Level.SYMBOLS, ove
 	let cont = true;
 	for (let tries = 0; tries < 1000 && cont; tries++) {
 		if (tries === 999) {
-			console.log("reached try #999 in getRandomLevel");
+			console.log ("reached try #999 in getRandomLevel");
 		}
 		index = floor(random(0, levelSet.length));
 		if (usedIndices.includes(index)) continue;
@@ -320,7 +315,7 @@ window.addEventListener("touchend", (e) => {
 function requestLandscape() {
 	if (screen.orientation && screen.orientation.lock) {
 		screen.orientation.lock('landscape')
-			.then(() => console.log("Landscape locked"))
+			.then(() => console.log ("Landscape locked"))
 			.catch(err => console.warn("Could not lock orientation:", err));
 	}
 	else {

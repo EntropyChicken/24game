@@ -346,7 +346,7 @@ class Complex {
             case 'round': return this.mathDotRound();
             case 'ceil': return this.ceil();
             default:
-                console.log("Invalid operator char");
+                console.log ("Invalid operator char");
                 return new Complex("Invalid operator char");
         }
     }

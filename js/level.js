@@ -25,6 +25,9 @@ class Level {
 		this.solved = false; // for external use
 		this.useRational = useRational;
 
+		this.watcherSequence = new Sequence();
+		this.sourceIdOfPos = numbers.map(n => -1);
+
 		this.setupBoxes();
 		this.setupOps();
 		this.reSetupLayout(width,height);
@@ -166,7 +169,7 @@ class Level {
 					case 'round': return a.mathDotRound();
 					case 'ceil': return a.ceil();
 					default:
-						console.log("Invalid operator char");
+						console.log ("Invalid operator char");
 						return new Complex("Invalid operator char");
 				}
 			},
@@ -174,6 +177,7 @@ class Level {
 			this.height * 0.525,
 			btnW,
 			btnH,
+			this.watcherSequence
 		));
 		for(let i = 0; i<this.opButtons.length; i++){
 			this.opButtons[i].drawScale = drawScales[i];
@@ -298,61 +302,6 @@ class Level {
 				}
 			} else {
 				drawTextInBox(b.value.getText(),b.x+b.w*0.015,b.y,b.w*0.97,b.h,(this.height+this.width/2) * 0.08,min(this.height * 0.05, this.width * 0.07),b.value.getColor());
-				
-				/*
-					// older version slightly different
-
-					fill(b.value.getColor());
-					fill(0,255,0,150);
-					let txt = b.value.getText();
-					const maxWidth = b.w - 7;
-					const maxHeight = b.h - 7;
-					const fallbackFontSize = min(this.height * 0.05, this.width * 0.07);
-
-					textSize(fallbackFontSize);
-					let fallbackWidth = textWidth(txt);
-					let fallbackHeight = fallbackFontSize * 1.2;
-
-					if (fallbackWidth <= maxWidth && fallbackHeight <= maxHeight) {
-						let low = fallbackFontSize, high = (this.height+this.width/2) * 0.08, bestSize = fallbackFontSize;
-						while (low <= high) {
-							let mid = (low + high) >> 1;
-							textSize(mid);
-							let w = textWidth(txt);
-							let h = mid * 1.2;
-
-							if (w <= maxWidth && h <= maxHeight) {
-								bestSize = mid;
-								low = mid + 1;
-							} else {
-								high = mid - 1;
-							}
-						}
-						textSize(bestSize);
-						text(txt, b.x + b.w/2, b.y + b.h/2);
-					} else {
-						textSize(fallbackFontSize);
-						let lines = [];
-						let currentLine = '';
-						for (let char of txt) {
-							let testLine = currentLine + char;
-							if (textWidth(testLine) > maxWidth && currentLine.length > 0) {
-								lines.push(currentLine);
-								currentLine = char;
-							} else {
-								currentLine = testLine;
-							}
-						}
-						if (currentLine.length > 0) lines.push(currentLine);
-
-						const lineHeight = fallbackFontSize * 1.05;
-						const startY = b.y + b.h / 2 - (lines.length - 1) * lineHeight / 2 + 3;
-
-						lines.forEach((line, j) => {
-							text(line, b.x + b.w/2, startY + j * lineHeight);
-						});
-					}
-				*/
 			}
 			pop();
 
@@ -375,15 +324,17 @@ class Level {
 		}
 		this.undoButton.drawScale -= 0.08;
 		const prev = this.history.pop();
+
+		this.sourceIdOfPos = prev.sourceIds.slice();
 		if(this.useRational){
-			this.boxes = prev.map(b => ({
+			this.boxes = prev.boxes.map(b => ({
 				x: b.x, y: b.y, w: b.w, h: b.h,
 				value: new Rational(b.value.numerator, b.value.denominator),
 				locName: b.locName
 			}));
 		}
 		else{
-			this.boxes = prev.map(b => ({
+			this.boxes = prev.boxes.map(b => ({
 				x: b.x, y: b.y, w: b.w, h: b.h,
 				value: new Complex(b.value.real, b.value.imag),
 				locName: b.locName
@@ -391,6 +342,7 @@ class Level {
 		}
 		this.firstIndex = null;
 		this.selectedOp = null;
+		this.watcherSequence.actions.pop();
 	}
 
 	applyOperation(i1, i2, opBtn) {
@@ -417,9 +369,10 @@ class Level {
 					throw new Error(`Unsupported operator for Rational: ${opBtn.symbol}`);
 			}
 		} else {
-			res = opBtn.apply(a, b);
+			res = opBtn.apply(a, b, this.sourceIdOfPos[this.boxes[i1].locName], this.sourceIdOfPos[this.boxes[i2].locName]);
 		}
 
+		this.sourceIdOfPos[this.boxes[i2].locName] = this.watcherSequence.actions.length-1;
 		this.boxes[i2].value = res;
 		this.boxes[i2].drawScale += 0.1;
 		this.boxes.splice(i1, 1);
@@ -433,18 +386,24 @@ class Level {
 	saveState() {
 		let snap;
 		if(this.useRational){
-			snap = this.boxes.map(b => ({
-				x: b.x, y: b.y, w: b.w, h: b.h,
-				value: new Rational(b.value.numerator, b.value.denominator),
-				locName: b.locName
-			}));
+			snap = {
+				sourceIds:this.sourceIdOfPos.slice(),
+				boxes:this.boxes.map(b => ({
+					x: b.x, y: b.y, w: b.w, h: b.h,
+					value: new Rational(b.value.numerator, b.value.denominator),
+					locName: b.locName
+				}))
+			};
 		}
 		else{
-			snap = this.boxes.map(b => ({
-				x: b.x, y: b.y, w: b.w, h: b.h,
-				value: new Complex(b.value.real, b.value.imag),
-				locName: b.locName
-			}));
+			snap = {
+				sourceIds:this.sourceIdOfPos.slice(),
+				boxes:this.boxes.map(b => ({
+					x: b.x, y: b.y, w: b.w, h: b.h,
+					value: new Complex(b.value.real, b.value.imag),
+					locName: b.locName
+				}))
+			};
 		}
 
 		const last = this.history[this.history.length - 1];
@@ -452,7 +411,7 @@ class Level {
 
 		this.history.push(snap);
 		
-		if (this.history.length > 5000) this.history.splice(1, 1); // preserve the original one
+		if (this.history.length > 10000) this.history.splice(1, 1); // preserve the original one
 	}
 
 	getHint() {
@@ -509,7 +468,7 @@ class Level {
 				if(shorten){
 					finalStep = getFinalStep(sol.substring(0,sol.length-4));
 					if(finalStep.startsWith("getFinalStep failed")){
-						console.log("getFinalStep failed on simplified sol. using original")
+						console.log ("getFinalStep failed on simplified sol. using original")
 						finalStep = getFinalStep(sol);
 					}
 				}
@@ -580,7 +539,8 @@ class Level {
 						this.saveState();
 						const a = this.boxes[this.firstIndex].value;
 						// For unary, ignore b param
-						const res = btn.apply(a, null);
+						const res = btn.apply(a, null, this.sourceIdOfPos[this.boxes[this.firstIndex].locName]);
+						this.sourceIdOfPos[this.boxes[this.firstIndex].locName] = this.watcherSequence.actions.length-1;
 						this.boxes[this.firstIndex].value = res;
 						this.boxes[this.firstIndex].drawScale += 0.1;
 						this.selectedOp = null;
@@ -717,7 +677,8 @@ class Level {
 						else{
 							this.saveState();
 							const a = this.boxes[this.firstIndex].value;
-							const res = btn.apply(a, null);
+							const res = btn.apply(a, null, this.sourceIdOfPos[this.boxes[this.firstIndex].locName]);
+							this.sourceIdOfPos[this.boxes[this.firstIndex].locName] = this.watcherSequence.actions.length-1;
 							this.boxes[this.firstIndex].value = res;
 							this.boxes[this.firstIndex].drawScale += 0.1;
 							this.selectedOp = null;
@@ -767,12 +728,20 @@ class Level {
 	}
 }
 
-Level.setupKeyboard = function(levelInstance, override=true) {
+Level.setupKeyboard = function(levelInstance, override = true) {
 	if (override || !window._levelKeyboardHandler) {
+		// If there's an existing handler, remove it first
+		if (window._levelKeyboardHandler) {
+			window.removeEventListener('keydown', window._levelKeyboardHandler);
+		}
+
+		// Create and assign the new handler
 		window._levelKeyboardHandler = function(e) {
 			if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
-			levelInstance.handleKey(e);  // pass the full event
+			levelInstance.handleKey(e);
 		};
+
 		window.addEventListener('keydown', window._levelKeyboardHandler);
 	}
 };
+

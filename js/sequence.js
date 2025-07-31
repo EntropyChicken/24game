@@ -92,9 +92,22 @@ class Sequence {
         // returns an expression that describes this series of actions (guaranteed to exist)
         // hopefully but not guaranteed to be the inverse of fromExpr)
         
-        return this.toExprRecursive(this.actions.length-1);
+        this.seenIds = [];
+        let ret = "";
+        for(let i = this.actions.length-1; i>=0; i--){
+            if(this.seenIds.includes(i)){
+                continue;
+            }
+            this.seenIds.push(i);
+            if(ret!==""){
+                ret += ", ";
+            }
+            ret += this.toExprRecursive(i);
+        }
+        return ret;
     }
     toExprRecursive(id) {
+        this.seenIds.push(id);
         if(id===-1){
             return null;
         }
@@ -141,9 +154,12 @@ class Sequence {
 
             let left = this.toExprRecursive(t.aId);
             let right = this.toExprRecursive(t.bId);
+            let leftIsNumberName = false;
+            let rightIsNumberName = false;
 
             if(left===null){
                 left = t.a.getText();
+                leftIsNumberName = true;
             }
             else{
                 let ls = topSplitExpr(left).splitter;
@@ -158,6 +174,7 @@ class Sequence {
 
             if(right===null){
                 right = t.b.getText();
+                rightIsNumberName = true;
             }
             else{
                 let rs = topSplitExpr(right).splitter;
@@ -171,10 +188,10 @@ class Sequence {
             }
 
             if(t.s==="^"){ // extra clarity for exponentiation
-                if(left.charAt(0)!=="("){
+                if(left.charAt(0)!=="("&&(left.charAt(0)==="-"||!leftIsNumberName)){
                     left = "("+left+")";
                 }
-                if(right.charAt(0)!=="("){
+                if(right.charAt(0)!=="("&&(right.charAt(0)==="-"||!rightIsNumberName)){
                     right = "("+right+")";
                 }
             }
@@ -380,12 +397,7 @@ function testSolutions() {
                     let seq = new Sequence(aug);
                     console.assert(seq.actions.length!==0);
                     console.assert(seq.actions[seq.actions.length-1].a.equals24());
-                    // // more obvious in console
-                    // if(!seq.actions[seq.actions.length-1].a.equals24()){
-                    //     for(let asdf = 0; asdf<100; asdf++){
-                    //         console.log(random());
-                    //     }
-                    // }
+                    
                     aug = seq.toExpr();
                     if(aug===ogAug){
                         break;

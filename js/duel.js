@@ -97,9 +97,6 @@ class Duel {
         let trueMx = mx;
         let trueMy = my;
 
-        // let sf = min(this.height/this.width,this.width/2/this.height); // should ideally be between 0.5 and 1
-        // console.log(sf);
-
         background(theme.backgroundColor);
         
         for(let i = 0; i<2; i++){

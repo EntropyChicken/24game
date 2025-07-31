@@ -75,7 +75,7 @@ class Rational {
             case '×': return this.multiply(b);
             case '÷': return this.divide(b);
             default:
-                console.log("Invalid operator char");
+                console.log ("Invalid operator char");
                 return new Complex("Invalid operator char");
         }
     }

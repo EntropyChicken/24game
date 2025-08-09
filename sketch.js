@@ -42,7 +42,54 @@ function setup() {
 	createCanvas(windowWidth, windowHeight);
 	titleScreen = new TitleScreen();
 	setScreen("title");
+
+	getGameCount().then(count => {
+	// Assuming you have an HTML element to display the count:
+	// const counterDisplay = document.getElementById('game-counter-display');
+	// if (counterDisplay) {
+	//   counterDisplay.textContent = `Total Games Played: ${count}`;
+	// }
+	console.log("Initial game count on load:", count);
+	});
+
 }
+function draw() {
+	if (canHover) {
+		mx = mouseX;
+		my = mouseY;
+	}
+	
+	if (screen === "title") {
+		titleScreen.draw();
+	} else if (screen === "game") {
+		background(220);
+		level.draw();
+		if (level.solved) {
+			let levelArgs = getRandomLevel(currentLevelSet, level.originalValues.map(c => c.real),
+				currentIsClassic ? ["+", "-", "×", "÷"] : Level.SYMBOLS, false, currentUsedIndices, !currentIsClassic);
+			level = new Level(levelArgs.cards,levelArgs.ops,levelArgs.lvl,currentIsClassic);
+			Level.setupKeyboard(level);
+			setThemeColor(theme.backgroundColor);
+		}
+	} else if (screen === "duel") {
+		background(220);
+		duel.draw();
+		if (duel.solved) {
+			let levelArgs = getRandomLevel(currentLevelSet, duel.levels[0].originalValues.map(c => c.real),
+				currentIsClassic ? ["+", "-", "×", "÷"] : Level.SYMBOLS, false, currentUsedIndices, !currentIsClassic);
+			duel = new Duel(levelArgs.cards,levelArgs.ops,levelArgs.lvl,duel.scores);
+			setThemeColor(theme.backgroundColor);
+		}
+	}
+}
+
+
+
+
+
+
+
+
 function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
 	
@@ -325,33 +372,65 @@ function requestLandscape() {
 
 
 
+// In your sketch.js
 
-function draw() {
-	if (canHover) {
-		mx = mouseX;
-		my = mouseY;
-	}
-	
-	if (screen === "title") {
-		titleScreen.draw();
-	} else if (screen === "game") {
-		background(220);
-		level.draw();
-		if (level.solved) {
-			let levelArgs = getRandomLevel(currentLevelSet, level.originalValues.map(c => c.real),
-				currentIsClassic ? ["+", "-", "×", "÷"] : Level.SYMBOLS, false, currentUsedIndices, !currentIsClassic);
-			level = new Level(levelArgs.cards,levelArgs.ops,levelArgs.lvl,currentIsClassic);
-			Level.setupKeyboard(level);
-			setThemeColor(theme.backgroundColor);
-		}
-	} else if (screen === "duel") {
-		background(220);
-		duel.draw();
-		if (duel.solved) {
-			let levelArgs = getRandomLevel(currentLevelSet, duel.levels[0].originalValues.map(c => c.real),
-				currentIsClassic ? ["+", "-", "×", "÷"] : Level.SYMBOLS, false, currentUsedIndices, !currentIsClassic);
-			duel = new Duel(levelArgs.cards,levelArgs.ops,levelArgs.lvl,duel.scores);
-			setThemeColor(theme.backgroundColor);
-		}
-	}
+// Declare a variable to hold the ready Firebase object
+let firebaseReady = null;
+
+// Listen for the custom event dispatched from the index.html script
+document.addEventListener('firebase_initialized', () => {
+  firebaseReady = window.firebaseAppReady;
+  console.log("Firebase is initialized and ready in sketch.js!");
+  getGameCount().then(count => {
+    console.log("Initial game count on load (after Firebase ready listener):", count);
+  });
+});
+
+
+async function incrementGameCounter() {
+  if (!firebaseReady || !firebaseReady.isReady || !firebaseReady.increment) { // Check for 'increment' itself
+    console.warn('Firebase or increment function not ready. Skipping.');
+    // Optional: console.log(firebaseReady) here for debugging the content of firebaseReady
+    return;
+  }
+  try {
+    // Destructure all needed functions from firebaseReady, including 'increment'
+    const { db, collection, doc, setDoc, increment } = firebaseReady; 
+
+    const gameCounterRef = doc(collection(db, 'gameStats'), 'globalCounter');
+    
+    // Use the directly imported 'increment' function
+    await setDoc(gameCounterRef, {
+      plays: increment(1) 
+    }, { merge: true });
+    console.log('Game counter incremented!');
+  } catch (error) {
+    console.error('Error incrementing counter:', error);
+  }
 }
+
+async function getGameCount() {
+  if (!firebaseReady || !firebaseReady.isReady) {
+    console.warn('Firebase not ready for get count. Skipping.');
+    return 0; 
+  }
+  try {
+    const { db, collection, doc, getDoc } = firebaseReady; 
+    
+    const gameCounterRef = doc(collection(db, 'gameStats'), 'globalCounter');
+    
+    const docSnap = await getDoc(gameCounterRef);
+    if (docSnap.exists()) { 
+      console.log('Current game count:', docSnap.data().plays);
+      return docSnap.data().plays;
+    } else {
+      console.log('No game counter found yet!');
+      return 0;
+    }
+  } catch (error) {
+    console.error('Error getting game count:', error);
+    return 0;
+  }
+}
+
+// ... (rest of your sketch.js code, including setup and draw) ...

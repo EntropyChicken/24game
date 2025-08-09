@@ -231,6 +231,7 @@ class Level {
 			this.winTimer--;
 			if (this.winTimer <= 0) {
 				this.solved = true;
+				incrementGameCounter(); // backend global counter (must only happen one time per actual win)
 				return;
 			}
 		}

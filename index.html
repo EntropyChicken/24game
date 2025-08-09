@@ -30,25 +30,59 @@
         });
       }
     </script>
-
-
   </head>
 
-  <body>
+    <body>
+    <!-- Firebase SDKs - use the modular approach -->
+    <!-- This script MUST come before any of your game scripts that use Firebase -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+      // IMPORTANT CHANGE HERE: Import 'increment' directly from 'firebase-firestore.js'
+      import { getFirestore, collection, doc, getDoc, setDoc, increment } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-analytics.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCDv8aTBxn5lfQQSA9kP5JQlJ-NNszJJRM",
+        authDomain: "make24-1e644.firebaseapp.com",
+        projectId: "make24-1e644",
+        storageBucket: "make24-1e644.firebasestorage.app",
+        messagingSenderId: "770585457003",
+        appId: "1:770585457003:web:9145d890d5b59403559c2e",
+        measurementId: "G-6CFVM2YNKE"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+
+      // Create a single object to hold all Firebase-related globals
+      window.firebaseAppReady = {
+        db: getFirestore(app),
+        // Now 'increment' is directly available here
+        increment: increment, 
+        collection: collection, 
+        doc: doc,
+        getDoc: getDoc,
+        setDoc: setDoc,
+        isReady: true 
+      };
+
+      document.dispatchEvent(new Event('firebase_initialized'));
+
+    </script>
+
+    <!-- Your P5.js and game-specific JavaScript files -->
     <script src="js/complex.js"></script>
     <script src="js/rational.js"></script>
     <script src="js/operation.js"></script>
-
     <script src="js/bubble.js"></script>
     <script src="js/bubbleBox.js"></script>
-    
     <script src="js/titleScreen.js"></script>
-    
     <script src="js/sequence.js"></script>
-
     <script src="js/button.js"></script>
     <script src="js/level.js"></script>
     <script src="js/duel.js"></script>
     <script src="sketch.js"></script>
+    
   </body>
+
 </html>

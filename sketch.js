@@ -42,16 +42,6 @@ function setup() {
 	createCanvas(windowWidth, windowHeight);
 	titleScreen = new TitleScreen();
 	setScreen("title");
-
-	getGameCount().then(count => {
-	// Assuming you have an HTML element to display the count:
-	// const counterDisplay = document.getElementById('game-counter-display');
-	// if (counterDisplay) {
-	//   counterDisplay.textContent = `Total Games Played: ${count}`;
-	// }
-	console.log("Initial game count on load:", count);
-	});
-
 }
 function draw() {
 	if (canHover) {

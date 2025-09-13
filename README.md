@@ -43,7 +43,7 @@ Try crazy hard, or two players mode if you are a pro!
 🛠️ Development
 
 This repository hosts the source code for the 24 Game.
-Contributions, feedback, and suggestions are welcome! Feel free to open an issue or pull request.
+Contributions, feedback, and suggestions are welcome (info@make24.org) ! Feel free to open an issue or pull request.
 
 📜 License
 

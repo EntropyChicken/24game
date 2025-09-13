@@ -1,14 +1,13 @@
-24 Game (Web-Based)
+Make 24 Math Game (Web-Based)
 
-A modern, web-based version of the classic Make 24 game
-, playable directly in your browser on desktop, tablet, or smartphone—no installation required.
+A reinvented, web-based version of the classic Make 24 game
+, playable directly in your browser on desktop, tablet, or smartphone, no installation required.
 
 This project extends the traditional rules of the 24 puzzle with new dimensions, multiple levels of difficulty, and gameplay options suited for everyone from beginners to experts.
 
 🎮 Features
 
-Web-based & cross-platform
-Works seamlessly on any device with a browser, including smartphones.
+Web-based & cross-platform. 
 
 Multiple difficulty levels
 From simple training puzzles to challenging expert problems.
@@ -25,8 +24,7 @@ Variants and challenges that expand on the traditional 24 puzzle.
 🚀 Play Now
 
 👉 Start playing here  https://Make24.org
-
-No installation needed—just open in your browser.
+ 
 
 📖 Basic Mode Rules (Quick Recap)
 
@@ -36,9 +34,9 @@ Use addition, subtraction, multiplication, or division.
 
 Combine all four numbers exactly once to make 24.
 
-This project includes classic rules plus extended variants to have complex numbers and advanced math functions.
+This game extended variants to have complex numbers and advanced math functions.
 
-Try crazy hard, or two players mode if you are a pro!
+Try crazy hard, or two-players mode if you are a pro!
 
 🛠️ Development
 

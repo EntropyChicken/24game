@@ -6,7 +6,7 @@
     {"cards":[0.02,0.3,7],"ops":["-","×","cot","asin"],"hint":"There exists a right triangle with side lengths 7, 24, 25","sols":["7×cot(asin(0.3-0.02))"]},
     {"cards":[2.718281828459045235,3],"ops":["÷","√","ln"],"hint":"Exploit √ and ln to turn e into 1/8. Remember, an nth root is the same as raising to the power of (1/n)","sols":["3÷ln(√√√e)"]},
     {"cards":[3,3,32],"ops":["-","÷","√","ln"],"hint":"Final step is 32-8","sols":["32-ln(3)÷ln(√√√3)"]},
-    {"cards":[2,2,2],"ops":["÷","√","ln"],"hint":"One possible solution starts by square rooting 24 times. Use base change formula","sols":["ln(ln(2)÷ln(√√√√√√√√√√√√√√√√√√√√√√√√2))÷ln(2)","ln(ln(2)÷ln(√√√2))÷ln(√√√2)"]},
+    
     {"cards":[0,0],"ops":["÷","√","ln","!","sin"],"hint":"Sine is actually useful here","sols":["(ln(sin(0!))÷ln(√√sin(0!)))!"]},
 
     {"cards":[-1,-1,2],"ops":["+","÷","√","ln"],"hint":"Make -√0.5+(√0.5)i from √0.5+(√0.5)i and √2. Notice this has arg = 3π/4. Once we obtain 3, we're only off by a power of 2","sols":["ln(√√(-1)-√2)/ln(√√√√√(-1))","ln(ln(-1)÷ln(√√√(-1)))÷ln(√√√2)"]},

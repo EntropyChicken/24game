@@ -351,7 +351,7 @@ class Complex {
         }
     }
     
-    getText(checkDebug = false){
+    getText(checkDebug){
         if(typeof(this.real)==="string"&&this.imag===0){
             return "\""+this.real+"\"";
         }
@@ -388,7 +388,8 @@ class Complex {
                         txt += sri;
                     }
                 }
-                txt += "𝑖"; // or fallback to i
+                // txt += "𝑖"; // or fallback to i
+                txt += "i"; // some systems fail to fallback so just use i
             }
             if(txt===""){
                 txt = "0";

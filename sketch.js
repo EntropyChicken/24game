@@ -377,23 +377,26 @@ document.addEventListener('firebase_initialized', () => {
 });
 
 
-async function incrementGameCounter() {
-  if (!firebaseReady || !firebaseReady.isReady || !firebaseReady.increment) { // Check for 'increment' itself
+async function incrementGameCounter(change) {
+  // Ensure 'change' is a valid number, defaulting to 1 if not provided
+  const incrementValue = typeof change === 'number' && !isNaN(change) ? change : 1; 
+
+  if (!firebaseReady || !firebaseReady.isReady || !firebaseReady.increment) {
     console.warn('Firebase or increment function not ready. Skipping.');
-    // Optional: console.log(firebaseReady) here for debugging the content of firebaseReady
     return;
   }
+  
   try {
     // Destructure all needed functions from firebaseReady, including 'increment'
     const { db, collection, doc, setDoc, increment } = firebaseReady; 
 
     const gameCounterRef = doc(collection(db, 'gameStats'), 'globalCounter');
     
-    // Use the directly imported 'increment' function
     await setDoc(gameCounterRef, {
-      plays: increment(1) 
+      plays: increment(incrementValue) 
     }, { merge: true });
-    console.log('Game counter incremented!');
+    
+    console.log('Game counter incremented by '+incrementValue);
   } catch (error) {
     console.error('Error incrementing counter:', error);
   }

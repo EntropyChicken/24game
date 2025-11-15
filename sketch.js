@@ -11,6 +11,7 @@ let theme = {};
 let canHover;
 let mx = -1, my = -1;
 let canSetThemeColor = true;
+let gameCount;
 
 function preload() {
 	loadJSON("levelData/classicLevelsEasy.json", data => { classicSets[0] = data; });
@@ -362,68 +363,61 @@ function requestLandscape() {
 
 
 
-// In your sketch.js
-
-// Declare a variable to hold the ready Firebase object
 let firebaseReady = null;
-
-// Listen for the custom event dispatched from the index.html script
 document.addEventListener('firebase_initialized', () => {
-  firebaseReady = window.firebaseAppReady;
-  console.log("Firebase is initialized and ready in sketch.js!");
-  getGameCount().then(count => {
-    console.log("Initial game count on load (after Firebase ready listener):", count);
-  });
+	firebaseReady = window.firebaseAppReady;
+	getGameCount().then(val => {
+		gameCount = val;
+		console.log("Initial game count (after Firebase_initialized):", gameCount);
+	});
 });
 
 
 async function incrementGameCounter(change) {
-  // Ensure 'change' is a valid number, defaulting to 1 if not provided
-  const incrementValue = typeof change === 'number' && !isNaN(change) ? change : 1; 
+	// Ensure 'change' is a valid number, defaulting to 1 if not provided
+	const incrementValue = typeof change === 'number' && !isNaN(change) ? change : 1; 
 
-  if (!firebaseReady || !firebaseReady.isReady || !firebaseReady.increment) {
-    console.warn('Firebase or increment function not ready. Skipping.');
-    return;
-  }
-  
-  try {
-    // Destructure all needed functions from firebaseReady, including 'increment'
-    const { db, collection, doc, setDoc, increment } = firebaseReady; 
+	if (!firebaseReady || !firebaseReady.isReady || !firebaseReady.increment) {
+		console.warn('Firebase or increment function not ready. Skipping.');
+		return;
+	}
 
-    const gameCounterRef = doc(collection(db, 'gameStats'), 'globalCounter');
-    
-    await setDoc(gameCounterRef, {
-      plays: increment(incrementValue) 
-    }, { merge: true });
-    
-    console.log('Game counter incremented by '+incrementValue);
-  } catch (error) {
-    console.error('Error incrementing counter:', error);
-  }
+	try {
+		// Destructure all needed functions from firebaseReady, including 'increment'
+		const { db, collection, doc, setDoc, increment } = firebaseReady; 
+
+		const gameCounterRef = doc(collection(db, 'gameStats'), 'globalCounter');
+
+		await setDoc(gameCounterRef, {
+			plays: increment(incrementValue) 
+		}, { merge: true });
+
+		console.log('Game counter incremented by '+incrementValue);
+	} catch (error) {
+		console.error('Error incrementing counter:', error);
+	}
 }
 
 async function getGameCount() {
-  if (!firebaseReady || !firebaseReady.isReady) {
-    console.warn('Firebase not ready for get count. Skipping.');
-    return 0; 
-  }
-  try {
-    const { db, collection, doc, getDoc } = firebaseReady; 
-    
-    const gameCounterRef = doc(collection(db, 'gameStats'), 'globalCounter');
-    
-    const docSnap = await getDoc(gameCounterRef);
-    if (docSnap.exists()) { 
-      console.log('Current game count:', docSnap.data().plays);
-      return docSnap.data().plays;
-    } else {
-      console.log('No game counter found yet!');
-      return 0;
-    }
-  } catch (error) {
-    console.error('Error getting game count:', error);
-    return 0;
-  }
+	if (!firebaseReady || !firebaseReady.isReady) {
+		console.warn('Firebase not ready for get count. Skipping.');
+		return 0; 
+	}
+	try {
+		const { db, collection, doc, getDoc } = firebaseReady; 
+		
+		const gameCounterRef = doc(collection(db, 'gameStats'), 'globalCounter');
+		
+		const docSnap = await getDoc(gameCounterRef);
+		if (docSnap.exists()) { 
+			console.log('Current game count:', docSnap.data().plays);
+			return docSnap.data().plays;
+		} else {
+			console.log('No game counter found yet!');
+			return 0;
+		}
+	} catch (error) {
+		console.error('Error getting game count:', error);
+		return 0;
+	}
 }
-
-// ... (rest of your sketch.js code, including setup and draw) ...

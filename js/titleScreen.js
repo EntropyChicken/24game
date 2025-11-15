@@ -74,21 +74,32 @@ class TitleScreen {
 		fill(100,93,85,120);
 		rect(-1,-1,width+2,height+2);
 
-		textAlign(CENTER, CENTER);
 		noStroke();
 		for(let y = 2; y>=-2; y-=2){
 			for(let x = y/3-1; x<y/3+1.1; x+=2){
 				fill(y<0 ? color(255,255,255) : color(100,93,85));
+				textAlign(CENTER,CENTER);
 				textSize(constrain(width*0.07,45,90));
 				text("Make 24", width*0.5+x, height*0.14+y);
 				textSize(constrain(width*0.035,25,45));
 				text("Random",width*0.3+x, height*0.363+y*0.8);
 				text("Designed",width*0.7+x, height*0.363+y*0.8);
+				textAlign(RIGHT,BOTTOM);
+				// text((gameCount===undefined ? "?" : gameCount.toString())+" puzzles solved",width,height);
+				if(gameCount!==undefined){
+					let txt = gameCount+" puzzles solved!";
+					if(textWidth(txt)>width/2){
+						txt = gameCount+" solved!";
+					}
+					text(txt,width-3+x,height-3+y*0.8);
+				}
 			}
 		}
 
+
 		this.drawBoxes();
 		this.duelButton.draw();
+
 	}
 
 	drawBubbleBox() {

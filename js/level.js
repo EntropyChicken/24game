@@ -11,7 +11,7 @@ function smoothErp(a,recursion=1){
 
 class Level {
 	static SYMBOLS = ["+","-","×","÷","^","√","ln","!","sin","cos","tan","cot","asin","acos","abs","%"]; // round, floor, and ceil are not included for space purposes
-	static WIN_TIMER_START = 75;
+	static WIN_TIMER_START = 70;
 
 	constructor(numbers, opSymbols = Level.SYMBOLS, metaData = {}, useRational = false) {
 		this.metaData = metaData;
@@ -204,6 +204,7 @@ class Level {
 		
 		if (this.winTimer === 0 && this.boxes.length === 1 && this.boxes[0].value.equals24()) {
 			this.winTimer = Level.WIN_TIMER_START;
+			incrementGameCounter(); // backend global counter (only happens once per win)
 			setThemeColor(theme.backgroundColorCorrect);
 		}
 		if (this.winTimer > 0) {
@@ -231,7 +232,6 @@ class Level {
 			this.winTimer--;
 			if (this.winTimer <= 0) {
 				this.solved = true;
-				incrementGameCounter(); // backend global counter (must only happen one time per actual win)
 				return;
 			}
 		}

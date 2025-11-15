@@ -71,7 +71,7 @@ class TitleScreen {
 		this.drawBubbleBox();
 
 		noStroke();
-		fill(100,93,85,120);
+		fill(100,93,85,125);
 		rect(-1,-1,width+2,height+2);
 		
 		this.drawBoxes();
@@ -82,15 +82,15 @@ class TitleScreen {
 			for(let x = y/3-1; x<y/3+1.1; x+=2){
 				fill(y<0 ? color(255,255,255) : color(100,93,85));
 				textAlign(CENTER,CENTER);
-				textSize(constrain(width*0.07,45,90));
+				textSize(constrain(width*0.07,55,90));
 				text("Make 24", width*0.5+x, height*0.14+y);
-				textSize(constrain(width*0.035,25,45));
+				textSize(constrain(width*0.035,27,45));
 				text("Random",width*0.3+x, height*0.363+y*0.8);
 				text("Designed",width*0.7+x, height*0.363+y*0.8);
 				textAlign(RIGHT,BOTTOM);
 				// text((gameCount===undefined ? "?" : gameCount.toString())+" puzzles solved",width,height);
 				if(gameCount!==undefined){
-					let s = constrain(width*0.035,25,35);
+					let s = constrain(width*0.035,27,35);
 					textSize(s);
 					text(" games",width-15+x,height-s-15+y*0.8);
 					text("won worldwide!",width-15+x,height-15+y*0.8);

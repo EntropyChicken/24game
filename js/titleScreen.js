@@ -81,17 +81,16 @@ class TitleScreen {
 				textAlign(CENTER,CENTER);
 				textSize(constrain(width*0.07,45,90));
 				text("Make 24", width*0.5+x, height*0.14+y);
-				textSize(constrain(width*0.035,25,45));
+				let s = constrain(width*0.035,25,45);
+				textSize(s);
 				text("Random",width*0.3+x, height*0.363+y*0.8);
 				text("Designed",width*0.7+x, height*0.363+y*0.8);
 				textAlign(RIGHT,BOTTOM);
 				// text((gameCount===undefined ? "?" : gameCount.toString())+" puzzles solved",width,height);
 				if(gameCount!==undefined){
-					let txt = gameCount+" puzzles solved!";
-					if(textWidth(txt)>width/2){
-						txt = gameCount+" solved!";
-					}
-					text(txt,width-3+x,height-3+y*0.8);
+					textSize(s);
+					text(gameCount+" games",width-3+x,height-s-3+y*0.8);
+					text("won worldwide!",width-3+x,height-3+y*0.8);
 				}
 			}
 		}

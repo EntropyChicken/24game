@@ -89,8 +89,8 @@ class TitleScreen {
 				// text((gameCount===undefined ? "?" : gameCount.toString())+" puzzles solved",width,height);
 				if(gameCount!==undefined){
 					textSize(s);
-					text(gameCount+" games",width-3+x,height-s-3+y*0.8);
-					text("won worldwide!",width-3+x,height-3+y*0.8);
+					text(gameCount+" games",width-15+x,height-s-15+y*0.8);
+					text("won worldwide!",width-15+x,height-15+y*0.8);
 				}
 			}
 		}

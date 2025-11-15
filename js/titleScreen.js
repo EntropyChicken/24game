@@ -73,6 +73,9 @@ class TitleScreen {
 		noStroke();
 		fill(100,93,85,120);
 		rect(-1,-1,width+2,height+2);
+		
+		this.drawBoxes();
+		this.duelButton.draw();
 
 		noStroke();
 		for(let y = 2; y>=-2; y-=2){
@@ -92,19 +95,15 @@ class TitleScreen {
 					text(" games",width-15+x,height-s-15+y*0.8);
 					text("won worldwide!",width-15+x,height-15+y*0.8);
 					let w = textWidth(" games");
-					textSize(s*gameCountDrawScale);
+					textSize(s*(gameCountDrawScale+0.2));
 					// if(y<0){
-					// 	fill(lerpColor(color(255,255,255),theme.shadeColorCorrect,gameCountDrawScale-1));
+					// 	fill(lerpColor(color(255,255,255),color(200,255,200),gameCountDrawScale-1));
 					// }
 					text(gameCount,width-15-w+x,height-s-15+y*0.8);
 				}
 			}
 		}
-		gameCountDrawScale = 1 + (gameCountDrawScale - 1) * 0.95;
-
-		this.drawBoxes();
-		this.duelButton.draw();
-
+		gameCountDrawScale = 1 + (gameCountDrawScale - 1) * 0.99;
 	}
 
 	drawBubbleBox() {

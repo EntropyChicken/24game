@@ -12,6 +12,7 @@ let canHover;
 let mx = -1, my = -1;
 let canSetThemeColor = true;
 let gameCount; // after initially loading global counter, update locally alongside global counter
+let gameCountDrawScale = 1;
 
 function preload() {
 	loadJSON("levelData/classicLevelsEasy.json", data => { classicSets[0] = data; });
@@ -396,6 +397,8 @@ async function incrementGameCounter(change) {
 	} catch (error) {
 		console.error('Error incrementing counter:', error);
 	}
+	
+	broadcastWin();
 }
 
 async function getGameCount() {
@@ -420,4 +423,36 @@ async function getGameCount() {
 		console.error('Error getting game count:', error);
 		return 0;
 	}
+}
+
+
+
+// this doesn't store the win counter, it just relays realtime updates
+const supabase = window.supabase.createClient(
+	"https://fhgzqafosmioykggwafl.supabase.co",
+	"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoZ3pxYWZvc21pb3lrZ2d3YWZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxNjkyMTMsImV4cCI6MjA3ODc0NTIxM30.j9xIAsRjNpqT-49WxrmrUcKLBSySd1y1ETTK8E4A194"
+);
+const channel = supabase.channel("main-room", {
+    config: {
+        broadcast: { self: true }
+    }
+});
+async function setupRealtime() {
+    channel
+        .on("broadcast", { event: "win" }, (msg) => {
+            gameCount = msg.payload.gameCount;
+            gameCountDrawScale = 2;
+        });
+
+    const status = await channel.subscribe(); 
+    console.log("channel status:", status);
+}
+setupRealtime();
+
+async function broadcastWin() {
+	channel.send({
+		type: "broadcast",
+		event: "win",
+		payload: { gameCount:gameCount }
+	});
 }

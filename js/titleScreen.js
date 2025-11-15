@@ -81,20 +81,26 @@ class TitleScreen {
 				textAlign(CENTER,CENTER);
 				textSize(constrain(width*0.07,45,90));
 				text("Make 24", width*0.5+x, height*0.14+y);
-				let s = constrain(width*0.035,25,45);
-				textSize(s);
+				textSize(constrain(width*0.035,25,45));
 				text("Random",width*0.3+x, height*0.363+y*0.8);
 				text("Designed",width*0.7+x, height*0.363+y*0.8);
 				textAlign(RIGHT,BOTTOM);
 				// text((gameCount===undefined ? "?" : gameCount.toString())+" puzzles solved",width,height);
 				if(gameCount!==undefined){
+					let s = constrain(width*0.035,25,35);
 					textSize(s);
-					text(gameCount+" games",width-15+x,height-s-15+y*0.8);
+					text(" games",width-15+x,height-s-15+y*0.8);
 					text("won worldwide!",width-15+x,height-15+y*0.8);
+					let w = textWidth(" games");
+					textSize(s*gameCountDrawScale);
+					// if(y<0){
+					// 	fill(lerpColor(color(255,255,255),theme.shadeColorCorrect,gameCountDrawScale-1));
+					// }
+					text(gameCount,width-15-w+x,height-s-15+y*0.8);
 				}
 			}
 		}
-
+		gameCountDrawScale = 1 + (gameCountDrawScale - 1) * 0.95;
 
 		this.drawBoxes();
 		this.duelButton.draw();

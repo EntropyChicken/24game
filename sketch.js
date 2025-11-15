@@ -11,7 +11,7 @@ let theme = {};
 let canHover;
 let mx = -1, my = -1;
 let canSetThemeColor = true;
-let gameCount;
+let gameCount; // after initially loading global counter, update locally alongside global counter
 
 function preload() {
 	loadJSON("levelData/classicLevelsEasy.json", data => { classicSets[0] = data; });
@@ -392,7 +392,7 @@ async function incrementGameCounter(change) {
 			plays: increment(incrementValue) 
 		}, { merge: true });
 
-		console.log('Game counter incremented by '+incrementValue);
+		gameCount += incrementValue;
 	} catch (error) {
 		console.error('Error incrementing counter:', error);
 	}

@@ -150,9 +150,6 @@ class Duel {
                 if(this.levels[i].solved){
                     this.solved = true;
                     this.scores[i]++;
-                    if (typeof incrementGameCounter === 'function') {
-                        incrementGameCounter();
-                    }
                 }
             }
         }
@@ -160,27 +157,18 @@ class Duel {
             if(this.isJustSolved(0)&&this.isJustSolved(1)){ // frame perfect tie
                 this.scores[0]++;
                 this.scores[1]++;
-                if (typeof incrementGameCounter === 'function') {
-                    incrementGameCounter(2);
-                }
                 this.solved = true;
             }
             else{
                 for(let i = 0; i<2; i++){
                     if(this.isJustSolved(i)){
                         if(this.isSolved(1-i)){
-                            if (typeof incrementGameCounter === 'function') {
-                                incrementGameCounter();
-                            }
                             if(!Duel.LOSER_WIN_ANIMATION){
                                 this.solved = true;
                             }
                         }
                         else{
                             this.scores[i]++;
-                            if (typeof incrementGameCounter === 'function') {
-                                incrementGameCounter();
-                            }
                         }
                     }
                 }

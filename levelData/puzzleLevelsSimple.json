@@ -1,10 +1,11 @@
 [
-    {"cards":[24,24,24,24],"ops":["+","-","×"],"hint":"Multiply by 0","sols":["24×(24-24)+24"]},
+    {"cards":[24,24,24,24],"ops":["-","×"],"hint":"Multiply by 0","sols":["24-24×(24-24)"]},
     {"cards":[8,8,8,8,8],"ops":["-"],"hint":"Subtract negative 16","sols":["8-(8-8-8-8)"]},
+    {"cards":[2,2,2,2,2],"ops":["+","×"],"hint":"The final step is 6×4","sols":["(2+2+2)×2×2"]},
+    {"cards":[4,4,100],"ops":["-","÷"],"hint":"Division is the last step","sols":["(100-4)÷4"]},
     {"cards":[3,3,3],"ops":["-","^"],"hint":"3 raised to the power of 3 equals 27","sols":["3^3-3"]},
     {"cards":[1,1,1,1,1,1,1,1],"ops":["+","×","^"],"hint":"2^3 = 8","sols":["(1+1+1)×(1+1)^(1+1+1)"]},
     {"cards":[0,0,0,0],"ops":["+","!"],"hint":"4! = 24","sols":["(0!+0!+0!+0!)!"]},
     {"cards":[4.89897948556635619,4.89897948556635619],"ops":["×"],"hint":"Square root of 24","sols":["4.89897948556635619 × 4.89897948556635619"]},
-    {"cards":[582794123,312059478,10,10],"ops":["×","%"],"hint":"Modulo operator gives the remainder when dividing. When dividing by 10, the last digit remains","sols":["(582794123%10)×(312059478%10)"]},
     {"cards":[20,4],"ops":["√","tan","^","acos","ln","sin","!","cos","%","÷","+","cot","×","-","asin","abs"],"hint":"Near the middle, toward the right","sols":["20+4"]}
 ]

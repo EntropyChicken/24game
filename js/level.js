@@ -703,18 +703,17 @@ class Level {
 			return;
 		}
 
-		if (key.length === 1){
-			const code = key.toLowerCase().charCodeAt(0);
-			if (code >= 97 && code <= 122) { // 'a' to 'z'
-				let loc = code - 97;
+		if (key.length === 1) {
+			const layout = "qwertyuiop"; // first row of keyboard
+			const idx = layout.indexOf(key.toLowerCase());
+			if (idx !== -1) {
 				for (let i = 0; i < this.boxes.length; i++) {
-					if (this.boxes[i].locName === loc){
+					if (this.boxes[i].locName === idx) {
 						if (this.firstIndex !== null && this.selectedOp) {
-							if(i === this.firstIndex) {
+							if (i === this.firstIndex) {
 								this.firstIndex = null;
 								this.selectedOp = null;
-							}
-							else {
+							} else {
 								this.applyOperation(this.firstIndex, i, this.selectedOp);
 							}
 						} else {
@@ -726,6 +725,7 @@ class Level {
 				}
 			}
 		}
+
 	}
 }
 

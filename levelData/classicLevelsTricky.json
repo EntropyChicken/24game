@@ -1,10 +1,13 @@
 [
   {"cards":[4,4,4,5],"needsFrac":0,"factorable":1,"sols":["4×(5+4÷4)"]},
+  {"cards":[4,5,9,9],"needsFrac":0,"factorable":1,"sols":["4×(5+9÷9)"]},
+  {"cards":[2,5,5,8],"needsFrac":0,"factorable":1,"sols":["8×(2+5÷5)"]},
   {"cards":[4,5,5,8],"needsFrac":0,"factorable":1,"sols":["8×(4-(5÷5))"]},
   {"cards":[4,5,5,7],"needsFrac":0,"factorable":1,"sols":["4×(7-(5÷5))"]},
   {"cards":[4,7,7,7],"needsFrac":0,"factorable":1,"sols":["4×(7-(7÷7))"]},
   {"cards":[5,6,7,7],"needsFrac":0,"factorable":1,"sols":["6×(5-(7÷7))"]},
   {"cards":[3,7,7,9],"needsFrac":0,"factorable":1,"sols":["3×(9-(7÷7))"]},
+  {"cards":[4,7,9,9],"needsFrac":0,"factorable":1,"sols":["4×(7-(9÷9))"]},
 
   {"cards":[5,5,5,5],"needsFrac":0,"factorable":0,"sols":["5×5-(5÷5)"]},
   {"cards":[5,5,9,9],"needsFrac":0,"factorable":0,"sols":["5×5-(9÷9)"]},

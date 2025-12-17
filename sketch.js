@@ -428,11 +428,12 @@ async function getGameCount() {
 
 
 // this doesn't store the win counter, it just relays realtime updates
-const supabase = window.supabase.createClient(
+// avoid colliding with any global "supabase"
+const supabaseClient = window.supabase.createClient(
 	"https://fhgzqafosmioykggwafl.supabase.co",
 	"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoZ3pxYWZvc21pb3lrZ2d3YWZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxNjkyMTMsImV4cCI6MjA3ODc0NTIxM30.j9xIAsRjNpqT-49WxrmrUcKLBSySd1y1ETTK8E4A194"
 );
-const channel = supabase.channel("main-room", {
+const channel = supabaseClient.channel("main-room", {
     config: {
         broadcast: { self: true }
     }

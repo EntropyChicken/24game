@@ -58,7 +58,7 @@ function draw() {
 		level.draw();
 		if (level.solved) {
 			let levelArgs = getRandomLevel(currentLevelSet, level.originalValues.map(c => c.real),
-				currentIsClassic ? ["+", "-", "×", "÷"] : Level.SYMBOLS, false, currentUsedIndices, !currentIsClassic);
+				currentIsClassic ? ["+", "-", "×", "÷"] : Level.SYMBOLS, false, currentUsedIndices, false);
 			level = new Level(levelArgs.cards,levelArgs.ops,levelArgs.lvl,currentIsClassic);
 			Level.setupKeyboard(level);
 			setThemeColor(theme.backgroundColor);
@@ -68,7 +68,7 @@ function draw() {
 		duel.draw();
 		if (duel.solved) {
 			let levelArgs = getRandomLevel(currentLevelSet, duel.levels[0].originalValues.map(c => c.real),
-				currentIsClassic ? ["+", "-", "×", "÷"] : Level.SYMBOLS, false, currentUsedIndices, !currentIsClassic);
+				currentIsClassic ? ["+", "-", "×", "÷"] : Level.SYMBOLS, false, currentUsedIndices, false);
 			duel = new Duel(levelArgs.cards,levelArgs.ops,levelArgs.lvl,duel.scores);
 			setThemeColor(theme.backgroundColor);
 		}

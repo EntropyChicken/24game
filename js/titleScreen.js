@@ -197,7 +197,7 @@ class TitleScreen {
                 currentIsClassic = b.isClassic;
                 theme.shadeColor = (b.isClassic ? color(255,210,160) : color(180,210,255));
                 theme.backgroundColor = (b.isClassic ? color(255,225,190) : color(210,225,250));
-                let levelData = getRandomLevel(currentLevelSet, [], currentIsClassic ? ["+","-","×","÷"] : Level.SYMBOLS, false, currentUsedIndices, !currentIsClassic);
+                let levelData = getRandomLevel(currentLevelSet, [], currentIsClassic ? ["+","-","×","÷"] : Level.SYMBOLS, false, currentUsedIndices, false);
 
 				if(this.duelMode){
 					duel = new Duel(levelData.cards,levelData.ops,levelData.lvl);

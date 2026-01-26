@@ -15,11 +15,13 @@ function factorialRecursive(int){
 
 class Complex {
     constructor(real, imag = 0) {
-        if(isNaN(real)){
-            imag = NaN;
-        }
-        if(isNaN(imag)){
-            real = NaN;
+        if(typeof(real)!=="string"){
+            if(isNaN(real)){
+                imag = NaN;
+            }
+            if(isNaN(imag)){
+                real = NaN;
+            }
         }
         this.real = real;
         this.imag = imag;

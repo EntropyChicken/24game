@@ -302,7 +302,7 @@ class Level {
 					pop();
 				}
 			} else {
-				drawTextInBox(b.value.getText(),b.x+b.w*0.015,b.y,b.w*0.97,b.h,(this.height+this.width/2) * 0.08,min(this.height * 0.05, this.width * 0.07),b.value.getColor());
+				drawTextInBox(b.value.getText(true),b.x+b.w*0.015,b.y,b.w*0.97,b.h,(this.height+this.width/2) * 0.08,min(this.height * 0.05, this.width * 0.07),b.value.getColor());
 			}
 			pop();
 

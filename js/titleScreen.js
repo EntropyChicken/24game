@@ -33,6 +33,7 @@ class TitleScreen {
 				label: labels[i].text,
 				isClassic: isClassic,
 				set: isClassic ? classicSets[labels[i].set] : puzzleSets[labels[i].set],
+				setIndex: labels[i].set,
 				drawOffset: 0,
 				drawAngle: 0,
 				drawScale: 1
@@ -193,11 +194,12 @@ class TitleScreen {
         for (let b of this.boxes) {
             if (mx > b.x && mx < b.x + b.w && my > b.y && my < b.y + b.h) {
                 currentLevelSet = b.set;
-                currentUsedIndices = [];
+				currentLevelSetIndex = b.setIndex;
                 currentIsClassic = b.isClassic;
                 theme.shadeColor = (b.isClassic ? color(255,210,160) : color(180,210,255));
                 theme.backgroundColor = (b.isClassic ? color(255,225,190) : color(210,225,250));
-                let levelData = getRandomLevel(currentLevelSet, [], currentIsClassic ? ["+","-","×","÷"] : Level.SYMBOLS, false, currentUsedIndices, false);
+				checkResetSet();
+                let levelData = getRandomLevel(currentLevelSet, [], currentIsClassic ? ["+","-","×","÷"] : Level.SYMBOLS, false, false);
 
 				if(this.duelMode){
 					duel = new Duel(levelData.cards,levelData.ops,levelData.lvl);

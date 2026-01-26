@@ -2,10 +2,12 @@ const EQUALITY_THRESHOLD = 1e-6;
 const DISPLAY_THRESHOLD = 7e-9;
 let screen = "title";
 let level, duel, titleScreen;
-let classicSets = [[], [], [], [], []];
-let puzzleSets = [[], [], [], []];
+let originalClassicSets = [[], [], [], [], []];
+let originalPuzzleSets = [[], [], [], []];
+let classicSets = []; // new system is mostly predetermined on shuffle but it will still skip ahead if it's the same as previous (could fix)
+let puzzleSets = [];
 let currentLevelSet = null;
-let currentUsedIndices = []; // Keeps track of used indices
+let currentLevelSetIndex = null; // which index within either classics or puzzles
 let currentIsClassic = true;
 let theme = {};
 let canHover;
@@ -15,18 +17,25 @@ let gameCount; // after initially loading global counter, update locally alongsi
 let gameCountDrawScale = 1;
 
 function preload() {
-	loadJSON("levelData/classicLevelsEasy.json", data => { classicSets[0] = data; });
-	loadJSON("levelData/classicLevelsMedium.json", data => { classicSets[1] = data; });
-	loadJSON("levelData/classicLevelsHard.json", data => { classicSets[2] = data; });
-	loadJSON("levelData/classicLevelsTricky.json", data => { classicSets[3] = data; });
-	loadJSON("levelData/classicLevelsCooked.json", data => { classicSets[4] = data; });
-	loadJSON("levelData/puzzleLevelsSimple.json", data => { puzzleSets[0] = data; });
-	loadJSON("levelData/puzzleLevelsInteresting.json", data => { puzzleSets[1] = data; });
-	loadJSON("levelData/puzzleLevelsCrazyHard.json", data => { puzzleSets[2] = data; });
-	loadJSON("levelData/puzzleLevelsJavascript.json", data => { puzzleSets[3] = data; });
+	loadJSON("levelData/classicLevelsEasy.json", data => { originalClassicSets[0] = data; });
+	loadJSON("levelData/classicLevelsMedium.json", data => { originalClassicSets[1] = data; });
+	loadJSON("levelData/classicLevelsHard.json", data => { originalClassicSets[2] = data; });
+	loadJSON("levelData/classicLevelsTricky.json", data => { originalClassicSets[3] = data; });
+	loadJSON("levelData/classicLevelsCooked.json", data => { originalClassicSets[4] = data; });
+	loadJSON("levelData/puzzleLevelsSimple.json", data => { originalPuzzleSets[0] = data; });
+	loadJSON("levelData/puzzleLevelsInteresting.json", data => { originalPuzzleSets[1] = data; });
+	loadJSON("levelData/puzzleLevelsCrazyHard.json", data => { originalPuzzleSets[2] = data; });
+	loadJSON("levelData/puzzleLevelsJavascript.json", data => { originalPuzzleSets[3] = data; });
 }
 
 function setup() {
+	for(let s of originalClassicSets){
+		classicSets.push(shuffle([...s]));
+	}
+	for(let s of originalPuzzleSets){
+		puzzleSets.push(shuffle([...s]));
+	}
+
 	// testSolutions();
 
 	canHover = window.matchMedia('(hover: hover)').matches;
@@ -57,8 +66,9 @@ function draw() {
 		background(220);
 		level.draw();
 		if (level.solved) {
+			checkResetSet();
 			let levelArgs = getRandomLevel(currentLevelSet, level.originalValues.map(c => c.real),
-				currentIsClassic ? ["+", "-", "×", "÷"] : Level.SYMBOLS, false, currentUsedIndices, false);
+				currentIsClassic ? ["+", "-", "×", "÷"] : Level.SYMBOLS, false, false);
 			level = new Level(levelArgs.cards,levelArgs.ops,levelArgs.lvl,currentIsClassic);
 			Level.setupKeyboard(level);
 			setThemeColor(theme.backgroundColor);
@@ -67,8 +77,9 @@ function draw() {
 		background(220);
 		duel.draw();
 		if (duel.solved) {
+			checkResetSet();
 			let levelArgs = getRandomLevel(currentLevelSet, duel.levels[0].originalValues.map(c => c.real),
-				currentIsClassic ? ["+", "-", "×", "÷"] : Level.SYMBOLS, false, currentUsedIndices, false);
+				currentIsClassic ? ["+", "-", "×", "÷"] : Level.SYMBOLS, false, false);
 			duel = new Duel(levelArgs.cards,levelArgs.ops,levelArgs.lvl,duel.scores);
 			setThemeColor(theme.backgroundColor);
 		}
@@ -100,51 +111,53 @@ function windowResized() {
 }
 
 
-function getRandomLevel(levelSet, previousCards, defaultOps = Level.SYMBOLS, overrideOps = false, usedIndices = [], shuffleCards) {
-	let lvl, index;
-	let cont = true;
-	for (let tries = 0; tries < 1000 && cont; tries++) {
-		if (tries === 999) {
-			console.log ("reached try #999 in getRandomLevel");
-		}
-		index = floor(random(0, levelSet.length));
-		if (usedIndices.includes(index)) continue;
+function getRandomLevel(levelSet, previousCards, defaultOps = Level.SYMBOLS, overrideOps = false, shuffleCards) {
+	// find first valid level
+	for (let i = 0; i < levelSet.length; i++) {
+		let lvl = levelSet[i];
 
-		lvl = levelSet[index];
-		if (previousCards === undefined || lvl.cards.length !== previousCards.length) {
-			cont = false;
-			break;
-		}
-		let sortedCards = lvl.cards.toSorted();
-		let sortedPreviousCards = previousCards.toSorted();
-		for (let i = 0; i < sortedCards.length; i++) {
-			if (sortedCards[i] !== sortedPreviousCards[i]) {
-				cont = false;
-				break;
-			}
+		if (!sameCards(lvl.cards, previousCards)) {
+			levelSet.splice(i, 1); // consume from deck
+			return buildLevel(lvl, defaultOps, overrideOps, shuffleCards);
 		}
 	}
 
-	// track used index
-	usedIndices.push(index);
-	if (usedIndices.length > min(levelSet.length-3,50)) usedIndices.shift();
-
+	// fallback: all remaining levels violate constraint
+	let lvl = levelSet.pop();
+	return buildLevel(lvl, defaultOps, overrideOps, shuffleCards);
+}
+function buildLevel(lvl, defaultOps, overrideOps, shuffleCards) {
 	let ops = defaultOps;
 	if (!overrideOps && lvl.ops !== undefined) {
 		ops = lvl.ops;
 	}
-	let cards;
-	if(shuffleCards){
-		cards = shuffle(lvl.cards);
-	}
-	else{
-		cards = lvl.cards;
-	}
+
+	let cards = shuffleCards ? shuffle(lvl.cards) : lvl.cards;
+
 	return {
-		cards:cards,
-		ops:ops,
-		lvl:lvl
+		cards: cards,
+		ops: ops,
+		lvl: lvl
 	};
+}
+function sameCards(a, b) {
+	if (!a || !b || a.length !== b.length) return false;
+
+	let sa = a.toSorted();
+	let sb = b.toSorted();
+	return sa.every((v, i) => v === sb[i]);
+}
+function checkResetSet() {
+	if (currentLevelSet.length === 0) {
+		if(currentIsClassic){
+			classicSets[currentLevelSetIndex] = shuffle([...originalClassicSets[currentLevelSetIndex]]);
+			currentLevelSet = classicSets[currentLevelSetIndex];
+		}
+		else{
+			puzzleSets[currentLevelSetIndex] = shuffle([...originalPuzzleSets[currentLevelSetIndex]]);
+			currentLevelSet = puzzleSets[currentLevelSetIndex];
+		}
+	}
 }
 
 

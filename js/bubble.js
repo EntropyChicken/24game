@@ -1,14 +1,12 @@
 function textAlpha(txt,x,y,alph){
     textSize(Bubble.rad*0.5);
     if(txt===24||txt==="24"){
-        // textSize(Bubble.rad*0.6);
         alph = alph+255*0.2*sin(PI*alph/255); // more alpha
         fill(lerpColor(color(255,255,255),color(40,180,20),alph/255));
         text(txt,x,y+1);
         text(txt,x,y);
     }
     else{
-        // textSize(Bubble.rad*0.45);
         fill(lerpColor(color(255,255,255),color(100,100,100),alph/255));
         text(txt,x,y);
     }
@@ -125,9 +123,6 @@ class Bubble {
         }
     }
     draw(){
-        // fill(255,0,0,30);
-        // ellipse(this.visualX(),this.y,Bubble.rad,Bubble.rad);
-
         noStroke();
         textAlign(CENTER,CENTER);
         let alph = 255;
@@ -146,10 +141,6 @@ class Bubble {
             textAlpha(this.parts[0],this.x+this.textXs[2],this.y,alph);
             textAlpha(this.parts[1],this.x+this.textXs[4],this.y,alph);
         }
-
-        // noFill();
-        // stroke(255,0,0);
-        // ellipse(this.visualX(),this.y,this.visualRad()*2,this.visualRad()*2);
     }
     startSplit(){
         this.splittingTimer = Bubble.SPLITTING_TIME;

@@ -27,7 +27,7 @@ let setLabels = [
     "Puzzle Simple", "Puzzle Interesting", "Puzzle Crazy Hard", "Puzzle Javascript 😭"
 ];
 let battleBackgroundImg, drawWaitingRoomForBattleBackground = false;
-let setChecked = [true, true, true, true, true, true, true, false, false];
+let setChecked = [true, true, true, true, false, true, true, false, false];
 let battleVictoryFlash = 0;
 let battleLossFlash = 0;
 let teamInput; 

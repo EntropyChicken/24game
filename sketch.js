@@ -43,6 +43,8 @@ const BATTLE_DOUBLER_LABELS = {
     invalid_number: "Non-Number"
 };
 const DOUBLER_REASON_KEYS = Object.keys(BATTLE_DOUBLER_LABELS);
+let showMasterHint = false;
+let masterHintX = null;
 
 function isDoublerReasonEnabled(reasonKey) {
     switch (reasonKey) {
@@ -378,6 +380,18 @@ function draw() {
             mx = oldMx; my = oldMy;
             pop();
         }
+
+        if (showMasterHint && typeof masterPreviewLevel !== 'undefined') {
+            push();
+            textSize(20);
+            fill(255, 230, 150);
+            textAlign(CENTER, LEFT);
+
+            let hintText = "Hint: " + masterPreviewLevel.getHint();
+            text(hintText, width * 0.1, height * 0.85, width * 0.8, height * 0.12);
+            pop();
+        }
+        
         if (battleMasterVictoryFlash > 0.005) {
             push();
             let alphaVal = 255 * min(1, battleMasterVictoryFlash * 1.5); // Multiply slightly so it stays solid a bit longer
@@ -1209,7 +1223,6 @@ async function setupRealtime() {
                 }
             }
             if (screen === "title" && titleScreen) {
-                console.log("REVEAL BATTLE! yay");
                 titleScreen.revealBattleButton();
             }
         })
@@ -1358,4 +1371,15 @@ function handleGameMasterLeft() {
     if (titleScreen) {
         titleScreen.showBattle = false;
     }
+}
+
+function keyPressed() {
+  if (screen === "battleMaster") {
+    if (key === 'h' || key === 'H') {
+      showMasterHint = !showMasterHint;
+      if (showMasterHint) {
+        masterHintX = width; 
+      }
+    }
+  }
 }

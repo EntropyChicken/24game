@@ -776,6 +776,7 @@ function mousePressed() {
         }
     } else if (screen === "battleMaster") {
         if (mouseX > width - 230 && mouseX < width - 80 && mouseY > 80 && mouseY < 230) {
+            battleLossFlash = 1;
             broadcastNewBattleLevel();
         }
         

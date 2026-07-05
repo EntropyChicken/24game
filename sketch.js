@@ -388,7 +388,7 @@ function draw() {
             // Draw huge dynamic black text
             fill(0, 0, 0, alphaVal);
             textAlign(CENTER, CENTER);
-            let winString = battleMasterWinningTeam + " +" + battleMasterWinningPoints;
+            let winString = battleMasterWinningTeam + " (+" + battleMasterWinningPoints+")";
             
             // Dynamically scale text to fit 90% of screen width
             textSize(100); 
@@ -402,7 +402,7 @@ function draw() {
             pop();
 
             // Decay the flash
-            battleMasterVictoryFlash *= 0.96;
+            battleMasterVictoryFlash *= 0.98;
         }
     }
 }

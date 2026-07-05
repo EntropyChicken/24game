@@ -220,9 +220,8 @@ function drawBattleTeamSelection(){
     let orbitPadding = battleTeams.length > 8 ? 3 : 20;
     let centralOrbitRadius = 220;
     
-    // Guard against division by zero layout errors if 0 teams exist yet
     let maxOrbitDiameter = 250;
-    if (battleTeams.length > 0) {
+    if (battleTeams.length > 1) {
         maxOrbitDiameter = min(250, 2 * centralOrbitRadius * sin(PI / battleTeams.length));
     }
 
@@ -238,7 +237,7 @@ function drawBattleTeamSelection(){
     let currentOrbitTextSize = baseTextSize;
     if (orbitDiameter > maxOrbitDiameter) {
         orbitDiameter = maxOrbitDiameter;
-        let availableSpace = maxOrbitDiameter - orbitPadding;
+        let availableSpace = max(0, maxOrbitDiameter - orbitPadding);
         currentOrbitTextSize = baseTextSize * (availableSpace / maxTextWidth);
     }
 
@@ -316,9 +315,15 @@ function setBattleTeam(team){
     textAlign(CENTER,CENTER);
     textSize(30);
     fill(255);
-    text("Team: " + team + "\n...waiting for puzzle...", width / 2, height / 2);
+    text("Team: "+team+"\n...waiting for puzzle...", width / 2, height / 2);
     pop();
-    
+
+    channel.send({
+        type: "broadcast",
+        event: "new_team_created",
+        payload: { teamName: team }
+    });
+
     channel.send({
         type: "broadcast",
         event: "request_current_level",
@@ -570,6 +575,14 @@ function setScreen(s){
     else if(screen === "game" || screen === "duel"){
         setThemeColor(theme.backgroundColor);
     }
+    else if(screen === "battle"){
+        setThemeColor(color(0,0,0));
+        channel.send({
+            type: "broadcast",
+            event: "request_teams",
+            payload: {}
+        });
+    }
     else{
         setThemeColor(color(0,0,0));
     }
@@ -593,19 +606,17 @@ function mousePressed() {
         if (battleTeam === null) {  
             let centralOrbitRadius = 220;
             let orbitSpeed = battleTeams.length > 8 ? 0.00012 : 0.00024;
-            
-            // --- Custom Typed Text Box Join Check ---
             let inputY = height / 2 + centralOrbitRadius + 40;
             let btnX = width / 2 - 60;
             let btnY = inputY + 45 + 20; 
             if (mouseX > btnX && mouseX < btnX + 120 && mouseY > btnY && mouseY < btnY + 50) {
                 let typedName = teamInput.value().trim();
                 if (typedName !== "") {
-                    // Broadcast new custom team registration to everybody!
+                    // FIX: Match the event name and payload structure the BattleMaster listens for
                     channel.send({
                         type: "broadcast",
-                        event: "register_team",
-                        payload: { team: typedName }
+                        event: "new_team_created",
+                        payload: { teamName: typedName }
                     });
                     setBattleTeam(typedName);
                     return;
@@ -617,7 +628,7 @@ function mousePressed() {
             let orbitPadding = battleTeams.length > 8 ? 3 : 20;
             
             let maxOrbitDiameter = 250;
-            if (battleTeams.length > 0) {
+            if (battleTeams.length > 1) {
                 maxOrbitDiameter = min(250, 2 * centralOrbitRadius * sin(PI / battleTeams.length));
             }
             
@@ -688,10 +699,11 @@ function touchStarted() {
                     if (t.x > btnX && t.x < btnX + 120 && t.y > btnY && t.y < btnY + 50) {
                         let typedName = teamInput.value().trim();
                         if (typedName !== "") {
+                            // FIX: Match the event name and payload structure the BattleMaster listens for
                             channel.send({
                                 type: "broadcast",
-                                event: "register_team",
-                                payload: { team: typedName }
+                                event: "new_team_created",
+                                payload: { teamName: typedName }
                             });
                             setBattleTeam(typedName);
                         }
@@ -770,26 +782,16 @@ const channel = supabaseClient.channel("main-room", {
         broadcast: { self: true }
     }
 });
-
 async function setupRealtime() {
     channel
         .on("broadcast", { event: "win" }, (msg) => {
             gameCount = msg.payload.gameCount;
             gameCountDrawScale = 2;
         })
-        .on("broadcast", { event: "register_team" }, (msg) => {
-            let tName = msg.payload.team.trim();
-            if (tName && !battleTeams.includes(tName)) {
-                battleTeams.push(tName);
-                battleScores[tName] = 0;
-            }
-        })
         .on("broadcast", { event: "sync_teams" }, (msg) => {
             if (msg.payload.teams) {
                 for (let t of msg.payload.teams) {
-                    if (!battleTeams.includes(t)) {
-                        battleTeams.push(t);
-                    }
+                    if (!battleTeams.includes(t)) battleTeams.push(t);
                 }
             }
             if (msg.payload.scores) {
@@ -801,12 +803,18 @@ async function setupRealtime() {
         .on("broadcast", { event: "battle_level" }, (msg) => {
             if (msg.payload.teams) {
                 for (let t of msg.payload.teams) {
-                    if (!battleTeams.includes(t)) {
-                        battleTeams.push(t);
-                        battleScores[t] = msg.payload.scores ? (msg.payload.scores[t] || 0) : 0;
+                    let tTrim = t.trim();
+                    if (tTrim && !battleTeams.includes(tTrim)) {
+                        battleTeams.push(tTrim);
                     }
                 }
             }
+            if (msg.payload.scores) {
+                for (let t in msg.payload.scores) {
+                    battleScores[t] = msg.payload.scores[t];
+                }
+            }
+            
             if (screen === "battle" && battleTeam !== null) {
                 let args = msg.payload;
                 level = new Level(args.cards, args.ops, args.lvl, args.isClassic);
@@ -814,26 +822,62 @@ async function setupRealtime() {
                 battleWaiting = false;
             }
         })
-        .on("broadcast", { event: "battle_win" }, (msg) => {
-            let winningTeam = msg.payload.team;
-            if (battleScores[winningTeam] === undefined) {
-                battleScores[winningTeam] = 0;
-            }
-            battleScores[winningTeam]++;
-            
-            if (screen === "battleMaster") {
-                broadcastNewBattleLevel(); 
+        .on("broadcast", { event: "teams_list" }, (msg) => {
+            if (msg.payload.teams) {
+                for (let t of msg.payload.teams) {
+                    let tTrim = t.trim();
+                    if (tTrim && !battleTeams.includes(tTrim)) {
+                        battleTeams.push(tTrim);
+                    }
+                }
+                for (let t of battleTeams) {
+                    if (battleScores[t] === undefined) {
+                        battleScores[t] = 0;
+                    }
+                }
             }
         })
-        .on("broadcast", { event: "request_current_level" }, (msg) => {
+        .on("broadcast", { event: "ping_game_master" }, () => {
             if (screen === "battleMaster") {
-                // Return current configurations and full team states instantly to late joiners
-                channel.send({
-                    type: "broadcast",
-                    event: "sync_teams",
-                    payload: { teams: battleTeams, scores: battleScores }
+                channel.send({ 
+                    type: "broadcast", 
+                    event: "game_master_pong", 
+                    payload: {
+                        teams: battleTeams,
+                        scores: battleScores
+                    } 
                 });
-                if (currentBattleLevelData) {
+            }
+        }).on("broadcast", { event: "game_master_pong" }, (msg) => {
+            if (msg.payload) {
+                if (msg.payload.teams) {
+                    for (let t of msg.payload.teams) {
+                        let tTrim = t.trim();
+                        if (tTrim && !battleTeams.includes(tTrim)) {
+                            battleTeams.push(tTrim);
+                        }
+                    }
+                }
+                if (msg.payload.scores) {
+                    for (let t in msg.payload.scores) {
+                        battleScores[t] = msg.payload.scores[t];
+                    }
+                }
+            }
+
+            if (screen === "title" && titleScreen) {
+                titleScreen.revealBattleButton();
+            }
+        })
+        .on("broadcast", { event: "new_team_created" }, (msg) => {
+            let newTeam = msg.payload.teamName.trim();
+            if (newTeam) {
+                if (!battleTeams.includes(newTeam)) {
+                    battleTeams.push(newTeam);
+                    battleScores[newTeam] = 0;
+                }
+                
+                if (screen === "battleMaster" && currentBattleLevelData) {
                     channel.send({
                         type: "broadcast",
                         event: "battle_level",
@@ -846,8 +890,13 @@ async function setupRealtime() {
                 }
             }
         });
-
-    await channel.subscribe(); 
+    await channel.subscribe((status) => {
+        if (status === "SUBSCRIBED") {
+            if (screen === "title" && titleScreen) {
+                channel.send({ type: "broadcast", event: "ping_game_master", payload: {} });
+            }
+        }
+    }); 
 }
 setupRealtime();
 

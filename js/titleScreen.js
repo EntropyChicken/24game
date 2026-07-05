@@ -1,9 +1,10 @@
 class TitleScreen {
     constructor() {
+        this.showBattle = false;
         this.boxes = [];
         this.boxW = min(220, width * 0.35);
         this.boxH = min(80, height * 0.1);
-        this.marginY = min(16,height*0.016);
+        this.marginY = min(16, height * 0.016);
         this.bubbleBox = new BubbleBox(0,0,width,height,20,0);
         this.duelMode = false;
 
@@ -40,30 +41,27 @@ class TitleScreen {
             });
         }
 
-        // Layout calculations for the dual buttons
-        let gap = 13;
-        let btnStartX = width * 0.5 - this.boxes[0].w / 2 - gap ; // idk gap ig
-        let btnY = height * 0.2;
-        let totalBtnW = this.boxes[0].w;
-        let btnH = this.boxes[0].h;
+        this.gap = 13;
+        this.btnStartX = width * 0.5 - this.boxes[0].w / 2 - this.gap; 
+        this.btnY = height * 0.2;
+        this.totalBtnW = this.boxes[0].w;
+        this.btnH = this.boxes[0].h;
         
-        let duelW = (totalBtnW - gap) * 0.46; // Duel is slightly smaller
-        let battleW = (totalBtnW - gap) * 0.63; // Battle gets more space for the longer word
+        this.duelW = (this.totalBtnW - this.gap) * 0.46; 
+        this.battleW = (this.totalBtnW - this.gap) * 0.63;
 
         this.duelButton = new Button({
-            x: btnStartX, y: btnY, w: duelW, h: btnH,
+            x: width * 0.5 - this.duelW / 2, // Default to centered
+            y: this.btnY, w: this.duelW, h: this.btnH,
             label: "Duel button",
             style: {
-                r: 15,
-                onHoverMovement: 0.003,
-                textColor: color(60,60,60),
+                r: 15, onHoverMovement: 0.003, textColor: color(60,60,60),
                 predraw: () => {
                     if(titleScreen.duelMode){
                         titleScreen.duelButton.style.mainColor = color(225,255,180);
                         titleScreen.duelButton.style.shadeColor = theme.shadeColorCorrect;
                         titleScreen.duelButton.style.hovering = true;
-                    }
-                    else{
+                    } else {
                         titleScreen.duelButton.style.mainColor = color(255,255,255);
                         titleScreen.duelButton.style.shadeColor = theme.shadeColor;
                         titleScreen.duelButton.style.hovering = false;
@@ -75,32 +73,33 @@ class TitleScreen {
         });
 
         this.battleButton = new Button({
-			x: btnStartX + duelW + gap, y: btnY, w: battleW, h: btnH,
-			label: "Battle button",
-			style: {
-				r: 15,
-				onHoverMovement: 0.003,
-				textColor: color(60,60,60),
-				predraw: () => {
-					titleScreen.battleButton.style.mainColor = color(255,255,255);
-					titleScreen.battleButton.style.shadeColor = theme.shadeColor;
-					titleScreen.battleButton.style.hovering = false;
-				}
-			},
-			getText: () => "BATTLE!",
-			onClick: () => { 
-				// 1. Load the newest set of teams from the game master
-				if (typeof gameMaster !== 'undefined' && gameMaster.getLatestTeams) {
-					battleTeams = gameMaster.getLatestTeams(); 
-				} else {
-					console.warn("Game Master not found or getLatestTeams() missing. Using current teams.");
-				}
+            x: this.btnStartX + this.duelW + this.gap, y: this.btnY, w: this.battleW, h: this.btnH,
+            label: "Battle button",
+            style: {
+                r: 15, onHoverMovement: 0.003, textColor: color(60,60,60),
+                predraw: () => {
+                    titleScreen.battleButton.style.mainColor = color(255,255,255);
+                    titleScreen.battleButton.style.shadeColor = theme.shadeColor;
+                    titleScreen.battleButton.style.hovering = false;
+                }
+            },
+            getText: () => "BATTLE!",
+            onClick: () => { 
+                if (typeof gameMaster !== 'undefined' && gameMaster.getLatestTeams) {
+                    battleTeams = gameMaster.getLatestTeams(); 
+                }
+                setScreen("battle"); 
+            } 
+        });
 
-				// 2. Now that teams are updated, change the screen
-				setScreen("battle"); 
-			} 
-		});
+        if (typeof channel !== 'undefined') {
+            channel.send({ type: "broadcast", event: "ping_game_master", payload: {} });
+        }
+    }
 
+    revealBattleButton() {
+        this.showBattle = true;
+        this.duelButton.x = this.btnStartX; // Shift left side-by-side
     }
 
     draw() {
@@ -114,9 +113,13 @@ class TitleScreen {
         
         this.drawBoxes();
         
-        // Draw both side-by-side buttons
+        // Draw duel button always
         this.duelButton.draw();
-        this.battleButton.draw();
+        
+        // FIX: Only draw battle button if a Game Master has replied
+        if (this.showBattle) {
+            this.battleButton.draw();
+        }
 
         noStroke();
         for(let y = 2; y>=-2; y-=2){
@@ -170,7 +173,6 @@ class TitleScreen {
             rotate(b.drawAngle);
             translate(-b.x - b.w / 2, -b.y - b.h / 2);
 
-            // Replace white button with shaded button
             if(typeof drawShadedButton === "function"){
                 drawShadedButton(b.x, b.y, b.w, b.h, 15, b.isClassic ? color(255,210,160) : color(180,210,255));
             } else {
@@ -196,7 +198,6 @@ class TitleScreen {
             if (fallbackWidth <= maxWidth && fallbackHeight <= maxHeight) {
                 text(label, b.x + b.w / 2, b.y + b.h / 2);
             } else {
-                // fallback: multiline wrapping
                 let lines = [];
                 let currentLine = '';
                 for (let char of label) {
@@ -251,8 +252,11 @@ class TitleScreen {
             }
         }
         
-        // Loop through both top buttons
-        const buttons = [this.duelButton, this.battleButton];
+        const buttons = [this.duelButton];
+        if (this.showBattle) {
+            buttons.push(this.battleButton);
+        }
+
         for(const btn of buttons) {
             if(btn.contains(mx, my)) {
                 btn.drawScale -= 0.08;

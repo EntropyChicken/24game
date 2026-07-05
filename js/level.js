@@ -75,7 +75,7 @@ class Level {
 				r: 10,
 				onHoverMovement: -0.004,
 				transparentOnWin: true,
-				transparent: (screen==="battle")
+				transparent: (screen === "battle" || screen === "battleMaster")
 			},
 			getText: () => "Home",
 			onClick: () => { setScreen("title"); }
@@ -191,7 +191,7 @@ class Level {
 				background(theme.backgroundColorCorrect);
 			}
 			else {
-				if (screen === "battle") {
+				if (screen === "battle" || screen === "battleMaster") {
 					drawBattleBackground();
 				}
 				else {
@@ -205,7 +205,7 @@ class Level {
 		this.homeButton.draw(this.winTimer > 0);
 
 		// bodgey but yeah. if battle screen then DONT do these.
-		if (typeof screen !== 'undefined' && screen !== "battle") {
+		if (typeof screen !== 'undefined' && !(screen === "battle" || screen === "battleMaster")) {
 			this.hintButton.draw(this.winTimer > 0);
 			this.solutionButton.draw(this.winTimer > 0);
 			this.skipButton.draw(this.winTimer > 0);
@@ -498,7 +498,7 @@ class Level {
 	handleClick(mx, my) {
 		// bodgey but, don't do these superbuttons if battle
 		let buttons = [this.undoButton, this.homeButton];
-		if (typeof screen !== 'undefined' && screen !== "battle") {
+		if (typeof screen !== 'undefined' && !(screen === "battle" || screen === "battleMaster")) {
 			buttons.push(this.hintButton, this.solutionButton, this.skipButton);
 		}
 		for(const btn of buttons) {

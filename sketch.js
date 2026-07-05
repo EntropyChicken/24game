@@ -26,7 +26,7 @@ let setLabels = [
     "Classic Easy", "Classic Medium", "Classic Hard", "Classic Tricky", "Classic Very Hard",
     "Puzzle Simple", "Puzzle Interesting", "Puzzle Crazy Hard", "Puzzle Javascript 😭"
 ];
-let battleBackgroundImg, drawWaitingRoomForBattleBackground = false;
+let battleMasterBackgroundImg;
 let setChecked = [true, true, true, true, false, true, true, false, false];
 let battleVictoryFlash = 0;
 let battleLossFlash = 0;
@@ -164,7 +164,48 @@ function draw() {
         if (currentBattleLevelData === null) {
             broadcastNewBattleLevel();
         }
-        background(0);
+
+        {
+            push();
+            for(let iter = 0; iter<3; iter++){ 
+                push();
+                translate(width / 2, height / 2);
+                scale(1.001);
+                rotate(0.0008);
+                
+                imageMode(CENTER);
+                if (battleMasterBackgroundImg !== undefined){
+                    image(battleMasterBackgroundImg, 0, 0);
+                }
+                pop();
+
+                noFill();
+                strokeWeight(15);
+                
+                stroke(random(0, 255), 70);
+                
+                let rad = pow(random(0, 1.1), 6) * 40 + 15;
+                if (random(0, 10) < 1) {
+                    rad *= random(1, 3);
+                }
+                let x = random(-rad, width + rad);
+                let y = random(-rad, height + rad);
+                push();
+                translate(x,y);
+                rotate(random(0,360));
+                rect(-rad, -rad, rad * 2, rad * 2, rad*0.15);
+                pop();
+                
+                if(random(0,1)<0.1){
+                    background(0,8);
+                }
+                battleMasterBackgroundImg = get();
+            }
+            pop();
+            background(lerpColor(color(0,120),color(255,120),min(1,battleLossFlash)));
+            battleLossFlash*=0.95;
+        }
+        
         textAlign(LEFT, TOP);
         fill(140);
         textSize(28);
@@ -185,7 +226,7 @@ function draw() {
             
             stroke(255);
             strokeWeight(2);
-            if (setChecked[i]) fill(100, 255, 100); 
+            if (setChecked[i]) fill(0,150,255); 
             else fill(0);                           
             rect(cx, cy, 30, 30, 5);
             
@@ -224,7 +265,7 @@ function draw() {
         noStroke();
         textAlign(CENTER, CENTER);
         textSize(40);
-        text("Reset\nBattle", width - 155, 495);
+        text("Reset\nScores", width - 155, 495);
 
         if (masterPreviewLevel) {
             push();
@@ -390,43 +431,7 @@ function setBattleTeam(team){
 }
 
 function drawBattleBackground(scaleFactor=1.0003, iterations=3, fadeFreq=0.1, col) {
-    if(drawWaitingRoomForBattleBackground){
-        push();
-        for(let iter = 0; iter<iterations; iter++){ 
-            push();
-            translate(width / 2, height / 2);
-            scale(scaleFactor);
-            
-            imageMode(CENTER);
-            if (battleBackgroundImg !== undefined){
-                image(battleBackgroundImg, 0, 0);
-            }
-            pop();
-
-            noFill();
-            strokeWeight(10);
-            
-            stroke(random(0, 255),80);
-            
-            let rad = pow(random(0, 1.1), 6) * 40 + 15;
-            if (random(0, 10) < 1) {
-                rad *= random(1, 3);
-            }
-            let x = random(-rad, width + rad);
-            let y = random(-rad, height + rad);
-            ellipse(x, y, rad * 2, rad * 2);
-            
-            if(random(0,1)<fadeFreq){
-                background(50,15);
-            }
-            battleBackgroundImg = get();
-        }
-        pop();
-        background(50,100);
-    }
-    else{
-        background(lerpColor(lerpColor(color(140),color(0),battleLossFlash),theme.backgroundColorCorrect,min(1,battleVictoryFlash)));
-    }
+    background(lerpColor(lerpColor(color(140),color(0),battleLossFlash),theme.backgroundColorCorrect,min(1,battleVictoryFlash)));
     theme.shadeColor = lerpColor(lerpColor(color(190),color(0),battleLossFlash),theme.backgroundColorCorrect,min(1,battleVictoryFlash));
     battleVictoryFlash*=0.9;
     battleLossFlash*=0.95;
@@ -684,16 +689,15 @@ function mousePressed() {
             let orbitSpeed = battleTeams.length > 8 ? 0.00012 : 0.00024;
             let inputW = 260;
             let inputH = 45;
-            let padding = 15; // Added to match touchStarted
+            let padding = 15;
             
             let inputX = width / 2 - inputW / 2;
-            // 💡 Now calculating inputY with constraints so it matches touch and drawing logic!
             let targetInputY = height / 2 + centralOrbitRadius + 40;
             let maxInputY = height - 115 - padding;
             let inputY = constrain(targetInputY, padding, maxInputY);
             
             if (mouseX > inputX && mouseX < inputX + inputW && mouseY > inputY && mouseY < inputY + inputH) {
-                return; // Let native DOM click pass cleanly
+                return;
             }
 
             let btnX = width / 2 - 60;
@@ -711,7 +715,6 @@ function mousePressed() {
                 }
             }
 
-            // Orbit Selection Logic (Applying Scale Factor)
             let baseTextSize = 40;
             let orbitPadding = battleTeams.length > 8 ? 3 : 20;
             let maxOrbitDiameter = 250;
@@ -764,7 +767,6 @@ function mousePressed() {
         }
         
         if (mouseX > width - 230 && mouseX < width - 80 && mouseY > 420 && mouseY < 570) {
-            // 1. Clear scores locally on the Master side
             for (let t in battleScores) {
                 battleScores[t] = 0;
             }
@@ -976,7 +978,7 @@ async function setupRealtime() {
         })
         .on("broadcast", { event: "battle_win", filter: {} }, (msg) => {
             let winningTeam = msg.payload.team;
-            
+            battleLossFlash = 1;
             if (screen === "battleMaster" && winningTeam) {
                 // 1. Award a point to the winning team
                 if (battleScores[winningTeam] !== undefined) {

@@ -29,8 +29,9 @@ let battleMasterAwardForNaN = true;
 // Per-team Set of distinct "doubler" reasons triggered so far this round.
 // Doing the same doubler action repeatedly only counts once (Set semantics);
 // doing two DIFFERENT doubler actions counts as two. Cleared every new round
-// (see broadcastNewBattleLevel). Only applied to a team's score if/when that
-// team wins the round: winning score = 2^(number of distinct doublers).
+// (see broadcastNewBattleLevel). ALL triggered doublers are recorded here
+// regardless of the checklist below - the checklist is only consulted when
+// a team's score is actually computed at win time (see battle_win handler).
 let battleDoublers = {};
 const BATTLE_DOUBLER_LABELS = {
     negative_number: "Negative",
@@ -38,6 +39,26 @@ const BATTLE_DOUBLER_LABELS = {
     non_real: "Non-Real",
     invalid_number: "NaN"
 };
+const DOUBLER_REASON_KEYS = Object.keys(BATTLE_DOUBLER_LABELS);
+
+function isDoublerReasonEnabled(reasonKey) {
+    switch (reasonKey) {
+        case "negative_number": return battleMasterAwardForNegativeNumber;
+        case "non_integer": return battleMasterAwardForNonInteger;
+        case "non_real": return battleMasterAwardForNonReal;
+        case "invalid_number": return battleMasterAwardForNaN;
+        default: return false;
+    }
+}
+
+function toggleDoublerReasonEnabled(reasonKey) {
+    switch (reasonKey) {
+        case "negative_number": battleMasterAwardForNegativeNumber = !battleMasterAwardForNegativeNumber; break;
+        case "non_integer": battleMasterAwardForNonInteger = !battleMasterAwardForNonInteger; break;
+        case "non_real": battleMasterAwardForNonReal = !battleMasterAwardForNonReal; break;
+        case "invalid_number": battleMasterAwardForNaN = !battleMasterAwardForNaN; break;
+    }
+}
 let setLabels = [
     "Classic Easy", "Classic Medium", "Classic Hard", "Classic Tricky", "Classic Very Hard",
     "Puzzle Simple", "Puzzle Interesting", "Puzzle Crazy Hard", "Puzzle Javascript 😭"
@@ -257,6 +278,28 @@ function draw() {
             textSize(24);
             textAlign(LEFT, CENTER);
             text(setLabels[i], cx + 45, cy + 15);
+        }
+
+        textSize(28);
+        fill(140);
+        text("DOUBLERS:", width / 2, 570);
+        fill(255);
+        for (let i = 0; i < DOUBLER_REASON_KEYS.length; i++) {
+            let cx = width / 2;
+            let cy = 615 + i * 45;
+            let reasonKey = DOUBLER_REASON_KEYS[i];
+
+            stroke(255);
+            strokeWeight(2);
+            if (isDoublerReasonEnabled(reasonKey)) fill(0,150,255);
+            else fill(0);
+            rect(cx, cy, 30, 30, 5);
+
+            noStroke();
+            fill(255);
+            textSize(24);
+            textAlign(LEFT, CENTER);
+            text(BATTLE_DOUBLER_LABELS[reasonKey], cx + 45, cy + 15);
         }
         
         strokeWeight(2);
@@ -776,7 +819,6 @@ function mousePressed() {
         }
     } else if (screen === "battleMaster") {
         if (mouseX > width - 230 && mouseX < width - 80 && mouseY > 80 && mouseY < 230) {
-            battleLossFlash = 1;
             broadcastNewBattleLevel();
         }
         
@@ -813,6 +855,16 @@ function mousePressed() {
                     setChecked[i] = true; 
                 }
                 break; 
+            }
+        }
+
+        for (let i = 0; i < DOUBLER_REASON_KEYS.length; i++) {
+            let cx = width / 2;
+            let cy = 615 + i * 45;
+
+            if (mouseX > cx - 15 && mouseX < cx + 300 && mouseY > cy - 10 && mouseY < cy + 40) {
+                toggleDoublerReasonEnabled(DOUBLER_REASON_KEYS[i]);
+                break;
             }
         }
     }
@@ -1005,9 +1057,16 @@ async function setupRealtime() {
             if (screen === "battleMaster" && winningTeam) {
                 // 1. Award the winning team 1 point, doubled once for every
                 // distinct doubler (negative number / non-integer / non-real /
-                // NaN) that team triggered during this round.
-                const doublerCount = battleDoublers[winningTeam] ? battleDoublers[winningTeam].size : 0;
-                const pointsWon = Math.pow(2, doublerCount);
+                // NaN) that team triggered during this round AND that is
+                // currently checked on the DOUBLERS: checklist.
+                const doublerSet = battleDoublers[winningTeam];
+                let validDoublerCount = 0;
+                if (doublerSet) {
+                    for (let reason of doublerSet) {
+                        if (isDoublerReasonEnabled(reason)) validDoublerCount++;
+                    }
+                }
+                const pointsWon = Math.pow(2, validDoublerCount);
                 if (battleScores[winningTeam] !== undefined) {
                     battleScores[winningTeam] += pointsWon;
                 } else {
@@ -1023,27 +1082,13 @@ async function setupRealtime() {
             if (screen === "battleMaster" && msg.payload) {
                 const team = msg.payload.team;
                 const reason = msg.payload.reason;
-                let award = false;
-                switch (reason) {
-                    case "negative_number":
-                        award = battleMasterAwardForNegativeNumber;
-                        break;
-                    case "non_integer":
-                        award = battleMasterAwardForNonInteger;
-                        break;
-                    case "non_real":
-                        award = battleMasterAwardForNonReal;
-                        break;
-                    case "invalid_number":
-                        award = battleMasterAwardForNaN;
-                        break;
-                }
-                if (award && team) {
-                    // Record this as a doubler for the team (Set: repeating the
-                    // same action doesn't add another doubler, but a different
-                    // qualifying action does). The actual point boost -
-                    // 2^(number of distinct doublers) - is only applied to
-                    // whichever team goes on to win this round.
+                if (team && reason) {
+                    // Always record the doubler (Set: repeating the same action
+                    // doesn't add another doubler, but a different qualifying
+                    // action does). Whether it actually counts toward the score
+                    // is decided later, at win time, by the DOUBLERS: checklist -
+                    // that way toggling a checkbox affects scoring immediately
+                    // without needing to know what's already been triggered.
                     if (!battleDoublers[team]) {
                         battleDoublers[team] = new Set();
                     }

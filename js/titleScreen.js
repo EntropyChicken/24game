@@ -75,21 +75,31 @@ class TitleScreen {
         });
 
         this.battleButton = new Button({
-            x: btnStartX + duelW + gap, y: btnY, w: battleW, h: btnH,
-            label: "Battle button",
-            style: {
-                r: 15,
-                onHoverMovement: 0.003,
-                textColor: color(60,60,60),
-                predraw: () => {
-                    titleScreen.battleButton.style.mainColor = color(255,255,255);
-                    titleScreen.battleButton.style.shadeColor = theme.shadeColor;
-                    titleScreen.battleButton.style.hovering = false;
-                }
-            },
-            getText: () => "BATTLE!",
-            onClick: () => { setScreen("battle"); } 
-        });
+			x: btnStartX + duelW + gap, y: btnY, w: battleW, h: btnH,
+			label: "Battle button",
+			style: {
+				r: 15,
+				onHoverMovement: 0.003,
+				textColor: color(60,60,60),
+				predraw: () => {
+					titleScreen.battleButton.style.mainColor = color(255,255,255);
+					titleScreen.battleButton.style.shadeColor = theme.shadeColor;
+					titleScreen.battleButton.style.hovering = false;
+				}
+			},
+			getText: () => "BATTLE!",
+			onClick: () => { 
+				// 1. Load the newest set of teams from the game master
+				if (typeof gameMaster !== 'undefined' && gameMaster.getLatestTeams) {
+					battleTeams = gameMaster.getLatestTeams(); 
+				} else {
+					console.warn("Game Master not found or getLatestTeams() missing. Using current teams.");
+				}
+
+				// 2. Now that teams are updated, change the screen
+				setScreen("battle"); 
+			} 
+		});
 
     }
 

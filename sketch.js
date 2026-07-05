@@ -4,22 +4,22 @@ let screen = "title";
 let level, duel, titleScreen, masterPreviewLevel;
 let originalClassicSets = [[], [], [], [], []];
 let originalPuzzleSets = [[], [], [], []];
-let classicSets = []; // new system is mostly predetermined on shuffle but it will still skip ahead if it's the same as previous (could fix)
+let classicSets = []; 
 let puzzleSets = [];
 let currentLevelSet = null;
-let currentLevelSetIndex = null; // which index within either classics or puzzles
+let currentLevelSetIndex = null; 
 let currentIsClassic = true;
 let theme = {};
 let canHover;
 let mx = -1, my = -1;
 let canSetThemeColor = true;
-let gameCount; // after initially loading global counter, update locally alongside global counter
+let gameCount; 
 let gameCountDrawScale = 1;
 
-// rgb is default for testing purposes. later i'll probably want to let the players submit their own team names???
-let battleTeams = ["red","green","blue"]; 
+// Starts empty for a fully dynamic, custom team setup!
+let battleTeams = []; 
 let battleTeam = null;
-let battleScores = { "red": 0, "green": 0, "blue": 0 };
+let battleScores = {};
 let battleWaiting = true;
 let currentBattleLevelData = null;
 let setLabels = [
@@ -29,6 +29,7 @@ let setLabels = [
 let battleBackgroundImg, drawWaitingRoomForBattleBackground = false;
 let setChecked = [true, true, true, true, true, true, true, false, false];
 let battleVictoryFlash = 0;
+let teamInput; 
 
 function preload() {
     loadJSON("levelData/classicLevelsEasy.json", data => { originalClassicSets[0] = data; });
@@ -50,8 +51,6 @@ function setup() {
         puzzleSets.push(shuffle([...s]));
     }
 
-    // testSolutions();
-
     canHover = window.matchMedia('(hover: hover)').matches;
     if(canHover){
         canSetThemeColor = false;
@@ -65,6 +64,16 @@ function setup() {
     };
 
     createCanvas(windowWidth, windowHeight);
+    
+    teamInput = createInput('');
+    teamInput.attribute('placeholder', 'Type custom team name...');
+    teamInput.style('font-size', '20px');
+    teamInput.style('padding', '10px');
+    teamInput.style('border-radius', '8px');
+    teamInput.style('border', '2px solid #323232');
+    teamInput.style('text-align', 'center');
+    teamInput.hide(); 
+
     titleScreen = new TitleScreen();
     setScreen("title");
 }
@@ -107,25 +116,19 @@ function draw() {
         }
         else{
             if (level && !battleWaiting) {
-                // The player has a level and is actively playing
                 background(220);
                 level.draw();
                 
-                // Check if they just solved it
                 if (level.winTimer > 0 || level.solved) {
                     battleWaiting = true;
                     battleVictoryFlash = 100;
-                    // Tell the Game Master this team won!
                     channel.send({
                         type: "broadcast",
                         event: "battle_win",
                         payload: { team: battleTeam }
                     });
                 }
-            } else {
-                // Waiting for the game master to send a level. honestly just don't draw anything because this flashes for a second whenever you win and it's annoying 
-                // background(100);
-            }
+            } 
         }
     } else if (screen === "battleMaster") {
         if (currentBattleLevelData === null) {
@@ -133,32 +136,29 @@ function draw() {
         }
         background(0);
         textAlign(LEFT, TOP);
-		fill(140);
+        fill(140);
         textSize(28);
         text("SCORES:", 80, 80);
         fill(255);
         for(let i = 0; i < battleTeams.length; i++){
             let tName = battleTeams[i];
-            text(tName + ": " + battleScores[tName], 80, 125 + 45 * i);
+            text(tName + ": " + (battleScores[tName] || 0), 80, 125 + 45 * i);
         }
         
-        // --- Draw Active Puzzle Sets Checkboxes ---
         textSize(28);
-		fill(140);
+        fill(140);
         text("SETS:", width / 2, 80);
-		fill(255);
+        fill(255);
         for (let i = 0; i < 9; i++) {
             let cx = width / 2;
-            let cy = 125 + i * 45; // Space them out vertically
+            let cy = 125 + i * 45; 
             
-            // Draw Checkbox
             stroke(255);
             strokeWeight(2);
-            if (setChecked[i]) fill(100, 255, 100); // Green if checked
-            else fill(0);                           // Black if unchecked
+            if (setChecked[i]) fill(100, 255, 100); 
+            else fill(0);                           
             rect(cx, cy, 30, 30, 5);
             
-            // Draw Label
             noStroke();
             fill(255);
             textSize(24);
@@ -166,18 +166,16 @@ function draw() {
             text(setLabels[i], cx + 45, cy + 15);
         }
         
-        // Skip Button
-		strokeWeight(2);
+        strokeWeight(2);
         stroke(255, 100, 100);
         fill(255, 100, 100, 80);
         rect(width - 230, 80, 150, 150, 15);
         fill(255);
-		noStroke();
+        noStroke();
         textAlign(CENTER, CENTER);
         textSize(40);
         text("Skip\nPuzzle", width - 155, 155);
 
-        // --- NEW: Non-Interactive Mini Level Preview for Game Master ---
         if (masterPreviewLevel) {
             push();
             let previewW = width * 0.3;
@@ -185,38 +183,32 @@ function draw() {
             let previewX = 80;
             let previewY = height - previewH - 40;
 
-            // Section Header Text
             fill(140);
             noStroke();
             textSize(28);
             textAlign(LEFT, BOTTOM);
             text("CURRENT PUZZLE:", previewX, previewY - 10);
 
-            // Outer Container Border Box
             fill(28);
             stroke(80);
             strokeWeight(2);
             rect(previewX, previewY, previewW, previewH, 12);
 
-            // Apply transformations to downscale game layout inside the container
             translate(previewX, previewY);
             let scaleX = previewW / width;
             let scaleY = previewH / height;
             let sFactor = min(scaleX, scaleY);
             
-            // Center the layout inside the bounding box if aspect ratios do not match perfectly
             let offsetX = (previewW - (width * sFactor)) / 2;
             let offsetY = (previewH - (height * sFactor)) / 2;
             translate(offsetX, offsetY);
             scale(sFactor);
 
-            // Temporarily suppress hover logic to keep cards flat during layout previews
             let oldMx = mx, oldMy = my;
             mx = -1; my = -1;
 
             masterPreviewLevel.draw(false);
 
-            // Restore interactive global coordinates
             mx = oldMx; my = oldMy;
             pop();
         }
@@ -225,12 +217,14 @@ function draw() {
 
 function drawBattleTeamSelection(){
     let baseTextSize = 40;
-    let orbitPadding = 20;
-    if(battleTeams.length>8){
-        orbitPadding = 3;
-    }
+    let orbitPadding = battleTeams.length > 8 ? 3 : 20;
     let centralOrbitRadius = 220;
-    let maxOrbitDiameter = min(250, 2 * centralOrbitRadius * sin(PI / battleTeams.length));
+    
+    // Guard against division by zero layout errors if 0 teams exist yet
+    let maxOrbitDiameter = 250;
+    if (battleTeams.length > 0) {
+        maxOrbitDiameter = min(250, 2 * centralOrbitRadius * sin(PI / battleTeams.length));
+    }
 
     background(220);
     textAlign(CENTER, CENTER);
@@ -238,9 +232,7 @@ function drawBattleTeamSelection(){
     textSize(baseTextSize); 
     for (let i = 0; i < battleTeams.length; i++) {
         let w = textWidth(battleTeams[i]);
-        if (w > maxTextWidth) {
-            maxTextWidth = w;
-        }
+        if (w > maxTextWidth) maxTextWidth = w;
     }
     let orbitDiameter = maxTextWidth + orbitPadding;
     let currentOrbitTextSize = baseTextSize;
@@ -250,24 +242,26 @@ function drawBattleTeamSelection(){
         currentOrbitTextSize = baseTextSize * (availableSpace / maxTextWidth);
     }
 
-    let widthMax = 2*centralOrbitRadius+maxOrbitDiameter;
+    let widthMax = 2 * centralOrbitRadius + maxOrbitDiameter;
     push();
     translate(width / 2, height / 2);
-    if(widthMax>width){
-        scale(width/widthMax);
+    if(widthMax > width){
+        scale(width / widthMax);
     }
 
     stroke(0);
-    strokeWeight(2);
+    let weightVal = 2;
+    strokeWeight(weightVal);
     noFill();
     ellipse(0, 0, centralOrbitRadius * 2, centralOrbitRadius * 2);
     fill(0);
     noStroke();
     textSize(baseTextSize);
-    text("Choose\na team!", 0, 0);
+    text("Create or\nChoose Team", 0, -30); 
+    
     for (let i = 0; i < battleTeams.length; i++) {
         push();
-        let orbitSpeed = battleTeams.length>8 ? 0.00012 : 0.00024;
+        let orbitSpeed = battleTeams.length > 8 ? 0.00012 : 0.00024;
         let ang = -PI * 0.8 + millis() * orbitSpeed + (i / battleTeams.length) * 2 * PI;
         translate(cos(ang) * centralOrbitRadius, sin(ang) * centralOrbitRadius);
         
@@ -281,23 +275,50 @@ function drawBattleTeamSelection(){
         textSize(currentOrbitTextSize);
         text(battleTeams[i], 0, 0);
         pop();
-
-        if(mouseIsPressed&&dist(mouseX,mouseY,width/2+cos(ang) * centralOrbitRadius, height/2+sin(ang) * centralOrbitRadius)<orbitDiameter/2){
-            setBattleTeam(battleTeams[i]);
-            break;
-        }
     }
+    pop();
+
+    let inputW = 260;
+    let inputH = 45;
+    let inputX = width / 2 - inputW / 2;
+    let inputY = height / 2 + centralOrbitRadius + 40;
+
+    teamInput.position(inputX, inputY);
+    teamInput.size(inputW, inputH);
+    teamInput.show(); 
+
+    let btnX = width / 2 - 60;
+    let btnY = inputY + inputH + 20;
+    let btnW = 120;
+    let btnH = 50;
+
+    stroke(0);
+    strokeWeight(2);
+    fill(100, 200, 100); 
+    rect(btnX, btnY, btnW, btnH, 10);
+    
+    noStroke();
+    fill(255);
+    textSize(22);
+    textAlign(CENTER, CENTER);
+    text("JOIN", btnX + btnW / 2, btnY + btnH / 2);
 }
 
 function setBattleTeam(team){
+    team = team.trim();
+    if (team === "") return; 
+
     battleTeam = team;
+    teamInput.hide(); 
+
     background(0);
     push();
     textAlign(CENTER,CENTER);
     textSize(30);
     fill(255);
-    text("Team: "+team+"\n...waiting for puzzle...",0,0);
+    text("Team: " + team + "\n...waiting for puzzle...", width / 2, height / 2);
     pop();
+    
     channel.send({
         type: "broadcast",
         event: "request_current_level",
@@ -321,7 +342,6 @@ function drawBattleBackground(scaleFactor=1.0003, iterations=3, fadeFreq=0.1, co
 
             noFill();
             strokeWeight(10);
-            let high = constrain(random(100, 280),0,255);
             
             stroke(random(0, 255),80);
             
@@ -369,17 +389,15 @@ function windowResized() {
 }
 
 function getRandomLevel(levelSet, previousCards, defaultOps = Level.SYMBOLS, overrideOps = false, shuffleCards) {
-    // find first valid level
     for (let i = 0; i < levelSet.length; i++) {
         let lvl = levelSet[i];
 
         if (!sameCards(lvl.cards, previousCards)) {
-            levelSet.splice(i, 1); // consume from deck
+            levelSet.splice(i, 1); 
             return buildLevel(lvl, defaultOps, overrideOps, shuffleCards);
         }
     }
 
-    // fallback: all remaining levels violate constraint
     let lvl = levelSet.pop();
     return buildLevel(lvl, defaultOps, overrideOps, shuffleCards);
 }
@@ -572,30 +590,76 @@ function mousePressed() {
     } else if (screen === "duel") {
         duel.handleClick(mouseX, mouseY);
     } else if (screen === "battle") {
-        if (level && !battleWaiting && battleTeam !== null) {
-            level.handleClick(mouseX, mouseY);
+        if (battleTeam === null) {  
+            let centralOrbitRadius = 220;
+            let orbitSpeed = battleTeams.length > 8 ? 0.00012 : 0.00024;
+            
+            // --- Custom Typed Text Box Join Check ---
+            let inputY = height / 2 + centralOrbitRadius + 40;
+            let btnX = width / 2 - 60;
+            let btnY = inputY + 45 + 20; 
+            if (mouseX > btnX && mouseX < btnX + 120 && mouseY > btnY && mouseY < btnY + 50) {
+                let typedName = teamInput.value().trim();
+                if (typedName !== "") {
+                    // Broadcast new custom team registration to everybody!
+                    channel.send({
+                        type: "broadcast",
+                        event: "register_team",
+                        payload: { team: typedName }
+                    });
+                    setBattleTeam(typedName);
+                    return;
+                }
+            }
+
+            // --- Orbit Selection Logic ---
+            let baseTextSize = 40;
+            let orbitPadding = battleTeams.length > 8 ? 3 : 20;
+            
+            let maxOrbitDiameter = 250;
+            if (battleTeams.length > 0) {
+                maxOrbitDiameter = min(250, 2 * centralOrbitRadius * sin(PI / battleTeams.length));
+            }
+            
+            let maxTextWidth = 0;
+            textSize(baseTextSize);
+            for (let i = 0; i < battleTeams.length; i++) {
+                let w = textWidth(battleTeams[i]);
+                if (w > maxTextWidth) maxTextWidth = w;
+            }
+            let orbitDiameter = maxTextWidth + orbitPadding;
+            if (orbitDiameter > maxOrbitDiameter) orbitDiameter = maxOrbitDiameter;
+
+            for (let i = 0; i < battleTeams.length; i++) {
+                let ang = -PI * 0.8 + millis() * orbitSpeed + (i / battleTeams.length) * 2 * PI;
+                let buttonX = width / 2 + cos(ang) * centralOrbitRadius;
+                let buttonY = height / 2 + sin(ang) * centralOrbitRadius;
+                if (dist(mouseX, mouseY, buttonX, buttonY) < orbitDiameter / 2) {
+                    let selectedTeam = battleTeams[i];
+                    setBattleTeam(selectedTeam);
+                    break; 
+                }
+            }
+        } else {
+            if (level && !battleWaiting) {
+                level.handleClick(mouseX, mouseY);
+            }
         }
     } else if (screen === "battleMaster") {
-        // --- Generous Skip Puzzle Button Hitbox ---
-        // Originally drawn at: rect(width - 230, 80, 150, 150)
         if (mouseX > width - 250 && mouseX < width - 60 && mouseY > 60 && mouseY < 250) {
             broadcastNewBattleLevel();
         }
         
-        // --- Generous Checkboxes + Labels Hitbox ---
-        // Originally drawn at: rect(width / 2, 125 + i * 45, 30, 30)
         for (let i = 0; i < 9; i++) {
             let cx = width / 2;
             let cy = 125 + i * 45;
             
-            // Padded box: starts 15px to the left of the checkbox, 
-            // and spans 300px wide to generous-click the label text too.
             if (mouseX > cx - 15 && mouseX < cx + 300 && mouseY > cy - 10 && mouseY < cy + 40) {
                 setChecked[i] = !setChecked[i];
                 if (!setChecked.includes(true)) {
-                    setChecked[i] = true; // Prevent deselecting all sets
+                    setChecked[i] = true; 
                 }
-                break; // Action handled, break loop
+                break; 
             }
         }
     }
@@ -614,6 +678,27 @@ function touchStarted() {
                 titleScreen.handleClick(t.x, t.y);
             } else if (screen === "duel") {
                 duel.handleClick(t.x, t.y);
+            } else if (screen === "battle") {
+                if (battleTeam === null) {
+                    let centralOrbitRadius = 220;
+                    let inputY = height / 2 + centralOrbitRadius + 40;
+                    let btnX = width / 2 - 60;
+                    let btnY = inputY + 45 + 20;
+                    
+                    if (t.x > btnX && t.x < btnX + 120 && t.y > btnY && t.y < btnY + 50) {
+                        let typedName = teamInput.value().trim();
+                        if (typedName !== "") {
+                            channel.send({
+                                type: "broadcast",
+                                event: "register_team",
+                                payload: { team: typedName }
+                            });
+                            setBattleTeam(typedName);
+                        }
+                    }
+                } else if (level && !battleWaiting) {
+                    level.handleClick(t.x, t.y);
+                }
             }
         }
     }
@@ -631,7 +716,6 @@ document.addEventListener('firebase_initialized', () => {
     firebaseReady = window.firebaseAppReady;
     getGameCount().then(val => {
         gameCount = val;
-        console.log("Initial game count (after Firebase_initialized):", gameCount);
     });
 });
 
@@ -639,7 +723,6 @@ async function incrementGameCounter(change) {
     const incrementValue = typeof change === 'number' && !isNaN(change) ? change : 1; 
 
     if (!firebaseReady || !firebaseReady.isReady || !firebaseReady.increment) {
-        console.warn('Firebase or increment function not ready. Skipping.');
         return;
     }
 
@@ -661,7 +744,6 @@ async function incrementGameCounter(change) {
 
 async function getGameCount() {
     if (!firebaseReady || !firebaseReady.isReady) {
-        console.warn('Firebase not ready for get count. Skipping.');
         return 0; 
     }
     try {
@@ -695,7 +777,36 @@ async function setupRealtime() {
             gameCount = msg.payload.gameCount;
             gameCountDrawScale = 2;
         })
+        .on("broadcast", { event: "register_team" }, (msg) => {
+            let tName = msg.payload.team.trim();
+            if (tName && !battleTeams.includes(tName)) {
+                battleTeams.push(tName);
+                battleScores[tName] = 0;
+            }
+        })
+        .on("broadcast", { event: "sync_teams" }, (msg) => {
+            if (msg.payload.teams) {
+                for (let t of msg.payload.teams) {
+                    if (!battleTeams.includes(t)) {
+                        battleTeams.push(t);
+                    }
+                }
+            }
+            if (msg.payload.scores) {
+                for (let t in msg.payload.scores) {
+                    battleScores[t] = msg.payload.scores[t];
+                }
+            }
+        })
         .on("broadcast", { event: "battle_level" }, (msg) => {
+            if (msg.payload.teams) {
+                for (let t of msg.payload.teams) {
+                    if (!battleTeams.includes(t)) {
+                        battleTeams.push(t);
+                        battleScores[t] = msg.payload.scores ? (msg.payload.scores[t] || 0) : 0;
+                    }
+                }
+            }
             if (screen === "battle" && battleTeam !== null) {
                 let args = msg.payload;
                 level = new Level(args.cards, args.ops, args.lvl, args.isClassic);
@@ -705,25 +816,38 @@ async function setupRealtime() {
         })
         .on("broadcast", { event: "battle_win" }, (msg) => {
             let winningTeam = msg.payload.team;
-            if (battleScores[winningTeam] !== undefined) {
-                battleScores[winningTeam]++;
+            if (battleScores[winningTeam] === undefined) {
+                battleScores[winningTeam] = 0;
             }
+            battleScores[winningTeam]++;
+            
             if (screen === "battleMaster") {
                 broadcastNewBattleLevel(); 
             }
         })
         .on("broadcast", { event: "request_current_level" }, (msg) => {
-            if (screen === "battleMaster" && currentBattleLevelData) {
+            if (screen === "battleMaster") {
+                // Return current configurations and full team states instantly to late joiners
                 channel.send({
                     type: "broadcast",
-                    event: "battle_level",
-                    payload: currentBattleLevelData
+                    event: "sync_teams",
+                    payload: { teams: battleTeams, scores: battleScores }
                 });
+                if (currentBattleLevelData) {
+                    channel.send({
+                        type: "broadcast",
+                        event: "battle_level",
+                        payload: {
+                            ...currentBattleLevelData,
+                            teams: battleTeams,
+                            scores: battleScores
+                        }
+                    });
+                }
             }
         });
 
-    const status = await channel.subscribe(); 
-    console.log("channel status:", status);
+    await channel.subscribe(); 
 }
 setupRealtime();
 
@@ -731,7 +855,7 @@ async function broadcastWin() {
     channel.send({
         type: "broadcast",
         event: "win",
-        payload: { gameCount:gameCount, battleTeam:battleTeam }
+        payload: { gameCount: gameCount, battleTeam: battleTeam }
     });
 }
 
@@ -771,9 +895,14 @@ function broadcastNewBattleLevel() {
     
     masterPreviewLevel = new Level(levelData.cards, levelData.ops, levelData.lvl, isClassic);
 
+    // Blast out updated lists alongside puzzle updates
     channel.send({
         type: "broadcast",
         event: "battle_level",
-        payload: currentBattleLevelData
+        payload: {
+            ...currentBattleLevelData,
+            teams: battleTeams,
+            scores: battleScores
+        }
     });
 }

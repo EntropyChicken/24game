@@ -129,6 +129,16 @@ function draw() {
                     });
                 }
             } 
+            else if (battleWaiting) {
+                // don't clutter screen
+                // background(0);
+                // push();
+                // textAlign(CENTER, CENTER);
+                // textSize(30);
+                // fill(255);
+                // text("GG! Puzzle Solved!\nWaiting for BattleMaster to send next round...", width / 2, height / 2);
+                // pop();
+            }
         }
     } else if (screen === "battleMaster") {
         if (currentBattleLevelData === null) {
@@ -692,20 +702,52 @@ function touchStarted() {
             } else if (screen === "battle") {
                 if (battleTeam === null) {
                     let centralOrbitRadius = 220;
+                    let orbitSpeed = battleTeams.length > 8 ? 0.00012 : 0.00024;
                     let inputY = height / 2 + centralOrbitRadius + 40;
                     let btnX = width / 2 - 60;
                     let btnY = inputY + 45 + 20;
                     
+                    // 1. Check the JOIN button (Using t.x and t.y correctly)
                     if (t.x > btnX && t.x < btnX + 120 && t.y > btnY && t.y < btnY + 50) {
                         let typedName = teamInput.value().trim();
                         if (typedName !== "") {
-                            // FIX: Match the event name and payload structure the BattleMaster listens for
                             channel.send({
                                 type: "broadcast",
                                 event: "new_team_created",
                                 payload: { teamName: typedName }
                             });
                             setBattleTeam(typedName);
+                            return false;
+                        }
+                    }
+
+                    // 2. Check the Orbit Team Selection buttons
+                    let baseTextSize = 40;
+                    let orbitPadding = battleTeams.length > 8 ? 3 : 20;
+                    let maxOrbitDiameter = 250;
+                    if (battleTeams.length > 1) {
+                        maxOrbitDiameter = min(250, 2 * centralOrbitRadius * sin(PI / battleTeams.length));
+                    }
+                    
+                    let maxTextWidth = 0;
+                    textSize(baseTextSize);
+                    for (let i = 0; i < battleTeams.length; i++) {
+                        let w = textWidth(battleTeams[i]);
+                        if (w > maxTextWidth) maxTextWidth = w;
+                    }
+                    let orbitDiameter = maxTextWidth + orbitPadding;
+                    if (orbitDiameter > maxOrbitDiameter) orbitDiameter = maxOrbitDiameter;
+
+                    for (let i = 0; i < battleTeams.length; i++) {
+                        let ang = -PI * 0.8 + millis() * orbitSpeed + (i / battleTeams.length) * 2 * PI;
+                        let buttonX = width / 2 + cos(ang) * centralOrbitRadius;
+                        let buttonY = height / 2 + sin(ang) * centralOrbitRadius;
+                        
+                        //  FIX: Changed mouseX/mouseY to t.x/t.y here
+                        if (dist(t.x, t.y, buttonX, buttonY) < orbitDiameter / 2) {
+                            let selectedTeam = battleTeams[i];
+                            setBattleTeam(selectedTeam);
+                            break; 
                         }
                     }
                 } else if (level && !battleWaiting) {
@@ -772,14 +814,21 @@ async function getGameCount() {
         return 0;
     }
 }
-
 const supabaseClient = window.supabase.createClient(
     "https://yjiizqjjuunbvmkuxulv.supabase.co",
-    "sb_publishable_UgcUH946WkpvMmPIvHN0Yg_cDczSY6T"
+    "sb_publishable_UgcUH946WkpvMmPIvHN0Yg_cDczSY6T",
+    {
+        auth: {
+            persistSession: false // 💡 Fix: Stops Supabase from requesting browser storage access!
+        }
+    }
 );
 const channel = supabaseClient.channel("main-room", {
     config: {
-        broadcast: { self: true }
+        broadcast: { 
+            self: true,
+            ack: true
+        }
     }
 });
 async function setupRealtime() {
@@ -787,6 +836,20 @@ async function setupRealtime() {
         .on("broadcast", { event: "win" }, (msg) => {
             gameCount = msg.payload.gameCount;
             gameCountDrawScale = 2;
+        })
+        .on("broadcast", { event: "battle_win", filter: {} }, (msg) => {
+            let winningTeam = msg.payload.team;
+            
+            if (screen === "battleMaster" && winningTeam) {
+                // 1. Award a point to the winning team
+                if (battleScores[winningTeam] !== undefined) {
+                    battleScores[winningTeam]++;
+                } else {
+                    battleScores[winningTeam] = 1;
+                }
+                
+                broadcastNewBattleLevel();
+            }
         })
         .on("broadcast", { event: "sync_teams" }, (msg) => {
             if (msg.payload.teams) {

@@ -616,13 +616,20 @@ function mousePressed() {
         if (battleTeam === null) {  
             let centralOrbitRadius = 220;
             let orbitSpeed = battleTeams.length > 8 ? 0.00012 : 0.00024;
+            let inputW = 260;
+            let inputH = 45;
+            let inputX = width / 2 - inputW / 2;
             let inputY = height / 2 + centralOrbitRadius + 40;
+            
+            if (mouseX > inputX && mouseX < inputX + inputW && mouseY > inputY && mouseY < inputY + inputH) {
+                return; // Let native DOM click pass cleanly
+            }
+
             let btnX = width / 2 - 60;
-            let btnY = inputY + 45 + 20; 
+            let btnY = inputY + inputH + 20; 
             if (mouseX > btnX && mouseX < btnX + 120 && mouseY > btnY && mouseY < btnY + 50) {
                 let typedName = teamInput.value().trim();
                 if (typedName !== "") {
-                    // FIX: Match the event name and payload structure the BattleMaster listens for
                     channel.send({
                         type: "broadcast",
                         event: "new_team_created",
@@ -633,10 +640,9 @@ function mousePressed() {
                 }
             }
 
-            // --- Orbit Selection Logic ---
+            // Orbit Selection Logic (Applying Scale Factor)
             let baseTextSize = 40;
             let orbitPadding = battleTeams.length > 8 ? 3 : 20;
-            
             let maxOrbitDiameter = 250;
             if (battleTeams.length > 1) {
                 maxOrbitDiameter = min(250, 2 * centralOrbitRadius * sin(PI / battleTeams.length));
@@ -651,11 +657,18 @@ function mousePressed() {
             let orbitDiameter = maxTextWidth + orbitPadding;
             if (orbitDiameter > maxOrbitDiameter) orbitDiameter = maxOrbitDiameter;
 
+            // 💡 Scale matching the draw loop
+            let widthMax = 2 * centralOrbitRadius + maxOrbitDiameter;
+            let sFactor = 1.0;
+            if (widthMax > width) {
+                sFactor = width / widthMax;
+            }
+
             for (let i = 0; i < battleTeams.length; i++) {
                 let ang = -PI * 0.8 + millis() * orbitSpeed + (i / battleTeams.length) * 2 * PI;
-                let buttonX = width / 2 + cos(ang) * centralOrbitRadius;
-                let buttonY = height / 2 + sin(ang) * centralOrbitRadius;
-                if (dist(mouseX, mouseY, buttonX, buttonY) < orbitDiameter / 2) {
+                let buttonX = width / 2 + (cos(ang) * centralOrbitRadius) * sFactor;
+                let buttonY = height / 2 + (sin(ang) * centralOrbitRadius) * sFactor;
+                if (dist(mouseX, mouseY, buttonX, buttonY) < (orbitDiameter * sFactor) / 2) {
                     let selectedTeam = battleTeams[i];
                     setBattleTeam(selectedTeam);
                     break; 
@@ -687,9 +700,22 @@ function mousePressed() {
 }
 
 let processedTouchIds = new Set();
-
 function touchStarted() {
     for (let t of touches) {
+        if (screen === "battle" && battleTeam === null) {
+            let centralOrbitRadius = 220;
+            let inputW = 260;
+            let inputH = 45;
+            let inputX = width / 2 - inputW / 2;
+            let inputY = height / 2 + centralOrbitRadius + 40;
+
+            // 💡 iOS FIX: If touching the text input, return immediately without returning false.
+            // This allows the default browser event to trigger the virtual keyboard.
+            if (t.x > inputX && t.x < inputX + inputW && t.y > inputY && t.y < inputY + inputH) {
+                return; 
+            }
+        }
+
         if (!processedTouchIds.has(t.id)) {
             processedTouchIds.add(t.id);
             
@@ -703,11 +729,13 @@ function touchStarted() {
                 if (battleTeam === null) {
                     let centralOrbitRadius = 220;
                     let orbitSpeed = battleTeams.length > 8 ? 0.00012 : 0.00024;
+                    let inputW = 260;
+                    let inputH = 45;
                     let inputY = height / 2 + centralOrbitRadius + 40;
                     let btnX = width / 2 - 60;
-                    let btnY = inputY + 45 + 20;
+                    let btnY = inputY + inputH + 20;
                     
-                    // 1. Check the JOIN button (Using t.x and t.y correctly)
+                    // 1. Check the JOIN button
                     if (t.x > btnX && t.x < btnX + 120 && t.y > btnY && t.y < btnY + 50) {
                         let typedName = teamInput.value().trim();
                         if (typedName !== "") {
@@ -721,7 +749,7 @@ function touchStarted() {
                         }
                     }
 
-                    // 2. Check the Orbit Team Selection buttons
+                    // 2. Check the Orbit Team Selection buttons (Applying Scale Factor)
                     let baseTextSize = 40;
                     let orbitPadding = battleTeams.length > 8 ? 3 : 20;
                     let maxOrbitDiameter = 250;
@@ -738,16 +766,23 @@ function touchStarted() {
                     let orbitDiameter = maxTextWidth + orbitPadding;
                     if (orbitDiameter > maxOrbitDiameter) orbitDiameter = maxOrbitDiameter;
 
+                    // 💡 Calculate Mobile Scale Factor matching the draw loop
+                    let widthMax = 2 * centralOrbitRadius + maxOrbitDiameter;
+                    let sFactor = 1.0;
+                    if (widthMax > width) {
+                        sFactor = width / widthMax;
+                    }
+
                     for (let i = 0; i < battleTeams.length; i++) {
                         let ang = -PI * 0.8 + millis() * orbitSpeed + (i / battleTeams.length) * 2 * PI;
-                        let buttonX = width / 2 + cos(ang) * centralOrbitRadius;
-                        let buttonY = height / 2 + sin(ang) * centralOrbitRadius;
+                        // Apply sFactor to recalculate real mobile screen positions
+                        let buttonX = width / 2 + (cos(ang) * centralOrbitRadius) * sFactor;
+                        let buttonY = height / 2 + (sin(ang) * centralOrbitRadius) * sFactor;
                         
-                        //  FIX: Changed mouseX/mouseY to t.x/t.y here
-                        if (dist(t.x, t.y, buttonX, buttonY) < orbitDiameter / 2) {
+                        if (dist(t.x, t.y, buttonX, buttonY) < (orbitDiameter * sFactor) / 2) {
                             let selectedTeam = battleTeams[i];
                             setBattleTeam(selectedTeam);
-                            break; 
+                            return false;
                         }
                     }
                 } else if (level && !battleWaiting) {

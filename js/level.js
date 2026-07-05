@@ -12,6 +12,7 @@ function smoothErp(a,recursion=1){
 class Level {
 	static SYMBOLS = ["+","-","×","÷","^","√","ln","!","sin","cos","tan","cot","asin","acos","abs","%"]; // round, floor, and ceil are not included for space purposes
 	static WIN_TIMER_START = 70;
+	static BACK_SLASH_CHEAT = false;
 
 	constructor(numbers, opSymbols = Level.SYMBOLS, metaData = {}, useRational = false) {
 		this.metaData = metaData;
@@ -601,7 +602,7 @@ class Level {
 		// 	screen = "title";
 		// }
 
-		if (key === '\\'){
+		if (key === '\\' && Level.BACK_SLASH_CHEAT){
 			this.opSymbols = Level.SYMBOLS;
 			this.setupOps();
 		}

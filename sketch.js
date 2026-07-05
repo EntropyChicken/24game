@@ -22,10 +22,13 @@ let battleTeam = null;
 let battleScores = {};
 let battleWaiting = true;
 let currentBattleLevelData = null;
-let battleMasterAwardForNegativeNumber = true;
-let battleMasterAwardForNonInteger = true;
-let battleMasterAwardForNonReal = true;
-let battleMasterAwardForNaN = true;
+let battleMasterAwardForNegativeNumber = false;
+let battleMasterAwardForNonInteger = false;
+let battleMasterAwardForNonReal = false;
+let battleMasterAwardForNaN = false;
+let battleMasterVictoryFlash = 0;
+let battleMasterWinningTeam = "";
+let battleMasterWinningPoints = 0;
 // Per-team Set of distinct "doubler" reasons triggered so far this round.
 // Doing the same doubler action repeatedly only counts once (Set semantics);
 // doing two DIFFERENT doubler actions counts as two. Cleared every new round
@@ -37,7 +40,7 @@ const BATTLE_DOUBLER_LABELS = {
     negative_number: "Negative",
     non_integer: "Non-Integer",
     non_real: "Non-Real",
-    invalid_number: "NaN"
+    invalid_number: "Non-Number"
 };
 const DOUBLER_REASON_KEYS = Object.keys(BATTLE_DOUBLER_LABELS);
 
@@ -253,8 +256,14 @@ function draw() {
             let scoreText = tName + ": " + (battleScores[tName] || 0);
             let doublerSet = battleDoublers[tName];
             if (doublerSet && doublerSet.size > 0) {
-                let names = [...doublerSet].map(reason => BATTLE_DOUBLER_LABELS[reason] || reason);
-                scoreText += " (" + names.join(", ") + ")";
+                // FILTER: Only map and show doublers that are currently enabled!
+                let validNames = [...doublerSet]
+                    .filter(reason => isDoublerReasonEnabled(reason)) 
+                    .map(reason => BATTLE_DOUBLER_LABELS[reason] || reason);
+                
+                if (validNames.length > 0) {
+                    scoreText += " (" + validNames.join(", ") + ")";
+                }
             }
             text(scoreText, 80, 125 + 45 * i);
         }
@@ -359,14 +368,41 @@ function draw() {
             let offsetY = (previewH - (height * sFactor)) / 2;
             translate(offsetX, offsetY);
             scale(sFactor);
-
             let oldMx = mx, oldMy = my;
             mx = -1; my = -1;
-
             masterPreviewLevel.draw(false);
-
             mx = oldMx; my = oldMy;
             pop();
+        }
+        if (battleMasterVictoryFlash > 0.01) {
+            push();
+            let alphaVal = 255 * min(1, battleMasterVictoryFlash * 1.5); // Multiply slightly so it stays solid a bit longer
+
+            // Draw semitranslucent background overlay
+            let flashColor = color(theme.backgroundColorCorrect);
+            flashColor.setAlpha(alphaVal * 0.95); // Caps out at 95% opacity
+            fill(flashColor);
+            noStroke();
+            rect(0, 0, width, height);
+
+            // Draw huge dynamic black text
+            fill(0, 0, 0, alphaVal);
+            textAlign(CENTER, CENTER);
+            let winString = battleMasterWinningTeam + " +" + battleMasterWinningPoints;
+            
+            // Dynamically scale text to fit 90% of screen width
+            textSize(100); 
+            let tw = textWidth(winString);
+            let dynamicSize = (width * 0.9) / tw * 100;
+            // Constrain size so it doesn't get ridiculously tall if the name is short
+            dynamicSize = min(dynamicSize, height * 0.4); 
+            
+            textSize(dynamicSize);
+            text(winString, width / 2, height / 2);
+            pop();
+
+            // Decay the flash
+            battleMasterVictoryFlash *= 0.96;
         }
     }
 }
@@ -1056,10 +1092,6 @@ async function setupRealtime() {
             let winningTeam = msg.payload.team;
             battleLossFlash = 1;
             if (screen === "battleMaster" && winningTeam) {
-                // 1. Award the winning team 1 point, doubled once for every
-                // distinct doubler (negative number / non-integer / non-real /
-                // NaN) that team triggered during this round AND that is
-                // currently checked on the DOUBLERS: checklist.
                 const doublerSet = battleDoublers[winningTeam];
                 let validDoublerCount = 0;
                 if (doublerSet) {
@@ -1073,6 +1105,11 @@ async function setupRealtime() {
                 } else {
                     battleScores[winningTeam] = pointsWon;
                 }
+
+                // --- NEW BATTLE MASTER FLASH ---
+                battleMasterWinningTeam = winningTeam;
+                battleMasterWinningPoints = pointsWon;
+                battleMasterVictoryFlash = 1.0; 
 
                 // 2. New round starts now; broadcastNewBattleLevel() clears
                 // every team's doubler set.

@@ -130,8 +130,12 @@ function setup() {
     
     // 5. Apply both clean positions directly through p5
     teamInput.position(safeX, safeY);
-    // -------------------------------
-
+    teamInput.elt.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.keyCode === 13) {
+            handleTeamSubmit();
+            teamInput.elt.blur(); // Dismisses the iPhone virtual keyboard instantly!
+        }
+    });
     teamInput.hide(); 
 
     titleScreen = new TitleScreen();
@@ -374,7 +378,7 @@ function draw() {
             mx = oldMx; my = oldMy;
             pop();
         }
-        if (battleMasterVictoryFlash > 0.01) {
+        if (battleMasterVictoryFlash > 0.005) {
             push();
             let alphaVal = 255 * min(1, battleMasterVictoryFlash * 1.5); // Multiply slightly so it stays solid a bit longer
 
@@ -390,10 +394,10 @@ function draw() {
             textAlign(CENTER, CENTER);
             let winString = battleMasterWinningTeam + " (+" + battleMasterWinningPoints+")";
             
-            // Dynamically scale text to fit 90% of screen width
+            // Dynamically scale text to fit 80% of screen width
             textSize(100); 
             let tw = textWidth(winString);
-            let dynamicSize = (width * 0.9) / tw * 100;
+            let dynamicSize = (width * 0.8) / tw * 100;
             // Constrain size so it doesn't get ridiculously tall if the name is short
             dynamicSize = min(dynamicSize, height * 0.4); 
             
@@ -402,7 +406,7 @@ function draw() {
             pop();
 
             // Decay the flash
-            battleMasterVictoryFlash *= 0.98;
+            battleMasterVictoryFlash *= 0.94;
         }
     }
 }
@@ -503,6 +507,12 @@ function drawBattleTeamSelection(){
     text("JOIN", btnX + btnW / 2, btnY + btnH / 2);
 }
 
+function handleTeamSubmit() {
+    let typedName = teamInput.value().trim();
+    if (typedName !== "") {
+        setBattleTeam(typedName);
+    }
+}
 function setBattleTeam(team){
     team = team.trim();
     if (team === "") return; 
@@ -804,16 +814,8 @@ function mousePressed() {
             let btnX = width / 2 - 60;
             let btnY = inputY + inputH + 20; 
             if (mouseX > btnX && mouseX < btnX + 120 && mouseY > btnY && mouseY < btnY + 50) {
-                let typedName = teamInput.value().trim();
-                if (typedName !== "") {
-                    channel.send({
-                        type: "broadcast",
-                        event: "new_team_created",
-                        payload: { teamName: typedName }
-                    });
-                    setBattleTeam(typedName);
-                    return;
-                }
+                handleTeamSubmit();
+                return;
             }
 
             let baseTextSize = 40;
@@ -956,16 +958,8 @@ function touchStarted() {
                     let btnY = inputY + inputH + 20;
                     
                     if (t.x > btnX && t.x < btnX + btnW && t.y > btnY && t.y < btnY + btnH) {
-                        let typedName = teamInput.value().trim();
-                        if (typedName !== "") {
-                            channel.send({
-                                type: "broadcast",
-                                event: "new_team_created",
-                                payload: { teamName: typedName }
-                            });
-                            setBattleTeam(typedName);
-                            return false;
-                        }
+                        handleTeamSubmit();
+                        return false;
                     }
 
                     let baseTextSize = 40;
@@ -1109,7 +1103,7 @@ async function setupRealtime() {
                 // --- NEW BATTLE MASTER FLASH ---
                 battleMasterWinningTeam = winningTeam;
                 battleMasterWinningPoints = pointsWon;
-                battleMasterVictoryFlash = 1.0; 
+                battleMasterVictoryFlash = 50; 
 
                 // 2. New round starts now; broadcastNewBattleLevel() clears
                 // every team's doubler set.

@@ -29,6 +29,7 @@ let setLabels = [
 let battleBackgroundImg, drawWaitingRoomForBattleBackground = false;
 let setChecked = [true, true, true, true, true, true, true, false, false];
 let battleVictoryFlash = 0;
+let battleLossFlash = 0;
 let teamInput; 
 
 function preload() {
@@ -404,10 +405,11 @@ function drawBattleBackground(scaleFactor=1.0003, iterations=3, fadeFreq=0.1, co
         background(50,100);
     }
     else{
-        background(lerpColor(color(130),theme.backgroundColorCorrect,min(1,battleVictoryFlash)));
+        background(lerpColor(lerpColor(color(130),color(255,180,180),battleLossFlash),theme.backgroundColorCorrect,min(1,battleVictoryFlash)));
     }
-    theme.shadeColor = lerpColor(color(190),theme.backgroundColorCorrect,min(1,battleVictoryFlash));
+    theme.shadeColor = lerpColor(lerpColor(color(190),color(255,180,180),battleLossFlash),theme.backgroundColorCorrect,min(1,battleVictoryFlash));
     battleVictoryFlash*=0.9;
+    battleLossFlash*=0.95;
 }
 
 function windowResized() {
@@ -955,12 +957,11 @@ async function setupRealtime() {
             if (screen === "battle" && battleTeam !== null) {
                 let args = msg.payload;
                 
-                // 💡 GUARD CONDITION: Only reset if the GM forces it, 
-                // OR if this player doesn't have a level running yet.
                 if (args.forceReset || level === null || level === undefined) {
                     level = new Level(args.cards, args.ops, args.lvl, args.isClassic);
                     Level.setupKeyboard(level);
                     battleWaiting = false;
+                    battleLossFlash = 2;
                 }
             }
         })

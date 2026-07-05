@@ -701,6 +701,10 @@ function mousePressed() {
 
 let processedTouchIds = new Set();
 function touchStarted() {
+    if(screen==="battle"){
+        background(0);
+        noLoop();
+    }
     for (let t of touches) {
         if (screen === "battle" && battleTeam === null) {
             let centralOrbitRadius = 220;

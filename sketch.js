@@ -106,8 +106,8 @@ function draw() {
     
     if (screen === "title") {
         titleScreen.draw();
-        if (keyIsDown(220) && keyIsDown(191)) {
-            screen = "battleMaster";
+        if (keyIsDown(220) && keyIsDown(191) && screen !== "battleMaster") {
+            setScreen("battleMaster");
         }
     } else if (screen === "game") {
         background(220);
@@ -205,6 +205,26 @@ function draw() {
         textAlign(CENTER, CENTER);
         textSize(40);
         text("Skip\nPuzzle", width - 155, 155);
+
+        strokeWeight(2);
+        stroke(255, 100, 100);
+        fill(255, 100, 100, 80);
+        rect(width - 230, 250, 150, 150, 15);
+        fill(255);
+        noStroke();
+        textAlign(CENTER, CENTER);
+        textSize(40);
+        text("End\nBattle", width - 155, 325);
+
+        strokeWeight(2);
+        stroke(255, 100, 100);
+        fill(255, 100, 100, 80);
+        rect(width - 230, 420, 150, 150, 15);
+        fill(255);
+        noStroke();
+        textAlign(CENTER, CENTER);
+        textSize(40);
+        text("Reset\nBattle", width - 155, 495);
 
         if (masterPreviewLevel) {
             push();
@@ -405,9 +425,9 @@ function drawBattleBackground(scaleFactor=1.0003, iterations=3, fadeFreq=0.1, co
         background(50,100);
     }
     else{
-        background(lerpColor(lerpColor(color(130),color(255,180,180),battleLossFlash),theme.backgroundColorCorrect,min(1,battleVictoryFlash)));
+        background(lerpColor(lerpColor(color(140),color(0),battleLossFlash),theme.backgroundColorCorrect,min(1,battleVictoryFlash)));
     }
-    theme.shadeColor = lerpColor(lerpColor(color(190),color(255,180,180),battleLossFlash),theme.backgroundColorCorrect,min(1,battleVictoryFlash));
+    theme.shadeColor = lerpColor(lerpColor(color(190),color(0),battleLossFlash),theme.backgroundColorCorrect,min(1,battleVictoryFlash));
     battleVictoryFlash*=0.9;
     battleLossFlash*=0.95;
 }
@@ -610,6 +630,9 @@ function setScreen(s){
     if(screen === "title"){
         theme.shadeColor = color(210,210,210);
         setThemeColor(color(175,175,175));
+        if (typeof channel !== 'undefined') {
+            channel.send({ type: "broadcast", event: "ping_game_master", payload: {} });
+        }
     }
     else if(screen === "game" || screen === "duel"){
         setThemeColor(theme.backgroundColor);
@@ -621,6 +644,20 @@ function setScreen(s){
             event: "request_teams",
             payload: {}
         });
+    }
+    else if(screen === "battleMaster"){
+        setThemeColor(color(0));
+        channel.track({ role: "game_master" });
+        if (typeof channel !== 'undefined') {
+            channel.send({ 
+                type: "broadcast", 
+                event: "game_master_pong", 
+                payload: {
+                    teams: battleTeams,
+                    scores: battleScores
+                } 
+            });
+        }
     }
     else{
         setThemeColor(color(0,0,0));
@@ -713,8 +750,32 @@ function mousePressed() {
             }
         }
     } else if (screen === "battleMaster") {
-        if (mouseX > width - 250 && mouseX < width - 60 && mouseY > 60 && mouseY < 250) {
+        if (mouseX > width - 230 && mouseX < width - 80 && mouseY > 80 && mouseY < 230) {
             broadcastNewBattleLevel();
+        }
+        
+        if (mouseX > width - 230 && mouseX < width - 80 && mouseY > 250 && mouseY < 400) {
+            channel.send({
+                type: "broadcast",
+                event: "game_master_terminated",
+                payload: {}
+            });
+            setScreen("title");
+        }
+        
+        if (mouseX > width - 230 && mouseX < width - 80 && mouseY > 420 && mouseY < 570) {
+            // 1. Clear scores locally on the Master side
+            for (let t in battleScores) {
+                battleScores[t] = 0;
+            }
+            channel.send({
+                type: "broadcast",
+                event: "sync_teams",
+                payload: {
+                    teams: battleTeams,
+                    scores: battleScores
+                }
+            });
         }
         
         for (let i = 0; i < 9; i++) {
@@ -1007,8 +1068,8 @@ async function setupRealtime() {
                     }
                 }
             }
-
             if (screen === "title" && titleScreen) {
+                console.log("REVEAL BATTLE! yay");
                 titleScreen.revealBattleButton();
             }
         })
@@ -1031,6 +1092,16 @@ async function setupRealtime() {
                             forceReset: false // 💡 Tell active players NOT to wipe their progress
                         }
                     });
+                }
+            }
+        })
+        .on("broadcast", { event: "game_master_terminated" }, () => {
+            handleGameMasterLeft();
+        })
+        .on("presence", { event: "leave" }, ({ leftPresences }) => {
+            for (let p of leftPresences) {
+                if (p.role === "game_master") {
+                    handleGameMasterLeft();
                 }
             }
         });
@@ -1108,4 +1179,28 @@ function broadcastNewBattleLevel() {
             forceReset: true // 🎯 Forces active players to dump their progress and move forward!
         }
     });
+}
+
+window.addEventListener("beforeunload", function (e) {
+    if (screen === "battleMaster" && typeof channel !== 'undefined') {
+        // Broadcast the exit event cleanly if we have a split second to do so LOL
+        channel.send({
+            type: "broadcast",
+            event: "game_master_terminated",
+            payload: {}
+        });
+    }
+});
+function handleGameMasterLeft() {
+    // 1. If they are actively in a multiplayer battle screen, kick them out
+    if (screen === "battle") {
+        battleTeam = null;
+        battleTeams = []; // ? this should be fine
+        battleWaiting = true;
+        currentBattleLevelData = null;
+        setScreen("title");
+    }
+    if (titleScreen) {
+        titleScreen.showBattle = false;
+    }
 }

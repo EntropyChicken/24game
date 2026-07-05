@@ -22,6 +22,10 @@ let battleTeam = null;
 let battleScores = {};
 let battleWaiting = true;
 let currentBattleLevelData = null;
+let battleMasterAwardForNegativeNumber = true;
+let battleMasterAwardForNonInteger = true;
+let battleMasterAwardForNonReal = true;
+let battleMasterAwardForNaN = true;
 let setLabels = [
     "Classic Easy", "Classic Medium", "Classic Hard", "Classic Tricky", "Classic Very Hard",
     "Puzzle Simple", "Puzzle Interesting", "Puzzle Crazy Hard", "Puzzle Javascript 😭"
@@ -431,8 +435,8 @@ function setBattleTeam(team){
 }
 
 function drawBattleBackground(scaleFactor=1.0003, iterations=3, fadeFreq=0.1, col) {
-    background(lerpColor(lerpColor(color(140),color(0),battleLossFlash),theme.backgroundColorCorrect,min(1,battleVictoryFlash)));
-    theme.shadeColor = lerpColor(lerpColor(color(190),color(0),battleLossFlash),theme.backgroundColorCorrect,min(1,battleVictoryFlash));
+    background(lerpColor(lerpColor(color(140),color(255),battleLossFlash),theme.backgroundColorCorrect,min(1,battleVictoryFlash)));
+    theme.shadeColor = lerpColor(lerpColor(color(190),color(255),battleLossFlash),theme.backgroundColorCorrect,min(1,battleVictoryFlash));
     battleVictoryFlash*=0.9;
     battleLossFlash*=0.95;
 }
@@ -990,6 +994,41 @@ async function setupRealtime() {
                 broadcastNewBattleLevel();
             }
         })
+        .on("broadcast", { event: "battle_invalid_action" }, (msg) => {
+            if (screen === "battleMaster" && msg.payload) {
+                const team = msg.payload.team;
+                const reason = msg.payload.reason;
+                let award = false;
+                switch (reason) {
+                    case "negative_number":
+                        award = battleMasterAwardForNegativeNumber;
+                        break;
+                    case "non_integer":
+                        award = battleMasterAwardForNonInteger;
+                        break;
+                    case "non_real":
+                        award = battleMasterAwardForNonReal;
+                        break;
+                    case "invalid_number":
+                        award = battleMasterAwardForNaN;
+                        break;
+                }
+                if (award && team) {
+                    if (battleScores[team] === undefined) {
+                        battleScores[team] = 0;
+                    }
+                    battleScores[team] += 100;
+                    channel.send({
+                        type: "broadcast",
+                        event: "sync_teams",
+                        payload: {
+                            teams: battleTeams,
+                            scores: battleScores
+                        }
+                    });
+                }
+            }
+        })
         .on("broadcast", { event: "sync_teams" }, (msg) => {
             if (msg.payload.teams) {
                 for (let t of msg.payload.teams) {
@@ -1122,6 +1161,18 @@ async function broadcastWin() {
         type: "broadcast",
         event: "win",
         payload: { gameCount: gameCount, battleTeam: battleTeam }
+    });
+}
+
+// Sent by a player in the "battle" screen when an operation they perform
+// yields a negative number, a non-integer, a non-real number, or NaN.
+// The battle master listens for this ("battle_invalid_action" handler above)
+// and, per its settings, awards the team 100 points.
+function broadcastBattleInvalidAction(reason) {
+    channel.send({
+        type: "broadcast",
+        event: "battle_invalid_action",
+        payload: { team: battleTeam, reason: reason }
     });
 }
 

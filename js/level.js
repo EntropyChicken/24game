@@ -383,6 +383,9 @@ class Level {
 			res = opBtn.apply(a, b, this.sourceIdOfPos[this.boxes[i1].locName], this.sourceIdOfPos[this.boxes[i2].locName]);
 		}
 
+		// Battle mode: check if this result should award the opposing... er, the player's own team 100 points.
+		maybeBroadcastBattleInvalidAction(res);
+
 		this.sourceIdOfPos[this.boxes[i2].locName] = this.watcherSequence.actions.length-1;
 		this.boxes[i2].value = res;
 		this.boxes[i2].drawScale += 0.1;
@@ -554,6 +557,7 @@ class Level {
 						const a = this.boxes[this.firstIndex].value;
 						// For unary, ignore b param
 						const res = btn.apply(a, null, this.sourceIdOfPos[this.boxes[this.firstIndex].locName]);
+						maybeBroadcastBattleInvalidAction(res);
 						this.sourceIdOfPos[this.boxes[this.firstIndex].locName] = this.watcherSequence.actions.length-1;
 						this.boxes[this.firstIndex].value = res;
 						this.boxes[this.firstIndex].drawScale += 0.1;
@@ -692,6 +696,7 @@ class Level {
 							this.saveState();
 							const a = this.boxes[this.firstIndex].value;
 							const res = btn.apply(a, null, this.sourceIdOfPos[this.boxes[this.firstIndex].locName]);
+							maybeBroadcastBattleInvalidAction(res);
 							this.sourceIdOfPos[this.boxes[this.firstIndex].locName] = this.watcherSequence.actions.length-1;
 							this.boxes[this.firstIndex].value = res;
 							this.boxes[this.firstIndex].drawScale += 0.1;
@@ -742,6 +747,34 @@ class Level {
 	}
 }
 
+function getBattleInvalidActionReason(value) {
+	if (value instanceof Rational) {
+		if (isNaN(value.numerator) || isNaN(value.denominator)) return "invalid_number";
+		if (!value.isInteger()) return "non_integer";
+		if (value.numerator < 0) return "negative_number";
+		return null;
+	}
+	if (value instanceof Complex) {
+		if (value.isNaN()) return "invalid_number";
+		if (value.imag !== 0) return "non_real";
+		if (!Number.isFinite(value.real)) return "invalid_number";
+		if (Math.round(value.real) !== value.real) return "non_integer";
+		if (value.real < 0) return "negative_number";
+		return null;
+	}
+	return null;
+}
+
+function maybeBroadcastBattleInvalidAction(value) {
+	const reason = getBattleInvalidActionReason(value);
+	if (!reason) return;
+	if (typeof screen === 'undefined' || screen !== "battle") return;
+	if (!battleTeam) return;
+	if (typeof broadcastBattleInvalidAction === 'function') {
+		broadcastBattleInvalidAction(reason);
+	}
+}
+
 Level.setupKeyboard = function(levelInstance, override = true) {
 	if (override || !window._levelKeyboardHandler) {
 		// If there's an existing handler, remove it first
@@ -758,4 +791,3 @@ Level.setupKeyboard = function(levelInstance, override = true) {
 		window.addEventListener('keydown', window._levelKeyboardHandler);
 	}
 };
-

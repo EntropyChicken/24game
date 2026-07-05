@@ -42,7 +42,6 @@ function preload() {
     loadJSON("levelData/puzzleLevelsCrazyHard.json", data => { originalPuzzleSets[2] = data; });
     loadJSON("levelData/puzzleLevelsJavascript.json", data => { originalPuzzleSets[3] = data; });
 }
-
 function setup() {
     for(let s of originalClassicSets){
         classicSets.push(shuffle([...s]));
@@ -72,6 +71,26 @@ function setup() {
     teamInput.style('border-radius', '8px');
     teamInput.style('border', '2px solid #323232');
     teamInput.style('text-align', 'center');
+
+    // --- FIXED POSITIONING LOGIC ---
+    // 1. Grab the exact live pixel dimensions of the input box
+    let inputWidth = teamInput.elt.offsetWidth;
+    let inputHeight = teamInput.elt.offsetHeight;
+
+    // 2. Mathematically center it horizontally
+    let safeX = (windowWidth - inputWidth) / 2;
+
+    // 3. Calculate your ideal vertical spot (150px from bottom)
+    let targetY = windowHeight - 150;
+    let padding = 15; // Safe buffer zone from the absolute edges
+    
+    // 4. Protect against small screens: ensures Y stays within the top and bottom boundaries
+    let safeY = constrain(targetY, padding, windowHeight - inputHeight - padding);
+    
+    // 5. Apply both clean positions directly through p5
+    teamInput.position(safeX, safeY);
+    // -------------------------------
+
     teamInput.hide(); 
 
     titleScreen = new TitleScreen();
@@ -223,10 +242,6 @@ function draw() {
             pop();
         }
     }
-    if(freeze){
-        fill(255,0,0);
-        ellipse(0,0,100,100);
-    }
 }
 
 function drawBattleTeamSelection(){
@@ -292,10 +307,19 @@ function drawBattleTeamSelection(){
     }
     pop();
 
+    // --- CONSTRAINED INPUT & BUTTON POSITIONING ---
     let inputW = 260;
     let inputH = 45;
+    let btnW = 120;
+    let btnH = 50;
+    let padding = 15;
+
     let inputX = width / 2 - inputW / 2;
-    let inputY = height / 2 + centralOrbitRadius + 40;
+    let targetInputY = height / 2 + centralOrbitRadius + 40;
+    
+    // 115px represents the combined height of the input (45) + gap (20) + button (50)
+    let maxInputY = height - 115 - padding; 
+    let inputY = constrain(targetInputY, padding, maxInputY);
 
     teamInput.position(inputX, inputY);
     teamInput.size(inputW, inputH);
@@ -303,8 +327,6 @@ function drawBattleTeamSelection(){
 
     let btnX = width / 2 - 60;
     let btnY = inputY + inputH + 20;
-    let btnW = 120;
-    let btnH = 50;
 
     stroke(0);
     strokeWeight(2);
@@ -623,8 +645,13 @@ function mousePressed() {
             let orbitSpeed = battleTeams.length > 8 ? 0.00012 : 0.00024;
             let inputW = 260;
             let inputH = 45;
+            let padding = 15; // Added to match touchStarted
+            
             let inputX = width / 2 - inputW / 2;
-            let inputY = height / 2 + centralOrbitRadius + 40;
+            // 💡 Now calculating inputY with constraints so it matches touch and drawing logic!
+            let targetInputY = height / 2 + centralOrbitRadius + 40;
+            let maxInputY = height - 115 - padding;
+            let inputY = constrain(targetInputY, padding, maxInputY);
             
             if (mouseX > inputX && mouseX < inputX + inputW && mouseY > inputY && mouseY < inputY + inputH) {
                 return; // Let native DOM click pass cleanly
@@ -662,7 +689,6 @@ function mousePressed() {
             let orbitDiameter = maxTextWidth + orbitPadding;
             if (orbitDiameter > maxOrbitDiameter) orbitDiameter = maxOrbitDiameter;
 
-            // 💡 Scale matching the draw loop
             let widthMax = 2 * centralOrbitRadius + maxOrbitDiameter;
             let sFactor = 1.0;
             if (widthMax > width) {
@@ -706,21 +732,19 @@ function mousePressed() {
 
 let processedTouchIds = new Set();
 
-let freeze = false;
 function touchStarted() {
-    if(screen==="battle"){
-        freeze = true;
-    }
     for (let t of touches) {
         if (screen === "battle" && battleTeam === null) {
             let centralOrbitRadius = 220;
             let inputW = 260;
             let inputH = 45;
+            let padding = 15;
+            
             let inputX = width / 2 - inputW / 2;
-            let inputY = height / 2 + centralOrbitRadius + 40;
+            let targetInputY = height / 2 + centralOrbitRadius + 40;
+            let maxInputY = height - 115 - padding;
+            let inputY = constrain(targetInputY, padding, maxInputY);
 
-            // 💡 iOS FIX: If touching the text input, return immediately without returning false.
-            // This allows the default browser event to trigger the virtual keyboard.
             if (t.x > inputX && t.x < inputX + inputW && t.y > inputY && t.y < inputY + inputH) {
                 return; 
             }
@@ -739,14 +763,22 @@ function touchStarted() {
                 if (battleTeam === null) {
                     let centralOrbitRadius = 220;
                     let orbitSpeed = battleTeams.length > 8 ? 0.00012 : 0.00024;
+                    
                     let inputW = 260;
                     let inputH = 45;
-                    let inputY = height / 2 + centralOrbitRadius + 40;
+                    let btnW = 120;
+                    let btnH = 50;
+                    let padding = 15;
+                    
+                    let inputX = width / 2 - inputW / 2;
+                    let targetInputY = height / 2 + centralOrbitRadius + 40;
+                    let maxInputY = height - 115 - padding;
+                    let inputY = constrain(targetInputY, padding, maxInputY);
+                    
                     let btnX = width / 2 - 60;
                     let btnY = inputY + inputH + 20;
                     
-                    // 1. Check the JOIN button
-                    if (t.x > btnX && t.x < btnX + 120 && t.y > btnY && t.y < btnY + 50) {
+                    if (t.x > btnX && t.x < btnX + btnW && t.y > btnY && t.y < btnY + btnH) {
                         let typedName = teamInput.value().trim();
                         if (typedName !== "") {
                             channel.send({
@@ -759,7 +791,6 @@ function touchStarted() {
                         }
                     }
 
-                    // 2. Check the Orbit Team Selection buttons (Applying Scale Factor)
                     let baseTextSize = 40;
                     let orbitPadding = battleTeams.length > 8 ? 3 : 20;
                     let maxOrbitDiameter = 250;
@@ -776,7 +807,6 @@ function touchStarted() {
                     let orbitDiameter = maxTextWidth + orbitPadding;
                     if (orbitDiameter > maxOrbitDiameter) orbitDiameter = maxOrbitDiameter;
 
-                    // 💡 Calculate Mobile Scale Factor matching the draw loop
                     let widthMax = 2 * centralOrbitRadius + maxOrbitDiameter;
                     let sFactor = 1.0;
                     if (widthMax > width) {
@@ -785,7 +815,6 @@ function touchStarted() {
 
                     for (let i = 0; i < battleTeams.length; i++) {
                         let ang = -PI * 0.8 + millis() * orbitSpeed + (i / battleTeams.length) * 2 * PI;
-                        // Apply sFactor to recalculate real mobile screen positions
                         let buttonX = width / 2 + (cos(ang) * centralOrbitRadius) * sFactor;
                         let buttonY = height / 2 + (sin(ang) * centralOrbitRadius) * sFactor;
                         

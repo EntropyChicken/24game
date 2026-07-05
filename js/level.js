@@ -12,7 +12,6 @@ function smoothErp(a,recursion=1){
 class Level {
 	static SYMBOLS = ["+","-","×","÷","^","√","ln","!","sin","cos","tan","cot","asin","acos","abs","%"]; // round, floor, and ceil are not included for space purposes
 	static WIN_TIMER_START = 70;
-	static BACK_SLASH_CHEAT = false;
 
 	constructor(numbers, opSymbols = Level.SYMBOLS, metaData = {}, useRational = false) {
 		this.metaData = metaData;
@@ -384,7 +383,8 @@ class Level {
 			res = opBtn.apply(a, b, this.sourceIdOfPos[this.boxes[i1].locName], this.sourceIdOfPos[this.boxes[i2].locName]);
 		}
 
-		// Battle mode: check if this result should award the opposing... er, the player's own team 100 points.
+		// Battle mode: this result may register a "doubler" for the player's team
+		// (the battle master decides whether it counts and applies the effect).
 		maybeBroadcastBattleInvalidAction(res);
 
 		this.sourceIdOfPos[this.boxes[i2].locName] = this.watcherSequence.actions.length-1;
@@ -602,7 +602,7 @@ class Level {
 		// 	screen = "title";
 		// }
 
-		if (key === '\\' && Level.BACK_SLASH_CHEAT){
+		if (key === '\\'){
 			this.opSymbols = Level.SYMBOLS;
 			this.setupOps();
 		}

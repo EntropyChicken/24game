@@ -1,4 +1,4 @@
-    const CACHE_NAME = "24game-cache-v35";
+    const CACHE_NAME = "24game-cache-v36";
     const CACHE_FILES = [
         "./index.html",
         "./style.css",

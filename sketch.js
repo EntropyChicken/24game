@@ -223,6 +223,10 @@ function draw() {
             pop();
         }
     }
+    if(freeze){
+        fill(255,0,0);
+        ellipse(0,0,100,100);
+    }
 }
 
 function drawBattleTeamSelection(){
@@ -266,7 +270,8 @@ function drawBattleTeamSelection(){
     fill(0);
     noStroke();
     textSize(baseTextSize);
-    text("Create or\nChoose Team", 0, -30); 
+    textAlign(CENTER,CENTER);
+    text("Create or\nChoose Team", 0, -5); 
     
     for (let i = 0; i < battleTeams.length; i++) {
         push();
@@ -700,10 +705,11 @@ function mousePressed() {
 }
 
 let processedTouchIds = new Set();
+
+let freeze = false;
 function touchStarted() {
     if(screen==="battle"){
-        background(0);
-        noLoop();
+        freeze = true;
     }
     for (let t of touches) {
         if (screen === "battle" && battleTeam === null) {

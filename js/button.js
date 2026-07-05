@@ -101,7 +101,7 @@ class Button {
 		translate(0, this.drawOffset);
 		rotate(this.drawAngle);
 		translate(-this.x - this.w / 2, -this.y - this.h / 2);
-		if(winTimer && this.style.transparentOnWin){
+		if(winTimer && this.style.transparentOnWin || this.style.transparent){
 			noFill(); stroke(100,93,85,80); strokeWeight(3);
 			rect(this.x, this.y, this.w, this.h, this.style.r || 10);
 		} else {

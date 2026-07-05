@@ -16,6 +16,20 @@ let canSetThemeColor = true;
 let gameCount; // after initially loading global counter, update locally alongside global counter
 let gameCountDrawScale = 1;
 
+// rgb is default for testing purposes. later i'll probably want to let the players submit their own team names???
+let battleTeams = ["red","green","blue"]; 
+let battleTeam = null;
+let battleScores = { "red": 0, "green": 0, "blue": 0 };
+let battleWaiting = true;
+let currentBattleLevelData = null;
+let setLabels = [
+    "Classic Easy", "Classic Medium", "Classic Hard", "Classic Tricky", "Classic Cooked",
+    "Puzzle Simple", "Puzzle Interesting", "Puzzle Crazy Hard", "Puzzle Javascript"
+];
+let battleBackgroundImg, drawWaitingRoomForBattleBackground = false;
+let setChecked = [true, true, true, true, true, true, true, false, false];
+let battleVictoryFlash = 0;
+
 function preload() {
 	loadJSON("levelData/classicLevelsEasy.json", data => { originalClassicSets[0] = data; });
 	loadJSON("levelData/classicLevelsMedium.json", data => { originalClassicSets[1] = data; });
@@ -62,6 +76,9 @@ function draw() {
 	
 	if (screen === "title") {
 		titleScreen.draw();
+		if (keyIsDown(220) && keyIsDown(191)) {
+			screen = "battleMaster";
+		}
 	} else if (screen === "game") {
 		background(220);
 		level.draw();
@@ -83,9 +100,209 @@ function draw() {
 			duel = new Duel(levelArgs.cards,levelArgs.ops,levelArgs.lvl,duel.scores);
 			setThemeColor(theme.backgroundColor);
 		}
-	}
+	} else if (screen === "battle") {
+		if(battleTeam === null){
+			drawBattleTeamSelection();
+		}
+		else{
+			if (level && !battleWaiting) {
+				// The player has a level and is actively playing
+				background(220);
+				level.draw();
+				
+				// Check if they just solved it
+				if (level.winTimer > 0 || level.solved) {
+					battleWaiting = true;
+					battleVictoryFlash = 100;
+					// Tell the Game Master this team won!
+					channel.send({
+						type: "broadcast",
+						event: "battle_win",
+						payload: { team: battleTeam }
+					});
+				}
+			} else {
+				// Waiting for the game master to send a level. honestly just don't draw anything because this flashes for a second whenever you win and it's annoying 
+
+
+				// background(100);
+				// textAlign(CENTER,CENTER);
+				// textSize(40);
+				// fill(255);
+				// text("Waiting for next puzzle...\nYou are on team " + battleTeam, width/2, height/2);
+			}
+		}
+	} else if (screen === "battleMaster") {
+        if (currentBattleLevelData === null) {
+            broadcastNewBattleLevel();
+        }
+        background(0);
+        textAlign(LEFT, TOP);
+        fill(255);
+        textSize(40);
+        text("TEAMS & SCORES:", 100, 100);
+        
+        for(let i = 0; i < battleTeams.length; i++){
+            let tName = battleTeams[i];
+            text(tName + ": " + battleScores[tName], 100, 160 + 60 * i);
+        }
+        
+        // --- NEW: Draw Active Puzzle Sets Checkboxes ---
+        textSize(30);
+        text("ACTIVE PUZZLE SETS:", width / 2 - 100, 100);
+        for (let i = 0; i < 9; i++) {
+            let cx = width / 2 - 100;
+            let cy = 160 + i * 45; // Space them out vertically
+            
+            // Draw Checkbox
+            stroke(255);
+            strokeWeight(2);
+            if (setChecked[i]) fill(100, 255, 100); // Green if checked
+            else fill(0);                           // Black if unchecked
+            rect(cx, cy, 30, 30, 5);
+            
+            // Draw Label
+            noStroke();
+            fill(255);
+            textSize(24);
+            textAlign(LEFT, CENTER);
+            text(setLabels[i], cx + 45, cy + 15);
+        }
+        
+        // Skip Button
+        fill(255, 100, 100);
+        rect(width - 350, 100, 250, 80, 15);
+        fill(255);
+        textAlign(CENTER, CENTER);
+        textSize(40);
+        text("Skip Puzzle", width - 225, 140);
+    }
 }
 
+
+function drawBattleTeamSelection(){
+	let baseTextSize = 40;
+	let orbitPadding = 20;
+	if(battleTeams.length>8){
+		orbitPadding = 3;
+	}
+	let centralOrbitRadius = 220;
+	let maxOrbitDiameter = min(250, 2 * centralOrbitRadius * sin(PI / battleTeams.length));
+
+	background(220);
+	textAlign(CENTER, CENTER);
+	let maxTextWidth = 0;
+	textSize(baseTextSize); 
+	for (let i = 0; i < battleTeams.length; i++) {
+		let w = textWidth(battleTeams[i]);
+		if (w > maxTextWidth) {
+			maxTextWidth = w;
+		}
+	}
+	let orbitDiameter = maxTextWidth + orbitPadding;
+	let currentOrbitTextSize = baseTextSize;
+	if (orbitDiameter > maxOrbitDiameter) {
+		orbitDiameter = maxOrbitDiameter;
+		let availableSpace = maxOrbitDiameter - orbitPadding;
+		currentOrbitTextSize = baseTextSize * (availableSpace / maxTextWidth);
+	}
+
+	let widthMax = 2*centralOrbitRadius+maxOrbitDiameter;
+	push();
+	translate(width / 2, height / 2);
+	if(widthMax>width){
+		scale(width/widthMax);
+	}
+
+	stroke(0);
+	strokeWeight(2);
+	noFill();
+	ellipse(0, 0, centralOrbitRadius * 2, centralOrbitRadius * 2);
+	fill(0);
+	noStroke();
+	textSize(baseTextSize);
+	text("Choose\na team!", 0, 0);
+	for (let i = 0; i < battleTeams.length; i++) {
+		push();
+		let orbitSpeed = battleTeams.length>8 ? 0.00012 : 0.00024;
+		let ang = -PI * 0.8 + millis() * orbitSpeed + (i / battleTeams.length) * 2 * PI;
+		translate(cos(ang) * centralOrbitRadius, sin(ang) * centralOrbitRadius);
+		
+		stroke(50);
+		strokeWeight(2);
+		fill(255);
+		ellipse(0, 0, orbitDiameter, orbitDiameter);
+
+		fill(0);
+		noStroke();
+		textSize(currentOrbitTextSize);
+		text(battleTeams[i], 0, 0);
+		pop();
+
+		if(mouseIsPressed&&dist(mouseX,mouseY,width/2+cos(ang) * centralOrbitRadius, height/2+sin(ang) * centralOrbitRadius)<orbitDiameter/2){
+			setBattleTeam(battleTeams[i]);
+			break;
+		}
+	}
+}
+function setBattleTeam(team){
+	battleTeam = team;
+	background(0);
+	push();
+	textAlign(CENTER,CENTER);
+	textSize(30);
+	fill(255);
+	text("Team: "+team+"\n...waiting for puzzle...",0,0);
+	pop();
+	channel.send({
+		type: "broadcast",
+		event: "request_current_level",
+		payload: {}
+	});
+}
+function drawBattleBackground(scaleFactor=1.0003, iterations=3, fadeFreq=0.1, col) {
+	if(drawWaitingRoomForBattleBackground){
+		push();
+		for(let iter = 0; iter<iterations; iter++){ 
+			push();
+			translate(width / 2, height / 2);
+			scale(scaleFactor);
+			
+			imageMode(CENTER);
+			if (battleBackgroundImg !== undefined){
+			image(battleBackgroundImg, 0, 0);
+			}
+			pop();
+
+			noFill();
+			strokeWeight(10);
+			let high = constrain(random(100, 280),0,255);
+			
+			stroke(random(0, 255),80);
+			
+			let rad = pow(random(0, 1.1), 6) * 40 + 15;
+			if (random(0, 10) < 1) {
+			rad *= random(1, 3);
+			}
+			let x = random(-rad, width + rad);
+			let y = random(-rad, height + rad);
+			ellipse(x, y, rad * 2, rad * 2);
+			
+			if(random(0,1)<fadeFreq){
+				background(50,15);
+			}
+			battleBackgroundImg = get();
+		}
+		pop();
+		background(50,100);
+	}
+	else{
+		// background(lerpColor(color(130),theme.backgroundColorCorrect,battleVictoryFlash));
+		background(lerpColor(color(130),theme.backgroundColorCorrect,min(1,battleVictoryFlash)));
+	}
+	theme.shadeColor = lerpColor(color(190),theme.backgroundColorCorrect,min(1,battleVictoryFlash));
+	battleVictoryFlash*=0.7;
+}
 
 
 
@@ -333,7 +550,32 @@ function mousePressed() {
 		titleScreen.handleClick(mouseX, mouseY);
 	} else if (screen === "duel") {
 		duel.handleClick(mouseX, mouseY);
-	}
+	} else if (screen === "battle") {
+		// --- NEW: Allow players to click and solve the puzzle ---
+		if (level && !battleWaiting && battleTeam !== null) {
+			level.handleClick(mouseX, mouseY);
+		}
+	} else if (screen === "battleMaster") {
+        // Repurposed button: Skip Puzzle
+        if (mouseX > width - 350 && mouseX < width - 100 && mouseY > 100 && mouseY < 180) {
+            broadcastNewBattleLevel();
+        }
+        
+        // Check if a checkbox/label was clicked
+        for (let i = 0; i < 9; i++) {
+            let cx = width / 2 - 100;
+            let cy = 160 + i * 45;
+            // The clickable width is ~250px so players can click the text too
+            if (mouseX > cx && mouseX < cx + 250 && mouseY > cy && mouseY < cy + 30) {
+                setChecked[i] = !setChecked[i];
+                
+                // Prevent the Game Master from unchecking the very last active set
+                if (!setChecked.includes(true)) {
+                    setChecked[i] = true;
+                }
+            }
+        }
+    }
 }
 
 let processedTouchIds = new Set();
@@ -443,8 +685,8 @@ async function getGameCount() {
 // this doesn't store the win counter, it just relays realtime updates
 // avoid colliding with any global "supabase"
 const supabaseClient = window.supabase.createClient(
-	"https://fhgzqafosmioykggwafl.supabase.co",
-	"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoZ3pxYWZvc21pb3lrZ2d3YWZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxNjkyMTMsImV4cCI6MjA3ODc0NTIxM30.j9xIAsRjNpqT-49WxrmrUcKLBSySd1y1ETTK8E4A194"
+	"https://yjiizqjjuunbvmkuxulv.supabase.co",
+	"sb_publishable_UgcUH946WkpvMmPIvHN0Yg_cDczSY6T"
 );
 const channel = supabaseClient.channel("main-room", {
     config: {
@@ -456,7 +698,36 @@ async function setupRealtime() {
         .on("broadcast", { event: "win" }, (msg) => {
             gameCount = msg.payload.gameCount;
             gameCountDrawScale = 2;
-        });
+        })
+		// 1. Players receive the active level configuration
+		.on("broadcast", { event: "battle_level" }, (msg) => {
+			if (screen === "battle" && battleTeam !== null) {
+				let args = msg.payload;
+				level = new Level(args.cards, args.ops, args.lvl, args.isClassic);
+				Level.setupKeyboard(level);
+				battleWaiting = false;
+			}
+		})
+		// 2. Game Master receives a win announcement
+		.on("broadcast", { event: "battle_win" }, (msg) => {
+			let winningTeam = msg.payload.team;
+			if (battleScores[winningTeam] !== undefined) {
+				battleScores[winningTeam]++;
+			}
+			if (screen === "battleMaster") {
+				broadcastNewBattleLevel(); // Automatically cycles to the next level
+			}
+		})
+		// 3. New players query the Game Master for the level currently in play
+		.on("broadcast", { event: "request_current_level" }, (msg) => {
+			if (screen === "battleMaster" && currentBattleLevelData) {
+				channel.send({
+					type: "broadcast",
+					event: "battle_level",
+					payload: currentBattleLevelData
+				});
+			}
+		});
 
     const status = await channel.subscribe(); 
     console.log("channel status:", status);
@@ -467,6 +738,56 @@ async function broadcastWin() {
 	channel.send({
 		type: "broadcast",
 		event: "win",
-		payload: { gameCount:gameCount }
+		payload: { gameCount:gameCount, battleTeam:battleTeam } // if battleTeam is null then that just means they're playing the non-battle versions of the game like solo or duel. so it doesn't matter in that case
 	});
+}
+function broadcastNewBattleLevel() {
+    // 1. Gather all indices that are currently checked on
+    let availableIndices = [];
+    for (let i = 0; i < 9; i++) {
+        if (setChecked[i]) availableIndices.push(i);
+    }
+    
+    // Safety fallback just in case
+    if (availableIndices.length === 0) availableIndices = [0]; 
+    
+    // 2. Pick a random active set
+    let chosenIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+    
+    // 3. Determine if it's a classic (0-4) or a puzzle (5-8)
+    let isClassic = chosenIndex < 5;
+    let setArrayIndex = isClassic ? chosenIndex : chosenIndex - 5;
+    
+    let chosenSet = isClassic ? classicSets[setArrayIndex] : puzzleSets[setArrayIndex];
+    let originalSet = isClassic ? originalClassicSets[setArrayIndex] : originalPuzzleSets[setArrayIndex];
+    
+    // Reset the deck if we've used all levels in this specific set
+    if (chosenSet.length === 0) {
+        if (isClassic) {
+            classicSets[setArrayIndex] = shuffle([...originalClassicSets[setArrayIndex]]);
+            chosenSet = classicSets[setArrayIndex];
+        } else {
+            puzzleSets[setArrayIndex] = shuffle([...originalPuzzleSets[setArrayIndex]]);
+            chosenSet = puzzleSets[setArrayIndex];
+        }
+    }
+    
+    // Classic levels strictly default to + - * /, while Puzzles allow advanced symbols
+    let defaultOps = isClassic ? ["+", "-", "×", "÷"] : Level.SYMBOLS;
+    let levelData = getRandomLevel(chosenSet, [], defaultOps, false, false);
+    
+    // Cache it so we can hand it out to mid-game joiners
+    currentBattleLevelData = {
+        cards: levelData.cards,
+        ops: levelData.ops,
+        lvl: levelData.lvl,
+		isClassic: isClassic
+    };
+    
+    // Broadcast to everyone
+    channel.send({
+        type: "broadcast",
+        event: "battle_level",
+        payload: currentBattleLevelData
+    });
 }

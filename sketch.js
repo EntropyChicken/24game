@@ -140,7 +140,7 @@ function draw() {
                 
                 if (level.winTimer > 0 || level.solved) {
                     battleWaiting = true;
-                    battleVictoryFlash = 100;
+                    battleVictoryFlash = 500;
                     channel.send({
                         type: "broadcast",
                         event: "battle_win",
@@ -407,7 +407,7 @@ function drawBattleBackground(scaleFactor=1.0003, iterations=3, fadeFreq=0.1, co
         background(lerpColor(color(130),theme.backgroundColorCorrect,min(1,battleVictoryFlash)));
     }
     theme.shadeColor = lerpColor(color(190),theme.backgroundColorCorrect,min(1,battleVictoryFlash));
-    battleVictoryFlash*=0.7;
+    battleVictoryFlash*=0.9;
 }
 
 function windowResized() {
@@ -954,9 +954,14 @@ async function setupRealtime() {
             
             if (screen === "battle" && battleTeam !== null) {
                 let args = msg.payload;
-                level = new Level(args.cards, args.ops, args.lvl, args.isClassic);
-                Level.setupKeyboard(level);
-                battleWaiting = false;
+                
+                // 💡 GUARD CONDITION: Only reset if the GM forces it, 
+                // OR if this player doesn't have a level running yet.
+                if (args.forceReset || level === null || level === undefined) {
+                    level = new Level(args.cards, args.ops, args.lvl, args.isClassic);
+                    Level.setupKeyboard(level);
+                    battleWaiting = false;
+                }
             }
         })
         .on("broadcast", { event: "teams_list" }, (msg) => {
@@ -1021,7 +1026,8 @@ async function setupRealtime() {
                         payload: {
                             ...currentBattleLevelData,
                             teams: battleTeams,
-                            scores: battleScores
+                            scores: battleScores,
+                            forceReset: false // 💡 Tell active players NOT to wipe their progress
                         }
                     });
                 }
@@ -1046,49 +1052,59 @@ async function broadcastWin() {
 }
 
 function broadcastNewBattleLevel() {
-    let availableIndices = [];
+    // 1. Find which puzzle sets the Battle Master has active
+    let validIndices = [];
     for (let i = 0; i < 9; i++) {
-        if (setChecked[i]) availableIndices.push(i);
+        if (setChecked[i]) validIndices.push(i);
     }
     
-    if (availableIndices.length === 0) availableIndices = [0]; 
-    let chosenIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+    // Fallback protection: if none are checked, default to Classic Easy (0)
+    if (validIndices.length === 0) validIndices.push(0);
     
-    let isClassic = chosenIndex < 5;
-    let setArrayIndex = isClassic ? chosenIndex : chosenIndex - 5;
+    // Pick a random set index out of the checked ones
+    let pickedIndex = random(validIndices);
     
-    let chosenSet = isClassic ? classicSets[setArrayIndex] : puzzleSets[setArrayIndex];
+    let isClassic = pickedIndex < 5;
+    let setIndex = isClassic ? pickedIndex : pickedIndex - 5;
+    let levelSet = isClassic ? classicSets[setIndex] : puzzleSets[setIndex];
     
-    if (chosenSet.length === 0) {
+    // Ensure the set wraps around/shuffles if it runs out of cards
+    if (levelSet.length === 0) {
         if (isClassic) {
-            classicSets[setArrayIndex] = shuffle([...originalClassicSets[setArrayIndex]]);
-            chosenSet = classicSets[setArrayIndex];
+            classicSets[setIndex] = shuffle([...originalClassicSets[setIndex]]);
+            levelSet = classicSets[setIndex];
         } else {
-            puzzleSets[setArrayIndex] = shuffle([...originalPuzzleSets[setArrayIndex]]);
-            chosenSet = puzzleSets[setArrayIndex];
+            puzzleSets[setIndex] = shuffle([...originalPuzzleSets[setIndex]]);
+            levelSet = puzzleSets[setIndex];
         }
     }
     
+    // 2. Fetch the random level args using your system's custom helper
+    let currentCards = masterPreviewLevel ? masterPreviewLevel.originalValues.map(c => c.real) : [];
     let defaultOps = isClassic ? ["+", "-", "×", "÷"] : Level.SYMBOLS;
-    let levelData = getRandomLevel(chosenSet, [], defaultOps, false, false);
     
+    let levelArgs = getRandomLevel(levelSet, currentCards, defaultOps, false, false);
+    
+    // 3. Keep track of it in the global state so new clients can fetch it later
     currentBattleLevelData = {
-        cards: levelData.cards,
-        ops: levelData.ops,
-        lvl: levelData.lvl,
+        cards: levelArgs.cards,
+        ops: levelArgs.ops,
+        lvl: levelArgs.lvl,
         isClassic: isClassic
     };
     
-    masterPreviewLevel = new Level(levelData.cards, levelData.ops, levelData.lvl, isClassic);
+    // Update the Game Master's bottom-left screen preview block
+    masterPreviewLevel = new Level(levelArgs.cards, levelArgs.ops, levelArgs.lvl, isClassic);
 
-    // Blast out updated lists alongside puzzle updates
+    // 4. Send the level data out to everyone and clear their active progress boards!
     channel.send({
         type: "broadcast",
         event: "battle_level",
         payload: {
             ...currentBattleLevelData,
             teams: battleTeams,
-            scores: battleScores
+            scores: battleScores,
+            forceReset: true // 🎯 Forces active players to dump their progress and move forward!
         }
     });
 }

@@ -126,14 +126,21 @@ class TitleScreen {
                 text("Random",width*0.3+x, height*0.363+y*0.8);
                 text("Designed",width*0.7+x, height*0.363+y*0.8);
                 textAlign(RIGHT,BOTTOM);
-                if(gameCount!==undefined){
-                    let s = constrain(width*0.035,27,35);
+                if (isOnlineSession) {
+                    if (gameCount !== undefined) {
+                        let s = constrain(width * 0.035, 27, 35);
+                        textSize(s);
+                        text((gameCount === 1 ? "game" : "games"), width - 15 + x, height - s - 15 + y * 0.8);
+                        text("won worldwide!", width - 15 + x, height - 15 + y * 0.8);
+                        let w = textWidth(" games");
+                        textSize(s * (gameCountDrawScale + 0.2));
+                        text(gameCount, width - 15 - w + x, height - s - 15 + y * 0.8);
+                    }
+                } else {
+                    let s = constrain(width * 0.035, 27, 35);
                     textSize(s);
-                    text(" games",width-15+x,height-s-15+y*0.8);
-                    text("won worldwide!",width-15+x,height-15+y*0.8);
-                    let w = textWidth(" games");
-                    textSize(s*(gameCountDrawScale+0.2));
-                    text(gameCount,width-15-w+x,height-s-15+y*0.8);
+                    text("offline", width - 15 + x, height - s - 15 + y * 0.8);
+                    text("mode📡❌", width - 15 + x, height - 15 + y * 0.8);
                 }
             }
         }

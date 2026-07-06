@@ -1,4 +1,4 @@
-const CACHE_NAME = "24game-cache-v52"; // Increment version to force update
+const CACHE_NAME = "24game-cache-v53"; // Increment version to force update
 const CACHE_FILES = [
     "./", // the root directory URL
     "./index.html",

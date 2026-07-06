@@ -42,13 +42,13 @@ class TitleScreen {
         }
 
         this.gap = 13;
-        this.btnStartX = width * 0.5 - this.boxes[0].w / 2 - this.gap; 
+        this.btnSumW = this.boxW * 1.2 + this.gap;
+        this.btnStartX = width / 2 - this.btnSumW / 2;
         this.btnY = height * 0.2;
-        this.totalBtnW = this.boxes[0].w;
         this.btnH = this.boxes[0].h;
         
-        this.duelW = (this.totalBtnW - this.gap) * 0.46; 
-        this.battleW = (this.totalBtnW - this.gap) * 0.63;
+        this.duelW = (this.btnSumW-this.gap) * 0.64; 
+        this.battleW = (this.btnSumW-this.gap) * 0.36;
 
         this.duelButton = new Button({
             x: this.btnStartX, // width * 0.5 - this.duelW / 2, // centered
@@ -68,7 +68,7 @@ class TitleScreen {
                     }
                 }
             },
-            getText: () => "Duel\nMode",
+            getText: () => "Two-Player\nMode",
             onClick: () => { titleScreen.duelMode = !titleScreen.duelMode }
         });
 
@@ -83,7 +83,7 @@ class TitleScreen {
                     titleScreen.battleButton.style.hovering = false;
                 }
             },
-            getText: () => "BATTLE!",
+            getText: () => "Team\nBattle",
             onClick: () => { 
                 if (typeof gameMaster !== 'undefined' && gameMaster.getLatestTeams) {
                     battleTeams = gameMaster.getLatestTeams(); 

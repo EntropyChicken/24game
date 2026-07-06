@@ -37,6 +37,10 @@
     <script type="module">
       async function loadFirebase() {
         try {
+          if (navigator.onLine === false) {
+            throw new Error("Device is offline");
+          }
+
           const [
             { initializeApp },
             { getFirestore, collection, doc, getDoc, setDoc, increment },
@@ -67,8 +71,8 @@
             doc: doc,
             getDoc: getDoc,
             setDoc: setDoc,
-            isOnlineMode: true, // Used for your new menu-blocking logic
-            isReady: true       // CRITICAL: Keeps getGameCount() working!
+            isOnlineMode: true,
+            isReady: true       
           };
           console.log("Online systems ready.");
         } catch (err) {
@@ -76,7 +80,7 @@
           
           window.firebaseAppReady = {
             isOnlineMode: false,
-            isReady: false,     // CRITICAL: Tells getGameCount() to skip safely
+            isReady: false,     
             db: null,
             increment: () => 0, 
             collection: () => {}, 
@@ -91,7 +95,7 @@
 
       loadFirebase();
     </script>
-    
+
     <!-- For realtime updates -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 

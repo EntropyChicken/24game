@@ -14,7 +14,7 @@ let setLabels = [
     "Random Easy", "Random Medium", "Random Hard", "Random Tricky", "Random Very Hard",
     "Designed Simple", "Designed Interesting", "Designed Crazy Hard", "Designed Javascript 😭"
 ];
-let setChecked = [true, true, false, true, false, true, true, false, false];
+let setChecked = [true, true, false, false, false, true, false, false, false];
 
 let theme = {};
 let canHover;

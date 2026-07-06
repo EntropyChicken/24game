@@ -401,7 +401,7 @@ class Complex {
     }
 
     getColor(){
-        if(isNaN(this.real)||isNaN(this.imag||typeof(this.real)!=="number"||typeof(this.imag)!=="number")||!isFinite(this.real)||!isFinite(this.imag)){
+        if(isNaN(this.real) || isNaN(this.imag) || typeof(this.real) !== "number" || typeof(this.imag) !== "number" || !isFinite(this.real) || !isFinite(this.imag)){
             return color(120,120,120);
         }
         if(abs(this.imag)>DISPLAY_THRESHOLD){

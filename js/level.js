@@ -749,21 +749,23 @@ class Level {
 }
 
 function getBattleInvalidActionReason(value) {
-	if (value instanceof Rational) {
-		if (isNaN(value.numerator) || isNaN(value.denominator)) return "invalid_number";
-		if (!value.isInteger()) return "non_integer";
-		if (value.numerator < 0) return "negative_number";
-		return null;
-	}
-	if (value instanceof Complex) {
-		if (value.isNaN()) return "invalid_number";
-		if (value.imag !== 0) return "non_real";
-		if (!Number.isFinite(value.real)) return "invalid_number";
-		if (Math.round(value.real) !== value.real) return "non_integer";
-		if (value.real < 0) return "negative_number";
-		return null;
-	}
-	return null;
+    if (value instanceof Rational) {
+        if (isNaN(value.numerator) || isNaN(value.denominator)) return "invalid_number";
+        if (Math.abs(value.numerator / value.denominator) > 9000) return "over_9000";
+        if (!value.isInteger()) return "non_integer";
+        if (value.numerator < 0) return "negative_number";
+        return null;
+    }
+    if (value instanceof Complex) {
+        if (value.isNaN()) return "invalid_number";
+        if (Math.hypot(value.real, value.imag) > 9000) return "over_9000";
+        if (value.imag !== 0) return "non_real";
+        if (!Number.isFinite(value.real)) return "invalid_number";
+        if (Math.round(value.real) !== value.real) return "non_integer";
+        if (value.real < 0) return "negative_number";
+        return null;
+    }
+    return null;
 }
 
 function maybeBroadcastBattleInvalidAction(value) {

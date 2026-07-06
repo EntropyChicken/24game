@@ -139,8 +139,8 @@ class TitleScreen {
                 } else {
                     let s = constrain(width * 0.035, 27, 35);
                     textSize(s);
-                    text("Offline", width - 15 + x, height - s - 15 + y * 0.8);
-                    text("mode 📡❌", width - 15 + x, height - 15 + y * 0.8);
+                    text("📡❌", width - 15 + x, height - s - 15 + y * 0.8);
+                    text("Offline mode", width - 15 + x, height - 15 + y * 0.8);
                 }
             }
         }

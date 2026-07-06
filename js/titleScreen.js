@@ -55,7 +55,7 @@ class TitleScreen {
             y: this.btnY, w: this.duelW, h: this.btnH,
             label: "Duel button",
             style: {
-                r: 15, onHoverMovement: 0.003, textColor: color(60,60,60),
+                r: 15, onHoverMovement: 0.003, textColor: color(111),
                 predraw: () => {
                     if(titleScreen.duelMode){
                         titleScreen.duelButton.style.mainColor = color(225,255,180);
@@ -76,7 +76,7 @@ class TitleScreen {
             x: this.btnStartX + this.duelW + this.gap, y: this.btnY, w: this.battleW, h: this.btnH,
             label: "Battle button",
             style: {
-                r: 15, onHoverMovement: 0.003, textColor: color(60,60,60),
+                r: 15, onHoverMovement: 0.003, textColor: color(111),
                 predraw: () => {
                     titleScreen.battleButton.style.mainColor = color(255,255,255);
                     titleScreen.battleButton.style.shadeColor = theme.shadeColor;

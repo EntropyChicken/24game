@@ -1,6 +1,6 @@
-const CACHE_NAME = "24game-cache-v56";
+const CACHE_NAME = "24game-cache-v57";
 const CACHE_FILES = [
-    "./", // the root directory URL
+    "./", // root directory URL
     "./index.html",
     "./style.css",
     "./manifest.json",
@@ -8,7 +8,7 @@ const CACHE_FILES = [
     "./assets/icon-550.png",
     "./assets/favicon.png",
 
-    // js
+    // js (never cache serviceWorker.js itself)
     "./sketch.js",
     "./js/rational.js",
     "./js/complex.js",

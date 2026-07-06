@@ -34,19 +34,17 @@ function drawTextInBox(txt, x, y, w, h, maxFontSize = height * 0.045, minFontSiz
 		return textWidth(txt);
 	}
 
-	// Custom line-breaking logic
+	// line-breaking logic
 	let lines = [];
 	let currentLine = '';
 	for (let i = 0; i < txt.length; i++) {
 		currentLine += txt[i];
 		if (textWidth(currentLine) > maxWidth) {
-			// Too long: backtrack to last break char
 			let j = currentLine.length - 1;
 			while (j > 0 && !WRAP_BREAK_CHARS.includes(currentLine[j])) {
 				j--;
 			}
 			if (j === 0) {
-				// No break point found—force break
 				lines.push(currentLine.trim());
 				currentLine = '';
 			} else {

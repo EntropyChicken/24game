@@ -89,6 +89,8 @@ class TitleScreen {
                     setScreen("battle"); 
                 } else {
                     alert("Connection lost! Please reconnect and reload to play Team Battle");
+                    this.showBattleButton = false;
+                    isOnlineSession = false;
                 }
             } 
         });

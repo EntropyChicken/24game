@@ -84,10 +84,7 @@ class TitleScreen {
                 }
             },
             getText: () => "Team\nBattle",
-            onClick: () => { 
-                if (typeof gameMaster !== 'undefined' && gameMaster.getLatestTeams) {
-                    battleTeams = gameMaster.getLatestTeams(); 
-                }
+            onClick: () => {
                 setScreen("battle"); 
             } 
         });

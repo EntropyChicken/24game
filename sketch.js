@@ -769,6 +769,12 @@ function setScreen(s){
     }
     else if(screen === "battle"){
         setThemeColor(color(0,0,0));
+        level = null; // to reset in case the player opened a level before coming here
+        channel.send({
+            type: "broadcast",
+            event: "request_current_level",
+            payload: {}
+        });
         channel.send({
             type: "broadcast",
             event: "request_teams",
@@ -1114,13 +1120,10 @@ async function setupRealtime() {
                     battleScores[winningTeam] = pointsWon;
                 }
 
-                // --- NEW BATTLE MASTER FLASH ---
                 battleMasterWinningTeam = winningTeam;
                 battleMasterWinningPoints = pointsWon;
                 battleMasterVictoryFlash = 50; 
 
-                // 2. New round starts now; broadcastNewBattleLevel() clears
-                // every team's doubler set.
                 broadcastNewBattleLevel();
             }
         })
@@ -1242,10 +1245,23 @@ async function setupRealtime() {
                             ...currentBattleLevelData,
                             teams: battleTeams,
                             scores: battleScores,
-                            forceReset: false // 💡 Tell active players NOT to wipe their progress
+                            forceReset: false
                         }
                     });
                 }
+            }
+        }).on("broadcast", { event: "request_current_level" }, (msg) => {
+            if (screen === "battleMaster" && currentBattleLevelData) {
+                channel.send({
+                    type: "broadcast",
+                    event: "battle_level",
+                    payload: {
+                        ...currentBattleLevelData,
+                        teams: battleTeams,
+                        scores: battleScores,
+                        forceReset: false
+                    }
+                });
             }
         })
         .on("broadcast", { event: "game_master_terminated" }, () => {
@@ -1344,7 +1360,7 @@ function broadcastNewBattleLevel() {
             ...currentBattleLevelData,
             teams: battleTeams,
             scores: battleScores,
-            forceReset: true // 🎯 Forces active players to dump their progress and move forward!
+            forceReset: true
         }
     });
 }

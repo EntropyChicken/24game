@@ -154,6 +154,13 @@ function draw() {
         if (keyIsDown(220) && keyIsDown(191) && screen !== "battleMaster") {
             setScreen("battleMaster");
         }
+        if (isOnlineSession) {
+            fill(0,255,0);
+        }
+        else {
+            fill(255,0,0);
+        }
+        ellipse(0,0,150,150);
     } else if (screen === "game") {
         background(220);
         level.draw();

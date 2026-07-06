@@ -1,45 +1,35 @@
-Make 24 Math Game (Web-Based)
+# Make24 Math Game
 
-A reinvented, web-based version of the classic Make 24 game
-, playable directly in your browser on desktop, tablet, or smartphone, no installation required.
+make24.org is a web-based version of the Make 24 extended to more advanced mathematics. Local and online multiplayer are available directly in your browser on desktop, tablet, or smartphone, no installation required.
 
-This project extends the traditional rules of the 24 puzzle with new dimensions, multiple levels of difficulty, and gameplay options suited for everyone from beginners to experts.
+This project extends the traditional rules of the 24 puzzle by introducing new number systems and new operations.
 
-🎮 Features
+---
 
-Web-based & cross-platform. 
+## Features
 
-Multiple difficulty levels
-From simple training puzzles to challenging expert problems.
+### Handcrafted puzzles
+Custom designed sets of numbers and operations capture specific mathematical ideas, all categorized by difficulty.
 
-Hints & solutions
+### Hints & solutions
 Get guidance when you’re stuck, or reveal the solution to learn new strategies.
 
-Two-player mode
-Play head-to-head on the same smartphone or device.
+### Two-player mode
+Race head-to-head on the same smartphone or device, but cooperate to progress.
 
-Extended gameplay
-Variants and challenges that expand on the traditional 24 puzzle.
+### Team Battle mode
+Play with a group of teammates against other teams, quickly completing side quests like dividing by zero in order to boost scores.
 
-🚀 Play Now
+---
 
-👉 Start playing here  https://Make24.org
- 
+## Rules of Make 24
 
-📖 Basic Mode Rules (Quick Recap)
+You are given four numbers. Use addition, subtraction, multiplication, or division to combine the four numbers to make 24.
+Does this sound too simple? I agree! Try "Crazy Hard" mode's complex logarithms and outside-the-box cleverness!
 
-You are given 4 numbers.
+---
 
-Use addition, subtraction, multiplication, or division.
+## Development
 
-Combine all four numbers exactly once to make 24.
-
-This game extended variants to have complex numbers and advanced math functions.
-
-Try crazy hard, or two-players mode if you are a pro!
-
-🛠️ Development
-
-This repository hosts the source code for the 24 Game.
-Contributions, feedback, and suggestions are welcome (info@make24.org) ! Feel free to open an issue or pull request.
-
+> **Project & Asset Notice:**
+> This repository hosts the source code for the 24 Game. Note that it is NOT open-source. Feel free to open an issue or pull request!

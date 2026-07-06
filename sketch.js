@@ -1,5 +1,6 @@
 const EQUALITY_THRESHOLD = 1e-6;
 const DISPLAY_THRESHOLD = 7e-9;
+let isOnlineSession = false;
 let screen = "title";
 let level, duel, titleScreen, masterPreviewLevel;
 let originalClassicSets = [[], [], [], [], []];
@@ -43,8 +44,6 @@ const BATTLE_DOUBLER_LABELS = {
     invalid_number: "Non-Number"
 };
 const DOUBLER_REASON_KEYS = Object.keys(BATTLE_DOUBLER_LABELS);
-let showMasterHint = false;
-let masterHintX = null;
 
 function isDoublerReasonEnabled(reasonKey) {
     switch (reasonKey) {
@@ -381,7 +380,7 @@ function draw() {
             pop();
         }
 
-        if (showMasterHint && typeof masterPreviewLevel !== 'undefined') {
+        if (keyIsDown(72) && typeof masterPreviewLevel !== 'undefined') {
             push();
             textSize(20);
             fill(255, 230, 150);
@@ -1033,6 +1032,13 @@ window.addEventListener("touchend", (e) => {
 let firebaseReady = null;
 document.addEventListener('firebase_initialized', () => {
     firebaseReady = window.firebaseAppReady;
+    if (firebaseReady && firebaseReady.isOnlineMode) {
+        isOnlineSession = true;
+        console.log("Session is ONLINE!");
+    } else {
+        isOnlineSession = false;
+        console.warn("Session is OFFLINE.");
+    }
     getGameCount().then(val => {
         gameCount = val;
     });
@@ -1389,13 +1395,9 @@ function handleGameMasterLeft() {
     }
 }
 
-function keyPressed() {
-  if (screen === "battleMaster") {
-    if (key === 'h' || key === 'H') {
-      showMasterHint = !showMasterHint;
-      if (showMasterHint) {
-        masterHintX = width; 
-      }
-    }
-  }
+function isOnlineAvailable() {
+    // Returns true only if Firebase loaded cleanly AND Supabase script is present
+    return window.firebaseAppReady && 
+           window.firebaseAppReady.isOnlineMode === true && 
+           typeof supabase !== 'undefined';
 }

@@ -35,35 +35,60 @@
 
     <body>
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-      import { getFirestore, collection, doc, getDoc, setDoc, increment } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-      import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-analytics.js";
+      async function loadFirebase() {
+        try {
+          const [
+            { initializeApp },
+            { getFirestore, collection, doc, getDoc, setDoc, increment },
+            { getAnalytics }
+          ] = await Promise.all([
+            import("https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js"),
+            import("https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js"),
+            import("https://www.gstatic.com/firebasejs/12.1.0/firebase-analytics.js")
+          ]);
 
-      const firebaseConfig = {
-        apiKey: "AIzaSyCDv8aTBxn5lfQQSA9kP5JQlJ-NNszJJRM",
-        authDomain: "make24-1e644.firebaseapp.com",
-        projectId: "make24-1e644",
-        storageBucket: "make24-1e644.firebasestorage.app",
-        messagingSenderId: "770585457003",
-        appId: "1:770585457003:web:9145d890d5b59403559c2e",
-        measurementId: "G-6CFVM2YNKE"
-      };
+          const firebaseConfig = {
+            apiKey: "AIzaSyCDv8aTBxn5lfQQSA9kP5JQlJ-NNszJJRM",
+            authDomain: "make24-1e644.firebaseapp.com",
+            projectId: "make24-1e644",
+            storageBucket: "make24-1e644.firebasestorage.app",
+            messagingSenderId: "770585457003",
+            appId: "1:770585457003:web:9145d890d5b59403559c2e",
+            measurementId: "G-6CFVM2YNKE"
+          };
 
-      const app = initializeApp(firebaseConfig);
-      const analytics = getAnalytics(app);
+          const app = initializeApp(firebaseConfig);
+          const analytics = getAnalytics(app);
 
-      window.firebaseAppReady = {
-        db: getFirestore(app),
-        increment: increment, 
-        collection: collection, 
-        doc: doc,
-        getDoc: getDoc,
-        setDoc: setDoc,
-        isReady: true 
-      };
+          window.firebaseAppReady = {
+            db: getFirestore(app),
+            increment: increment, 
+            collection: collection, 
+            doc: doc,
+            getDoc: getDoc,
+            setDoc: setDoc,
+            isOnlineMode: true // <-- Flag set to true if network succeeds
+          };
+          console.log("Online systems ready.");
+        } catch (err) {
+          console.warn("Offline fallback activated:", err);
+          
+          // Empty mock objects so your scripts don't crash when reading properties
+          window.firebaseAppReady = {
+            isOnlineMode: false, // <-- Flag set to false if offline
+            db: null,
+            increment: () => 0, 
+            collection: () => {}, 
+            doc: () => {},
+            getDoc: async () => ({ exists: () => false }),
+            setDoc: async () => {}
+          };
+        } finally {
+          document.dispatchEvent(new Event('firebase_initialized'));
+        }
+      }
 
-      document.dispatchEvent(new Event('firebase_initialized'));
-
+      loadFirebase();
     </script>
     
     <!-- For realtime updates -->

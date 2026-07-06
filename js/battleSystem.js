@@ -399,7 +399,7 @@ function drawBattleTeamSelection(){
     pop();
 
     let inputW = 260;
-    let inputH = 45;
+    let inputH = 50;
     let btnW = 120;
     let btnH = 50;
     let padding = 15;

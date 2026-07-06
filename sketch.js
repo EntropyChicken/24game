@@ -63,6 +63,7 @@ function setup() {
     teamInput.style('border-radius', '8px');
     teamInput.style('border', '2px solid #323232');
     teamInput.style('text-align', 'center');
+    teamInput.style('box-sizing', 'border-box');
 
     let inputWidth = teamInput.elt.offsetWidth;
     let inputHeight = teamInput.elt.offsetHeight;

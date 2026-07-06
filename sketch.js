@@ -297,7 +297,7 @@ function draw() {
 
         textSize(28);
         fill(140);
-        text("SIDE QUESTS\n(STACKABLE DOUBLERS):", width / 2, 570);
+        text("SIDE QUESTS:\n(STACKABLE DOUBLERS)", width / 2, 570);
         fill(255);
         for (let i = 0; i < DOUBLER_REASON_KEYS.length; i++) {
             let cx = width / 2;

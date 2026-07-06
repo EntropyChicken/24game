@@ -75,8 +75,7 @@ class Level {
 			style: {
 				r: 10,
 				onHoverMovement: -0.004,
-				transparentOnWin: true,
-				transparent: (screen === "battle" || screen === "battleMaster")
+				transparentOnWin: true
 			},
 			getText: () => "Home",
 			onClick: () => { setScreen("title"); }

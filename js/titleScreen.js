@@ -1,6 +1,6 @@
 class TitleScreen {
     constructor() {
-        this.showBattle = false;
+        this.showBattleButton = false;
         this.boxes = [];
         this.boxW = min(220, width * 0.35);
         this.boxH = min(80, height * 0.1);
@@ -51,7 +51,7 @@ class TitleScreen {
         this.battleW = (this.totalBtnW - this.gap) * 0.63;
 
         this.duelButton = new Button({
-            x: width * 0.5 - this.duelW / 2, // Default to centered
+            x: this.btnStartX, // width * 0.5 - this.duelW / 2, // centered
             y: this.btnY, w: this.duelW, h: this.btnH,
             label: "Duel button",
             style: {
@@ -98,8 +98,7 @@ class TitleScreen {
     }
 
     revealBattleButton() {
-        this.showBattle = true;
-        this.duelButton.x = this.btnStartX; // Shift left side-by-side
+        this.showBattleButton = true;
     }
 
     draw() {
@@ -113,13 +112,11 @@ class TitleScreen {
         
         this.drawBoxes();
         
-        // Draw duel button always
         this.duelButton.draw();
         
-        // FIX: Only draw battle button if a Game Master has replied
-        if (this.showBattle) {
-            this.battleButton.draw();
-        }
+        this.battleButton.style.transparent = !this.showBattleButton;
+        this.battleButton.style.onHoverMovement = this.showBattleButton ? 0.0045 : 0;
+        this.battleButton.draw();
 
         noStroke();
         for(let y = 2; y>=-2; y-=2){
@@ -253,7 +250,7 @@ class TitleScreen {
         }
         
         const buttons = [this.duelButton];
-        if (this.showBattle) {
+        if (this.showBattleButton) {
             buttons.push(this.battleButton);
         }
 

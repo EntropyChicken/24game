@@ -184,7 +184,7 @@ function draw() {
             if (level && !battleWaiting) {
                 background(220);
                 level.draw();
-                
+
                 if (level.winTimer > 0 || level.solved) {
                     battleWaiting = true;
                     battleVictoryFlash = 500;
@@ -194,7 +194,7 @@ function draw() {
                         payload: { team: battleTeam }
                     });
                 }
-            } 
+            }
             else if (battleWaiting) {
                 // don't clutter screen
                 // background(0);
@@ -297,7 +297,7 @@ function draw() {
 
         textSize(28);
         fill(140);
-        text("DOUBLERS:", width / 2, 570);
+        text("SIDE QUESTS\n(STACKABLE DOUBLERS):", width / 2, 570);
         fill(255);
         for (let i = 0; i < DOUBLER_REASON_KEYS.length; i++) {
             let cx = width / 2;

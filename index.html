@@ -9,7 +9,7 @@
     <link rel="icon" href="assets/favicon.png" type="image/png">
     
     <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="assets/icon-550.png">
 
@@ -67,15 +67,16 @@
             doc: doc,
             getDoc: getDoc,
             setDoc: setDoc,
-            isOnlineMode: true // <-- Flag set to true if network succeeds
+            isOnlineMode: true, // Used for your new menu-blocking logic
+            isReady: true       // CRITICAL: Keeps getGameCount() working!
           };
           console.log("Online systems ready.");
         } catch (err) {
           console.warn("Offline fallback activated:", err);
           
-          // Empty mock objects so your scripts don't crash when reading properties
           window.firebaseAppReady = {
-            isOnlineMode: false, // <-- Flag set to false if offline
+            isOnlineMode: false,
+            isReady: false,     // CRITICAL: Tells getGameCount() to skip safely
             db: null,
             increment: () => 0, 
             collection: () => {}, 

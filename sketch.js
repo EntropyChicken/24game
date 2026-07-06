@@ -23,10 +23,7 @@ let battleTeam = null;
 let battleScores = {};
 let battleWaiting = true;
 let currentBattleLevelData = null;
-let battleMasterAwardForNegativeNumber = false;
-let battleMasterAwardForNonInteger = false;
-let battleMasterAwardForNonReal = false;
-let battleMasterAwardForNaN = false;
+let battleMasterAwardForNegativeNumber = true, battleMasterAwardForNonInteger = true, battleMasterAwardForNonReal = true, battleMasterAwardForNaN = true;
 let battleMasterVictoryFlash = 0;
 let battleMasterWinningTeam = "";
 let battleMasterWinningPoints = 0;
@@ -41,7 +38,7 @@ const BATTLE_DOUBLER_LABELS = {
     negative_number: "Negative",
     non_integer: "Non-Integer",
     non_real: "Non-Real",
-    invalid_number: "Non-Number"
+    invalid_number: "Undefined"
 };
 const DOUBLER_REASON_KEYS = Object.keys(BATTLE_DOUBLER_LABELS);
 
@@ -68,7 +65,7 @@ let setLabels = [
     "Puzzle Simple", "Puzzle Interesting", "Puzzle Crazy Hard", "Puzzle Javascript 😭"
 ];
 let battleMasterBackgroundImg;
-let setChecked = [true, true, true, true, false, true, true, false, false];
+let setChecked = [true, true, false, true, false, true, true, false, false];
 let battleVictoryFlash = 0;
 let battleLossFlash = 0;
 let teamInput; 

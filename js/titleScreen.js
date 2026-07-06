@@ -85,7 +85,11 @@ class TitleScreen {
             },
             getText: () => "Team\nBattle",
             onClick: () => {
-                setScreen("battle"); 
+                if (isOnlineSession && navigator.onLine) {
+                    setScreen("battle"); 
+                } else {
+                    alert("Connection lost! Please reconnect and reload to play Team Battle");
+                }
             } 
         });
 

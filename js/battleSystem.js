@@ -332,7 +332,7 @@ function handleGameMasterLeft() {
         setScreen("title");
     }
     if (titleScreen) {
-        titleScreen.showBattle = false;
+        titleScreen.showBattleButton = false;
     }
 }
 

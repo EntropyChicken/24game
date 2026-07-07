@@ -1,6 +1,7 @@
 let isOnlineSession = false;
 let currentLang = localStorage.getItem('user_lang_preference') || getUserLanguage();
-let flagEmojiFallback = false;
+const USE_FLAG_EMOJIS = false;
+let showFlagEmojis = false;
 
 let screen = "title";
 let level, duel, titleScreen, masterPreviewLevel;
@@ -79,7 +80,12 @@ function setup() {
     });
     teamInput.hide(); 
 
-    flagEmojiFallback = !systemSupportsFlagEmojis();
+    if(USE_FLAG_EMOJIS){
+        showFlagEmojis = systemSupportsFlagEmojis();
+    }
+    else{
+        showFlagEmojis = false;
+    }
     titleScreen = new TitleScreen();
     setScreen("title");
 }

@@ -90,18 +90,21 @@ class TitleScreen {
             } 
         });
 
-        let langBtnW = min(100, width * 0.15); 
-        let langBtnH = 35;
+        let langBtnW = min(100, width * 0.13); 
+        let langBtnH = 30;
         let padding = 12;
         let langGap = 10;
 
-        let englishGetText = flagEmojiFallback ? " English " : "English🇺🇸";
-        let traditionalGetText = flagEmojiFallback ? "  繁體中文  " : " 繁體中文🇹🇼 ";
-        let chineseGetText = flagEmojiFallback ? "  简体中文  " : " 简体中文🇨🇳 ";
-        if(langBtnW<80){
-            englishGetText = flagEmojiFallback ? " Eng " : "Eng🇺🇸";
-            traditionalGetText = flagEmojiFallback ? " 繁體 " : "繁體🇹🇼";
-            chineseGetText = flagEmojiFallback ? " 简体 " : "简体🇨🇳";
+        let englishGetText, traditionalChineseGetText, simplifiedChineseGetText;
+        if(langBtnW<60){
+            englishGetText = showFlagEmojis ? "Eng🇺🇸" : "Eng";
+            traditionalChineseGetText = showFlagEmojis ? "繁體🇹🇼" : "繁體";
+            simplifiedChineseGetText = showFlagEmojis ? "简体🇨🇳" : "简体";
+        }
+        else{
+            englishGetText = showFlagEmojis ? "English🇺🇸" : "English";
+            traditionalChineseGetText = showFlagEmojis ? "繁體中文🇹🇼" : "繁體中文";
+            simplifiedChineseGetText = showFlagEmojis ? "简体中文🇨🇳" : "简体中文";
         }
 
         this.engButton = new Button({
@@ -148,7 +151,7 @@ class TitleScreen {
                     }
                 }
             },
-            getText: () => traditionalGetText,
+            getText: () => traditionalChineseGetText,
             onClick: () => { changeLanguage('chinese_traditional'); }
         });
 
@@ -172,7 +175,7 @@ class TitleScreen {
                     }
                 }
             },
-            getText: () => chineseGetText,
+            getText: () => simplifiedChineseGetText,
             onClick: () => { changeLanguage('chinese'); }
         });
 

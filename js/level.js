@@ -750,7 +750,6 @@ class Level {
 
 // Returns EVERY doubler reason a value satisfies (not just the first match),
 // so a single number can simultaneously count for multiple doublers
-// (e.g. -9000.01 is negative_number AND non_integer AND over_9000 all at once).
 function getBattleDoublerActionReasons(value) {
     const reasons = [];
     if (value instanceof Rational) {
@@ -759,7 +758,8 @@ function getBattleDoublerActionReasons(value) {
             reasons.push("invalid_number");
             return reasons;
         }
-        if (Math.abs(value.numerator / value.denominator) > 9000) reasons.push("over_9000");
+        if (value.numerator / value.denominator > 24) reasons.push("over_24"); // maybe try multiplying both sides by denomatinor for more precision?
+        if (value.numerator / value.denominator > 9000) reasons.push("over_9000");
         if (!value.isInteger()) reasons.push("non_integer");
         if (value.numerator < 0) reasons.push("negative_number");
         return reasons;
@@ -769,13 +769,10 @@ function getBattleDoublerActionReasons(value) {
             reasons.push("invalid_number");
             return reasons;
         }
-        if (Math.hypot(value.real, value.imag) > 9000) reasons.push("over_9000");
+        if (value.imag === 0 && value.real > 24) reasons.push("over_24");
+        if (value.imag === 0 && value.real > 9000) reasons.push("over_9000");
         if (value.imag !== 0) reasons.push("non_real");
-        // Non-integer includes any non-real number (e.g. 1+i), per the doubler's definition,
-        // as well as real numbers with a fractional part.
-        if (value.imag !== 0 || (Number.isFinite(value.real) && Math.round(value.real) !== value.real)) {
-            reasons.push("non_integer");
-        }
+        if (value.imag !== 0 || (Number.isFinite(value.real) && Math.round(value.real) !== value.real)) reasons.push("non_integer");
         if (value.imag === 0 && Number.isFinite(value.real) && value.real < 0) reasons.push("negative_number");
         return reasons;
     }

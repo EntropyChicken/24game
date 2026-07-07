@@ -17,15 +17,17 @@ let battleMasterAwardForNegativeNumber = true;
 let battleMasterAwardForNonInteger = true;
 let battleMasterAwardForNonReal = true;
 let battleMasterAwardForNaN = true;
-let battleMasterAwardForBigNumber = true;
+let battleMasterAwardForOver24 = true;
+let battleMasterAwardForOver9000 = true;
 
 let battleDoublers = {};
 const BATTLE_DOUBLER_LABELS = {
     negative_number: "Negative", // obtain a negative real number (examples: -1, -3.14)
     non_integer: "Non-Integer", // obtain a non-integer number (examples: 0.5, 1+i)
     non_real: "Non-Real", // obtain a non-real number (examples: i, 1+2i)
-    invalid_number: "Undefined", // obtain something mathematically undefined (examples: division by zero, zero to the power of zero, natural log of zero)
-    over_9000: "It's Over 9000" // obtain something with an absolute value or modulus strictly greater than 9000 (examples: 8000+8000i, -9000.01)
+    invalid_number: "NaN", // obtain something mathematically undefined, indeterminate, or too big for javascript to handle (examples: division by zero, zero to the power of zero, natural log of zero)
+    over_24: "Over 24", // obtain something with an absolute value or modulus strictly greater than 9000 (examples: 20+20i, -24.01)
+    over_9000: "IT'S OVER 9000" // obtain something with an absolute value or modulus strictly greater than 24 (examples: 8000+8000i, -9000.01)
 };
 const DOUBLER_REASON_KEYS = Object.keys(BATTLE_DOUBLER_LABELS);
 
@@ -35,7 +37,8 @@ function isDoublerReasonEnabled(reasonKey) {
         case "non_integer": return battleMasterAwardForNonInteger;
         case "non_real": return battleMasterAwardForNonReal;
         case "invalid_number": return battleMasterAwardForNaN;
-        case "over_9000": return battleMasterAwardForBigNumber; // NEW DOUBLER
+        case "over_24": return battleMasterAwardForOver24;
+        case "over_9000": return battleMasterAwardForOver9000;
         default: return false;
     }
 }
@@ -46,7 +49,8 @@ function toggleDoublerReasonEnabled(reasonKey) {
         case "non_integer": battleMasterAwardForNonInteger = !battleMasterAwardForNonInteger; break;
         case "non_real": battleMasterAwardForNonReal = !battleMasterAwardForNonReal; break;
         case "invalid_number": battleMasterAwardForNaN = !battleMasterAwardForNaN; break;
-        case "over_9000": battleMasterAwardForBigNumber = !battleMasterAwardForBigNumber; break; // NEW DOUBLER
+        case "over_24": battleMasterAwardForOver24 = !battleMasterAwardForOver24; break;
+        case "over_9000": battleMasterAwardForOver9000 = !battleMasterAwardForOver9000; break;
     }
 }
 

@@ -57,7 +57,7 @@ class Duel {
                     onHoverMovement: -0.004,
                     transparentOnWin: true
                 },
-                getText: () => "Home",
+                getText: () => TRANSLATIONS[currentLang].level.homeButton,
                 onClick: () => {
                     if((!Duel.SKIP_LOSER)||this.levels[0].winTimer===0&&this.levels[1].winTimer===0){
                         setScreen("title");
@@ -75,7 +75,7 @@ class Duel {
                     onHoverMovement: 0.004,
                     transparentOnWin: true,
                 },
-                getText: () => "Skip",
+                getText: () => TRANSLATIONS[currentLang].level.skipButton,
                 onClick: () => {
                     if((!Duel.SKIP_LOSER)||this.levels[0].winTimer===0&&this.levels[1].winTimer===0){
                         this.solved = true;

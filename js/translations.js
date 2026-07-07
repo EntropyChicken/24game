@@ -31,14 +31,14 @@ const TRANSLATIONS = {
                 "简单",   // Easy (Simple)
                 "普通",   // Medium (Normal)
                 "困难",   // Hard (Difficult)
-                "进阶",   // Tricky (Advanced/Nuanced)
+                "刁钻",   // Tricky (Trick-question vibes)
                 "极难"    // Very Hard (Extremely Difficult)
             ],
             designedSets: [
                 "极简",   // Simple
-                "巧妙",   // Interesting/Clever
+                "有趣",   // Interesting
                 "代码",   // JavaScript (Code)
-                "大师级"  // CRAZY HARD (Master Level - sounds prestigious rather than torturous)
+                "大师级"  // CRAZY HARD (Master Level - sounds prestigious rather than silly but eh)
             ],
             getGameCountUpperText: (val) => "次通关",
             gameCountLowerText: "来自全球玩家!",
@@ -48,7 +48,7 @@ const TRANSLATIONS = {
             skipButton: "跳过",
             undoButton: "撤销",
             hintButton: "提示",
-            solutionButton: "答案",
+            solutionButton: "解法",
             getPointsText: (val) => " 分"
         }
     }

@@ -46,7 +46,7 @@ class Level {
 			x: this.width * 0.05, y: this.height * 0.77, w: this.width * 0.22, h: this.height * 0.18,
 			label: "Undo",
 			style: { r: 10, transparentOnWin: true },
-			getText: () => "Undo",
+			getText: () => TRANSLATIONS[currentLang].level.undoButton,
 			onClick: () => {
 				if(this.history.length){
 					this.undo();
@@ -59,14 +59,14 @@ class Level {
 			x: this.width * 0.43, y: this.height * 0.77, w: this.width * 0.3, h: this.height * 0.18,
 			label: "Hint",
 			style: { r: 10, transparentOnWin: true },
-			getText: () => this.hintButton.state.showHint ? this.getHint() : "Hint",
+			getText: () => this.hintButton.state.showHint ? this.getHint() : TRANSLATIONS[currentLang].level.hintButton,
 			onClick: () => { this.hintButton.state.showHint = !this.hintButton.state.showHint; }
 		});
 		this.solutionButton = new Button({
 			x: this.width * 0.75, y: this.height * 0.77, w: this.width * 0.2, h: this.height * 0.18,
 			label: "Solution",
 			style: { r: 10, transparentOnWin: true },
-			getText: () => this.solutionButton.state.showSolution ? (this.metaData.sols ? this.metaData.sols[0] : "Sorry, no solution 💀😭 Code is bugged") : "Solution",
+			getText: () => this.solutionButton.state.showSolution ? (this.metaData.sols ? this.metaData.sols[0] : "Sorry, no solution 💀😭 Code is bugged") : (TRANSLATIONS[currentLang].level.solutionButton),
 			onClick: () => { this.solutionButton.state.showSolution = !this.solutionButton.state.showSolution; }
 		});
 		this.homeButton = new Button({
@@ -77,7 +77,7 @@ class Level {
 				onHoverMovement: -0.004,
 				transparentOnWin: true
 			},
-			getText: () => "Home",
+			getText: () => TRANSLATIONS[currentLang].level.homeButton,
 			onClick: () => { setScreen("title"); }
 		});
 		this.skipButton = new Button({
@@ -88,7 +88,7 @@ class Level {
 				onHoverMovement: -0.004,
 				transparentOnWin: true
 			},
-			getText: () => "Skip",
+			getText: () => TRANSLATIONS[currentLang].level.skipButton,
 			onClick: () => { this.solved = true; },
 			onHoverMovement: -0.0035
 		});

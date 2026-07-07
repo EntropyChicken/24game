@@ -1,4 +1,3 @@
-// Battle System State
 let battleTeams = []; 
 let battleTeam = null;
 let battleScores = {};
@@ -12,7 +11,11 @@ let battleLossFlash = 0;
 let battleMasterBackgroundImg;
 let teamInput; 
 
-// --- DOUBLERS SETUP (Includes new "Big Number" request) ---
+let battleSetLabels = [
+    "Random Easy", "Random Medium", "Random Hard", "Random Tricky", "Random Very Hard",
+    "Designed Simple", "Designed Interesting", "Designed Crazy Hard", "Designed Javascript 😭"
+];
+let battleSetChecked = [true, true, false, false, false, true, false, false, false];
 let battleMasterAwardForNegativeNumber = true;
 let battleMasterAwardForNonInteger = true;
 let battleMasterAwardForNonReal = true;

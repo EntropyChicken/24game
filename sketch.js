@@ -10,11 +10,6 @@ let puzzleSets = [];
 let currentLevelSet = null;
 let currentLevelSetIndex = null; 
 let currentIsClassic = true;
-let setLabels = [
-    "Random Easy", "Random Medium", "Random Hard", "Random Tricky", "Random Very Hard",
-    "Designed Simple", "Designed Interesting", "Designed Crazy Hard", "Designed Javascript 😭"
-];
-let battleSetChecked = [true, true, false, false, false, true, false, false, false];
 
 let theme = {};
 let canHover;
@@ -221,7 +216,7 @@ function draw() {
             fill(255);
             textSize(24);
             textAlign(LEFT, CENTER);
-            text(setLabels[i], cx + 45, cy + 15);
+            text(battleSetLabels[i], cx + 45, cy + 15);
         }
 
         textSize(28);

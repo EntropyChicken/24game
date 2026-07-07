@@ -63,7 +63,7 @@ class TitleScreen {
                     }
                 }
             },
-            getText: () => TRANSLATIONS[currentLang].duelButton,
+            getText: () => TRANSLATIONS[currentLang].titleScreen.duelButton,
             onClick: () => { titleScreen.duelMode = !titleScreen.duelMode }
         });
 
@@ -78,7 +78,7 @@ class TitleScreen {
                     titleScreen.battleButton.style.hovering = false;
                 }
             },
-            getText: () => TRANSLATIONS[currentLang].battleButton,
+            getText: () => TRANSLATIONS[currentLang].titleScreen.battleButton,
             onClick: () => {
                 if (isOnlineSession && navigator.onLine) {
                     setScreen("battle"); 
@@ -90,14 +90,15 @@ class TitleScreen {
             } 
         });
 
-        let langBtnW = min(90, width * 0.15); 
+        let langBtnW = min(100, width * 0.2); 
         let langBtnH = 35;
-        let padding = 15;
+        let padding = 14;
         let langGap = 10;
 
-        let eng = "English";
-        if(langBtnW<55){
-            eng = "Eng";
+        let englishGetText = flagEmojiFallback ? " English " : "English🇺🇸";
+        let chineseGetText = flagEmojiFallback ? "  中文  " : " 中文🇨🇳 ";
+        if(langBtnW<65){
+            englishGetText = flagEmojiFallback ? " Eng " : "Eng🇺🇸";
         }
 
         this.engButton = new Button({
@@ -120,7 +121,7 @@ class TitleScreen {
                     }
                 }
             },
-            getText: () => flagEmojiFallback ? eng : eng+"\n🇺🇸",
+            getText: () => englishGetText,
             onClick: () => { changeLanguage('english'); }
         });
 
@@ -144,7 +145,7 @@ class TitleScreen {
                     }
                 }
             },
-            getText: () => flagEmojiFallback ? "中文" : "中文\n🇨🇳",
+            getText: () => chineseGetText,
             onClick: () => { changeLanguage('chinese'); }
         });
 
@@ -187,15 +188,15 @@ class TitleScreen {
                 text(mainTitle, width*0.5+x, height*0.14+y);
                 
                 textSize(constrain(width*0.035,27,45));
-                text(TRANSLATIONS[currentLang].randomSetSection,width*0.3+x, height*0.363+y*0.8);
-                text(TRANSLATIONS[currentLang].designedSetSection,width*0.7+x, height*0.363+y*0.8);
+                text(TRANSLATIONS[currentLang].titleScreen.randomSetSection,width*0.3+x, height*0.363+y*0.8);
+                text(TRANSLATIONS[currentLang].titleScreen.designedSetSection,width*0.7+x, height*0.363+y*0.8);
                 textAlign(RIGHT,BOTTOM);
                 if (isOnlineSession) {
                     if (gameCount !== undefined) {
                         let s = constrain(width * 0.035, 27, 35);
                         textSize(s);
-                        text(TRANSLATIONS[currentLang].gameCountUpperText, width - 15 + x, height - s - 15 + y * 0.8);
-                        text(TRANSLATIONS[currentLang].gameCountLowerText, width - 15 + x, height - 15 + y * 0.8);
+                        text(TRANSLATIONS[currentLang].titleScreen.gameCountUpperText, width - 15 + x, height - s - 15 + y * 0.8);
+                        text(TRANSLATIONS[currentLang].titleScreen.gameCountLowerText, width - 15 + x, height - 15 + y * 0.8);
                         let w = textWidth(" games");
                         textSize(s * (gameCountDrawScale + 0.2));
                         text(gameCount, width - 15 - w + x, height - s - 15 + y * 0.8);
@@ -258,8 +259,8 @@ class TitleScreen {
             let fontSize = min(currentLang === 'chinese' ? 30 : 24, b.h * 0.46);
             textSize(fontSize);
             let label = b.isClassic 
-                ? TRANSLATIONS[currentLang].randomSets[b.setIndex] 
-                : TRANSLATIONS[currentLang].designedSets[b.setIndex];
+                ? TRANSLATIONS[currentLang].titleScreen.randomSets[b.setIndex] 
+                : TRANSLATIONS[currentLang].titleScreen.designedSets[b.setIndex];
 
             let fallbackWidth = textWidth(label);
             let fallbackHeight = fontSize * 1.2;

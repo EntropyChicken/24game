@@ -661,15 +661,24 @@ function isOnlineAvailable() {
 function getUserLanguage() {
     const preferences = navigator.languages || [navigator.language || ''];
     for (const lang of preferences) {
-        if (lang.startsWith('zh')) return 'chinese';
-        // if (lang.startsWith('ja')) return 'japanese';
+        if (lang.startsWith('zh')) {
+            return (lang.startsWith('zh-TW') || lang.startsWith('zh-HK') || lang.startsWith('zh-MO') || lang.includes('Hant'))
+                ? 'chinese_traditional'
+                : 'chinese';
+        }
         if (lang.startsWith('en')) return 'english';
     }
     try {
         const intlLocale = Intl.DateTimeFormat().resolvedOptions().locale;
-        if (intlLocale.startsWith('zh')) return 'chinese';
-        // if (intlLocale.startsWith('ja')) return 'japanese';
+        if (intlLocale.startsWith('zh')) {
+            return (intlLocale.startsWith('zh-TW') || intlLocale.startsWith('zh-HK') || intlLocale.startsWith('zh-MO') || intlLocale.includes('Hant'))
+                ? 'chinese_traditional'
+                : 'chinese';
+        }
+        if (intlLocale.startsWith('en')) return 'english';
     } catch (e) {}
+    
+    // everyone else just sees english by default
     return 'english';
 }
 

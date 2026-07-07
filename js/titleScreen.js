@@ -286,7 +286,7 @@ class TitleScreen {
             const maxHeight = b.h - 10;
             
             // chinese has finer text so show it bigger relative to vertical height
-            let fontSize = min(currentLang === 'chinese' ? 30 : 24, b.h * 0.46);
+            let fontSize = min(currentLang.startsWith('chinese') ? 30 : 24, b.h * 0.46);
             textSize(fontSize);
             let label = b.isClassic 
                 ? TRANSLATIONS[currentLang].titleScreen.randomSets[b.setIndex] 

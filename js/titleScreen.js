@@ -158,8 +158,7 @@ class TitleScreen {
         this.drawBubbleBox();
 
         noStroke();
-        fill(100,93,85,125);
-        rect(-1,-1,width+2,height+2);
+        background(100,93,85,145)
         
         this.drawBoxes();
         

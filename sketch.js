@@ -324,8 +324,9 @@ function draw() {
         if (battleMasterVictoryFlash > 0.005) {
             push();
             let alphaVal = 255 * min(1, battleMasterVictoryFlash * 1.5); 
-            let flashColor = color(theme.backgroundColorCorrect);
-            flashColor.setAlpha(alphaVal * 0.95); 
+
+            // interestingly, color(theme.backgroundColorCorrect) returns a reference, not a deep copy, so this is necessary to avoid mutation:
+            let flashColor = color(red(theme.backgroundColorCorrect),green(theme.backgroundColorCorrect),blue(theme.backgroundColorCorrect),alphaVal * 0.95); 
             fill(flashColor);
             noStroke();
             rect(0, 0, width, height);

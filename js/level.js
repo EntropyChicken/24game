@@ -188,6 +188,7 @@ class Level {
 	draw(showBackground = true) {
 		if(showBackground){
 			if (this.winTimer > 0) {
+				console.log(theme.backgroundColorCorrect);
 				background(theme.backgroundColorCorrect);
 			}
 			else {

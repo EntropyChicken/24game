@@ -280,7 +280,7 @@ function broadcastNewBattleLevel() {
     battleDoublers = {};
     let validIndices = [];
     for (let i = 0; i < 9; i++) {
-        if (setChecked[i]) validIndices.push(i);
+        if (battleSetChecked[i]) validIndices.push(i);
     }
     
     if (validIndices.length === 0) validIndices.push(0);

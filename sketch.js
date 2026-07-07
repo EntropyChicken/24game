@@ -14,7 +14,7 @@ let setLabels = [
     "Random Easy", "Random Medium", "Random Hard", "Random Tricky", "Random Very Hard",
     "Designed Simple", "Designed Interesting", "Designed Crazy Hard", "Designed Javascript 😭"
 ];
-let setChecked = [true, true, false, false, false, true, false, false, false];
+let battleSetChecked = [true, true, false, false, false, true, false, false, false];
 
 let theme = {};
 let canHover;
@@ -209,11 +209,11 @@ function draw() {
         fill(255);
         for (let i = 0; i < 9; i++) {
             let cx = width / 2;
-            let cy = 125 + i * 45; 
+            let cy = 125 + i * 40; 
             
             stroke(255);
             strokeWeight(2);
-            if (setChecked[i]) fill(0,150,255); 
+            if (battleSetChecked[i]) fill(0,150,255); 
             else fill(0);                           
             rect(cx, cy, 30, 30, 5);
             
@@ -226,11 +226,11 @@ function draw() {
 
         textSize(28);
         fill(140);
-        text("SIDE QUESTS (DOUBLERS):", width / 2, 550);
+        text("SIDE QUESTS (DOUBLERS):", width / 2, 510);
         fill(255);
         for (let i = 0; i < DOUBLER_REASON_KEYS.length; i++) {
             let cx = width / 2;
-            let cy = 585 + i * 45;
+            let cy = 540 + i * 40;
             let reasonKey = DOUBLER_REASON_KEYS[i];
 
             stroke(255);
@@ -530,12 +530,12 @@ function mousePressed() {
         
         for (let i = 0; i < 9; i++) {
             let cx = width / 2;
-            let cy = 125 + i * 45;
+            let cy = 125 + i * 40;
             
-            if (mouseX > cx - 15 && mouseX < cx + 300 && mouseY > cy - 10 && mouseY < cy + 40) {
-                setChecked[i] = !setChecked[i];
-                if (!setChecked.includes(true)) {
-                    setChecked[i] = true; 
+            if (mouseX > cx - 15 && mouseX < cx + 300 && mouseY > cy - 10 && mouseY < cy + 35) {
+                battleSetChecked[i] = !battleSetChecked[i];
+                if (!battleSetChecked.includes(true)) {
+                    battleSetChecked[i] = true; 
                 }
                 break; 
             }
@@ -543,9 +543,9 @@ function mousePressed() {
 
         for (let i = 0; i < DOUBLER_REASON_KEYS.length; i++) {
             let cx = width / 2;
-            let cy = 585 + i * 45;
+            let cy = 540 + i * 40;
 
-            if (mouseX > cx - 15 && mouseX < cx + 300 && mouseY > cy - 10 && mouseY < cy + 40) {
+            if (mouseX > cx - 15 && mouseX < cx + 300 && mouseY > cy - 10 && mouseY < cy + 35) {
                 toggleDoublerReasonEnabled(DOUBLER_REASON_KEYS[i]);
                 break;
             }

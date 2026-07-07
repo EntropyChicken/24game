@@ -90,16 +90,18 @@ class TitleScreen {
             } 
         });
 
-        let langBtnW = min(100, width * 0.2); 
+        let langBtnW = min(100, width * 0.15); 
         let langBtnH = 35;
-        let padding = 14;
+        let padding = 12;
         let langGap = 10;
 
         let englishGetText = flagEmojiFallback ? " English " : "English🇺🇸";
         let traditionalGetText = flagEmojiFallback ? "  繁體中文  " : " 繁體中文🇹🇼 ";
         let chineseGetText = flagEmojiFallback ? "  简体中文  " : " 简体中文🇨🇳 ";
-        if(langBtnW<65){
+        if(langBtnW<80){
             englishGetText = flagEmojiFallback ? " Eng " : "Eng🇺🇸";
+            traditionalGetText = flagEmojiFallback ? " 繁體 " : "繁體🇹🇼";
+            chineseGetText = flagEmojiFallback ? " 简体 " : "简体🇨🇳";
         }
 
         this.engButton = new Button({
@@ -107,7 +109,7 @@ class TitleScreen {
             y: padding, 
             w: langBtnW, 
             h: langBtnH,
-            label: "English Toggle",
+            label: "English Button",
             style: {
                 r: 8, onHoverMovement: 0.003, textColor: color(111),
                 predraw: () => {
@@ -131,7 +133,7 @@ class TitleScreen {
             y: padding, 
             w: langBtnW, 
             h: langBtnH,
-            label: "Traditional Chinese Toggle",
+            label: "Traditional Chinese Button",
             style: {
                 r: 8, onHoverMovement: 0.003, textColor: color(111),
                 predraw: () => {
@@ -155,7 +157,7 @@ class TitleScreen {
             y: padding, 
             w: langBtnW, 
             h: langBtnH,
-            label: "Chinese Toggle",
+            label: "Simplified Chinese Button",
             style: {
                 r: 8, onHoverMovement: 0.003, textColor: color(111),
                 predraw: () => {

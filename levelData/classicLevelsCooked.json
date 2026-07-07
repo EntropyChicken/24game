@@ -6,5 +6,5 @@
   {"cards":[3,3,7,7],"needsFrac":1,"factorable":1,"hint":"There's only one solution and it uses FRACTIONS! Final step: 7×(24/7)","sols":["7×(3+3÷7)"]},
   {"cards":[4,4,7,7],"needsFrac":1,"factorable":1,"hint":"There's only one solution and it uses FRACTIONS! Final step: 7×(24/7)","sols":["7×(4-(4÷7))"]},
   {"cards":[3,3,8,8],"needsFrac":1,"factorable":0,"hint":"There's only one solution and it uses FRACTIONS! Final step: 8÷(1/3)","sols":["8÷(3-(8÷3))"]},
-  {"cards":[2,5,5,10],"needsFrac":1,"factorable":0,"hint":"ASK BEN LOL! Final step: 5×(24/7)","sols":["8÷(3-(8÷3))"]}
+  {"cards":[2,5,5,10],"needsFrac":1,"factorable":0,"hint":"ASK BEN LOL! Ok, ok fine... final step: 5×(24/7)","sols":["5×(5-(2÷10))"]}
 ]

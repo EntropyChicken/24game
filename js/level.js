@@ -26,7 +26,7 @@ class Level {
 		this.solved = false; // for external use
 		this.useRational = useRational;
 
-		this.watcherSequence = new Sequence();
+		this.watcherSequence = new Sequence(undefined, useRational);
 		this.sourceIdOfPos = numbers.map(n => -1);
 
 		this.setupBoxes();
@@ -178,7 +178,8 @@ class Level {
 			this.height * 0.525,
 			btnW,
 			btnH,
-			this.watcherSequence
+			this.watcherSequence,
+			this.useRational
 		));
 		for(let i = 0; i<this.opButtons.length; i++){
 			this.opButtons[i].drawScale = drawScales[i];
@@ -188,7 +189,6 @@ class Level {
 	draw(showBackground = true) {
 		if(showBackground){
 			if (this.winTimer > 0) {
-				console.log(theme.backgroundColorCorrect);
 				background(theme.backgroundColorCorrect);
 			}
 			else {
@@ -380,6 +380,14 @@ class Level {
 				default:
 					throw new Error(`Unsupported operator for Rational: ${opBtn.symbol}`);
 			}
+			this.watcherSequence.actions.push({
+				a:a,
+				s:opBtn.symbol,
+				b:b,
+				aId:this.sourceIdOfPos[this.boxes[i1].locName],
+				bId:this.sourceIdOfPos[this.boxes[i2].locName]
+			});
+			// console.log(this.watcherSequence.toExpr());
 		} else {
 			res = opBtn.apply(a, b, this.sourceIdOfPos[this.boxes[i1].locName], this.sourceIdOfPos[this.boxes[i2].locName]);
 		}

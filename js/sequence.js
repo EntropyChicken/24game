@@ -1,9 +1,10 @@
 class Sequence {
     static SYMBOLS = ["+","-","×","÷","^","√","ln","!","sin","cos","tan","cot","asin","acos","abs","%","round","ceil","floor"];
 
-    constructor(expr) {
+    constructor(expr, useRational = false) {
         // indexing is crucial for toExpr()
         this.actions = [];
+        this.useRational = useRational;
 
         if(expr !== undefined) {
             this.fromExpr(expr);
@@ -22,34 +23,38 @@ class Sequence {
         this.fromExprRecursive(expr);
     }
     fromExprRecursive(expr) {
+        // 1. Dynamically pick the right class based on the flag
+        const NumericClass = this.useRational ? Rational : Complex;
+
         // expr should be break-down-able at least once: 2+2 is valid. 2 is not valid.
         let parts = topSplitExpr(expr);
-        // console.log("BREAK DOWN ",expr);
-        // console.log(parts);
         console.assert(parts!==null);
-        if(parts===null) return new Complex(stringToNum(expr));
-
         
+        // 2. Use NumericClass instead of hardcoded Complex
+        if(parts===null) return new NumericClass(stringToNum(expr));
+
         // cringe doubled computation but cost is negligible
-        let leftVal; // Complex
+        let leftVal; // Dynamically Rational or Complex
         let leftSource = -1;
         if(topSplitExpr(parts.left)===null){
-            leftVal = new Complex(stringToNum(parts.left)); // this is actually ZERO if the string is empty, but it is ignored for unary operator case anyway
+            // 3. Swap here
+            leftVal = new NumericClass(stringToNum(parts.left)); 
         }
         else{
             leftVal = this.fromExprRecursive(parts.left);
-            leftSource = this.actions.length-1; // the action just made by the call above
+            leftSource = this.actions.length-1; 
         }
-        let rightVal; // Complex
+        
+        let rightVal; // Dynamically Rational or Complex
         let rightSource = -1;
         if(topSplitExpr(parts.right)===null){
-            rightVal = new Complex(stringToNum(parts.right));
+            // 4. Swap here
+            rightVal = new NumericClass(stringToNum(parts.right));
         }
         else{
             rightVal = this.fromExprRecursive(parts.right);
             rightSource = this.actions.length-1;
         }
-
 
         if(symbolIsBinary(parts.splitter)){
             this.actions.push({
@@ -63,7 +68,6 @@ class Sequence {
         }
         else if(symbolIsUnary(parts.splitter)){
             if(parts.splitter==="!"){
-                // content is to the left
                 this.actions.push({
                     a:leftVal,
                     s:parts.splitter,
@@ -73,7 +77,6 @@ class Sequence {
                 return leftVal.operation(parts.splitter);
             }
             else{
-                // content is to the right
                 this.actions.push({
                     s:parts.splitter,
                     b:rightVal,
@@ -85,7 +88,8 @@ class Sequence {
         }
         else{
             console.assert(false,"parts.splitter is not an operator");
-            return new Complex(NaN,NaN);
+            // 5. Swap here for the error fallback state
+            return new NumericClass(NaN,NaN);
         }
     }
     toExpr() {
@@ -379,32 +383,33 @@ function stringToNum(s){
 }
 
 // evaluates all expressions for all classics and puzzles except for js puzzles, sees if they're 24
-function testSolutions() {
-    let problemSets = puzzleSets.slice(0, 3).concat(puzzleSets.slice(4), classicSets);
-    // let problemSets = puzzleSets.slice(0,3).concat(puzzleSets.slice(4));
+function testAllSolutions() {
+    // let problemSets = puzzleSets.slice(0, 3).concat(puzzleSets.slice(4), classicSets);
+    for(let problemSet of puzzleSets.slice(0,3).concat(puzzleSets.slice(4))){
+        testSolutionsOfProblemSet(problemSet,false);
+    }
+    for(let problemSet of classicSets){
+        testSolutionsOfProblemSet(problemSet,true);
+    }
+    console.log("finished testing all solutions in all problem sets!");
+}
 
-    for(let problemSet of problemSets){
-        for(let problem of problemSet){
-            for(let sol of problem.sols){
-                let aug = sol+"+0";
-                let ogAug = aug;
+function testSolutionsOfProblemSet(problemSet,useRational){
+    for(let problem of problemSet){
+        for(let sol of problem.sols){
+            let aug = sol+"+0";
+            let ogAug = aug;
 
-                for(let iter = 6; iter>0; iter--){
-                    // if(iter===1){
-                    //     console.log(iter,aug,ogAug);
-                    // }
-
-                    let seq = new Sequence(aug);
-                    console.assert(seq.actions.length!==0);
-                    console.assert(seq.actions[seq.actions.length-1].a.equals24());
-                    
-                    aug = seq.toExpr();
-                    if(aug===ogAug){
-                        break;
-                    }
+            for(let iter = 6; iter>0; iter--){
+                let seq = new Sequence(aug,useRational);
+                console.assert(seq.actions.length!==0);
+                console.assert(seq.actions[seq.actions.length-1].a.equals24(),problem,sol,seq.actions[seq.actions.length-1].a);
+                
+                aug = seq.toExpr();
+                if(aug===ogAug){
+                    break;
                 }
             }
         }
     }
-    console.assert(false,"all done!");
 }

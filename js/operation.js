@@ -1,3 +1,4 @@
+// only works for Complex numbers
 class Operation {
 	constructor(symbol, fn, x, y, w, h, watcherSequence) {
 		this.symbol = symbol;
@@ -90,7 +91,6 @@ class Operation {
 				bId:id1
 			});
 		}
-		// console.log(this.watcherSequence.actions);
 		// console.log(this.watcherSequence.toExpr());
 		return this.fn(a, b);
 	}

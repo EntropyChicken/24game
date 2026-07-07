@@ -17,7 +17,7 @@ class TitleScreen {
             
             { text: "🧩Simple🔢", set: 0 },
             { text: "💡Interesting📐", set: 1 },
-            { text: "💻Javascript💽", set: 3 },
+            { text: "💻JavaScript💽", set: 3 },
             { text: "🎓Crazy Hard💀", set: 2 }
         ];
         const labels = [
@@ -29,7 +29,7 @@ class TitleScreen {
             
             { text: "Simple", set: 0 },
             { text: "Interesting", set: 1 },
-            { text: "Javascript", set: 3 },
+            { text: "JavaScript", set: 3 },
             { text: "CRAZY HARD", set: 2 }
         ];
 

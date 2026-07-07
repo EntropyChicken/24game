@@ -36,6 +36,7 @@ function setup() {
     for(let s of originalPuzzleSets){
         puzzleSets.push(shuffle([...s]));
     }
+    // testAllSolutions();
 
     canHover = window.matchMedia('(hover: hover)').matches;
     if(canHover){

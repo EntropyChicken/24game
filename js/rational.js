@@ -1,5 +1,18 @@
 class Rational {
     constructor(numerator, denominator) {
+        // If only one argument is provided, convert it from a float to a fraction
+        if (denominator === undefined && !isNaN(numerator)) {
+            if (Number.isInteger(numerator)) {
+                denominator = 1;
+            } else {
+                // Find how many decimal places there are (e.g., 2.56 -> 2 decimal places)
+                const fractionDigits = numerator.toString().split('.')[1]?.length || 0;
+                const factor = Math.pow(10, fractionDigits);
+                numerator = Math.round(numerator * factor);
+                denominator = factor;
+            }
+        }
+        
         if (isNaN(numerator) || isNaN(denominator) || denominator === 0) {
             this.numerator = NaN;
             this.denominator = NaN;
@@ -78,6 +91,27 @@ class Rational {
                 console.log ("Invalid operator char");
                 return new Complex("Invalid operator char");
         }
+    }
+
+    getText(checkDebug) {
+        // redundant but meh
+        if (typeof(this.numerator) === "string") {
+            return `"${this.numerator}"`;
+        }
+        if (checkDebug && typeof keyIsDown === "function" && keyIsDown(32)) {
+            if (typeof fill === "function") fill(0, 100, 0); 
+            return `${this.numerator}/${this.denominator}`;
+        }
+        if (isNaN(this.numerator) || isNaN(this.denominator)) {
+            return "🤯❓";
+        }
+        let txt = "";
+        if (this.denominator === 1) {
+            txt = `${this.numerator}`;
+        } else {
+            txt = `(${this.numerator}/${this.denominator})`;
+        }
+        return txt.replaceAll("Infinity", "∞");
     }
 
     getColor(){

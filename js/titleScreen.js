@@ -90,10 +90,15 @@ class TitleScreen {
             } 
         });
 
-        let langBtnW = min(120, width * 0.15); 
+        let langBtnW = min(90, width * 0.15); 
         let langBtnH = 35;
         let padding = 15;
         let langGap = 10;
+
+        let eng = "English";
+        if(langBtnW<55){
+            eng = "Eng";
+        }
 
         this.engButton = new Button({
             x: width - langBtnW * 2 - langGap - padding, 
@@ -115,7 +120,7 @@ class TitleScreen {
                     }
                 }
             },
-            getText: () => flagEmojiFallback ? " English " : "English 🇺🇸",
+            getText: () => flagEmojiFallback ? eng : eng+"\n🇺🇸",
             onClick: () => { changeLanguage('english'); }
         });
 
@@ -139,7 +144,7 @@ class TitleScreen {
                     }
                 }
             },
-            getText: () => flagEmojiFallback ? "   中文   " : "  中文 🇨🇳  ",
+            getText: () => flagEmojiFallback ? "中文" : "中文\n🇨🇳",
             onClick: () => { changeLanguage('chinese'); }
         });
 

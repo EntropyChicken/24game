@@ -8,6 +8,18 @@ class TitleScreen {
         this.bubbleBox = new BubbleBox(0,0,width,height,20,0);
         this.duelMode = false;
 
+        const emoji_labels = [
+            { text: "😁Easy😊", set: 0 },
+            { text: "😓Medium😅", set: 1 },
+            { text: "🤔Hard🫠", set: 2 },
+            { text: "😑Tricky😭", set: 3 },
+            { text: "😡Very Hard🤪", set: 4 },
+            
+            { text: "🧩Simple🔢", set: 0 },
+            { text: "💡Interesting📐", set: 1 },
+            { text: "💻Javascript💽", set: 3 },
+            { text: "🎓Crazy Hard💀", set: 2 }
+        ];
         const labels = [
             { text: "Easy", set: 0 },
             { text: "Medium", set: 1 },
@@ -18,7 +30,7 @@ class TitleScreen {
             { text: "Simple", set: 0 },
             { text: "Interesting", set: 1 },
             { text: "Javascript", set: 3 },
-            { text: "Crazy Hard", set: 2 }
+            { text: "CRAZY HARD", set: 2 }
         ];
 
         for (let i = 0; i < labels.length; i++) {

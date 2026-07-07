@@ -30,9 +30,9 @@ const TRANSLATIONS = {
             randomSets: [
                 "简单",   // Easy (Simple)
                 "普通",   // Medium (Normal)
-                "困难",   // Hard (Difficult)
-                "刁钻",   // Tricky (Trick-question vibes)
-                "极难"    // Very Hard (Extremely Difficult)
+                "困难",   // Hard (Is difficult and Solution looks difficult)
+                "刁钻",   // Tricky (Trick-question vibes because it's difficult but the solution doesn't look difficult)
+                "极难"    // Very Hard (Is super difficult and solution looks super difficult because it requires fractions)
             ],
             designedSets: [
                 "极简",   // Simple

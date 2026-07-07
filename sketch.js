@@ -662,9 +662,14 @@ function getUserLanguage() {
     const preferences = navigator.languages || [navigator.language || ''];
     for (const lang of preferences) {
         if (lang.startsWith('zh')) return 'chinese';
-        if (lang.startsWith('ja')) return 'japanese';
+        // if (lang.startsWith('ja')) return 'japanese';
         if (lang.startsWith('en')) return 'english';
     }
+    try {
+        const intlLocale = Intl.DateTimeFormat().resolvedOptions().locale;
+        if (intlLocale.startsWith('zh')) return 'chinese';
+        // if (intlLocale.startsWith('ja')) return 'japanese';
+    } catch (e) {}
     return 'english';
 }
 

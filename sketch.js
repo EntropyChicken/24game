@@ -1,6 +1,7 @@
-const EQUALITY_THRESHOLD = 1e-6;
-const DISPLAY_THRESHOLD = 7e-9;
 let isOnlineSession = false;
+let currentLang = localStorage.getItem('user_lang_preference') || getUserLanguage();
+let flagEmojiFallback = false;
+
 let screen = "title";
 let level, duel, titleScreen, masterPreviewLevel;
 let originalClassicSets = [[], [], [], [], []];
@@ -25,11 +26,12 @@ function preload() {
     loadJSON("levelData/classicLevelsCooked.json", data => { originalClassicSets[4] = data; });
     loadJSON("levelData/puzzleLevelsSimple.json", data => { originalPuzzleSets[0] = data; });
     loadJSON("levelData/puzzleLevelsInteresting.json", data => { originalPuzzleSets[1] = data; });
-    loadJSON("levelData/puzzleLevelsCrazyHard.json", data => { originalPuzzleSets[2] = data; });
-    loadJSON("levelData/puzzleLevelsJavascript.json", data => { originalPuzzleSets[3] = data; });
+    loadJSON("levelData/puzzleLevelsJavascript.json", data => { originalPuzzleSets[2] = data; });
+    loadJSON("levelData/puzzleLevelsCrazyHard.json", data => { originalPuzzleSets[3] = data; });
 }
 
 function setup() {
+    console.log("currentLang: "+currentLang);
     for(let s of originalClassicSets){
         classicSets.push(shuffle([...s]));
     }
@@ -77,6 +79,7 @@ function setup() {
     });
     teamInput.hide(); 
 
+    flagEmojiFallback = !systemSupportsFlagEmojis();
     titleScreen = new TitleScreen();
     setScreen("title");
 }
@@ -653,4 +656,54 @@ function isOnlineAvailable() {
     return window.firebaseAppReady && 
            window.firebaseAppReady.isOnlineMode === true && 
            typeof supabase !== 'undefined';
+}
+
+function getUserLanguage() {
+    const preferences = navigator.languages || [navigator.language || ''];
+    for (const lang of preferences) {
+        if (lang.startsWith('zh')) return 'chinese';
+        if (lang.startsWith('ja')) return 'japanese';
+        if (lang.startsWith('en')) return 'english';
+    }
+    return 'english';
+}
+
+function changeLanguage(newLang) {
+    currentLang = newLang;
+    localStorage.setItem('user_lang_preference', newLang);
+}
+
+function systemSupportsFlagEmojis() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 30;
+    canvas.height = 30;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return false;
+
+    // Draw the emoji flag on our hidden canvas
+    ctx.textBaseline = 'top';
+    ctx.font = '16px sans-serif';
+    ctx.fillText('🇺🇸', 0, 0);
+
+    // Grab the pixel data of the drawn area
+    const imgData = ctx.getImageData(0, 0, 24, 24).data;
+    
+    // Check if the pixel data contains multiple distinct color channels 
+    // (A real flag emoji will have vibrant, differing RGB values like red/blue)
+    let hasColorVariation = false;
+    for (let i = 0; i < imgData.length; i += 4) {
+        let r = imgData[i];
+        let g = imgData[i+1];
+        let b = imgData[i+2];
+        let a = imgData[i+3];
+
+        if (a > 0) { // If the pixel isn't transparent
+            // If R, G, and B are significantly different, it's a colorful asset, not monochrome text
+            if (abs(r - g) > 40 || abs(r - b) > 40 || abs(g - b) > 40) {
+                hasColorVariation = true;
+                break;
+            }
+        }
+    }
+    return hasColorVariation;
 }

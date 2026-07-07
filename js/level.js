@@ -247,7 +247,7 @@ class Level {
 			}
 		}
 	}
-	drawBoxes() {
+	drawBoxes() { // distinct from the titleScreen set boxes, which draw chinese bigger
 		let sorted = this.boxes
 			.map((b, i) => ({ b, i }))
 			.sort((a, b) => {

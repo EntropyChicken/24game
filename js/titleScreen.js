@@ -7,31 +7,15 @@ class TitleScreen {
         this.marginY = min(16, height * 0.016);
         this.bubbleBox = new BubbleBox(0,0,width,height,20,0);
         this.duelMode = false;
-
-        const emoji_labels = [
-            { text: "😁Easy😊", set: 0 },
-            { text: "😓Medium😅", set: 1 },
-            { text: "🤔Hard🫠", set: 2 },
-            { text: "😑Tricky😭", set: 3 },
-            { text: "😡Very Hard🤪", set: 4 },
-            
-            { text: "🧩Simple🔢", set: 0 },
-            { text: "💡Interesting📐", set: 1 },
-            { text: "💻JavaScript💽", set: 3 },
-            { text: "🎓Crazy Hard💀", set: 2 }
-        ];
-        const labels = [
-            { text: "Easy", set: 0 },
-            { text: "Medium", set: 1 },
-            { text: "Hard", set: 2 },
-            { text: "Tricky", set: 3 },
-            { text: "Very Hard", set: 4 },
-            
-            { text: "Simple", set: 0 },
-            { text: "Interesting", set: 1 },
-            { text: "JavaScript", set: 3 },
-            { text: "CRAZY HARD", set: 2 }
-        ];
+        
+        // We only need the loops to capture the indices structurally
+        let labels = [];
+        for(let i = 0; i<5; i++){
+            labels.push({ set: i });
+        }
+        for(let i = 0; i<4; i++){
+            labels.push({ set: i });
+        }
 
         for (let i = 0; i < labels.length; i++) {
             const isClassic = i < 5;
@@ -43,10 +27,9 @@ class TitleScreen {
 
             this.boxes.push({
                 x, y, w: this.boxW, h: this.boxH,
-                label: labels[i].text,
                 isClassic: isClassic,
                 set: isClassic ? classicSets[labels[i].set] : puzzleSets[labels[i].set],
-                setIndex: labels[i].set,
+                setIndex: labels[i].set, // This index allows us to look up translations dynamically
                 drawOffset: 0,
                 drawAngle: 0,
                 drawScale: 1
@@ -63,7 +46,7 @@ class TitleScreen {
         this.battleW = (this.btnSumW-this.gap) * 0.36;
 
         this.duelButton = new Button({
-            x: this.btnStartX, // width * 0.5 - this.duelW / 2, // centered
+            x: this.btnStartX, 
             y: this.btnY, w: this.duelW, h: this.btnH,
             label: "Duel button",
             style: {
@@ -80,7 +63,7 @@ class TitleScreen {
                     }
                 }
             },
-            getText: () => "Two-Player\nMode",
+            getText: () => TRANSLATIONS[currentLang].duelButton,
             onClick: () => { titleScreen.duelMode = !titleScreen.duelMode }
         });
 
@@ -95,7 +78,7 @@ class TitleScreen {
                     titleScreen.battleButton.style.hovering = false;
                 }
             },
-            getText: () => "Team\nBattle",
+            getText: () => TRANSLATIONS[currentLang].battleButton,
             onClick: () => {
                 if (isOnlineSession && navigator.onLine) {
                     setScreen("battle"); 
@@ -105,6 +88,59 @@ class TitleScreen {
                     isOnlineSession = false;
                 }
             } 
+        });
+
+        let langBtnW = min(120, width * 0.15); 
+        let langBtnH = 35;
+        let padding = 15;
+        let langGap = 10;
+
+        this.engButton = new Button({
+            x: width - langBtnW * 2 - langGap - padding, 
+            y: padding, 
+            w: langBtnW, 
+            h: langBtnH,
+            label: "English Toggle",
+            style: {
+                r: 8, onHoverMovement: 0.003, textColor: color(111),
+                predraw: () => {
+                    if (currentLang === 'english') {
+                        titleScreen.engButton.style.mainColor = color(225,255,180);
+                        titleScreen.engButton.style.shadeColor = theme.shadeColorCorrect;
+                        titleScreen.engButton.style.hovering = true;
+                    } else {
+                        titleScreen.engButton.style.mainColor = color(255,255,255);
+                        titleScreen.engButton.style.shadeColor = theme.shadeColor;
+                        titleScreen.engButton.style.hovering = false;
+                    }
+                }
+            },
+            getText: () => flagEmojiFallback ? " English " : "English 🇺🇸",
+            onClick: () => { changeLanguage('english'); }
+        });
+
+        this.chiButton = new Button({
+            x: width - langBtnW - padding, 
+            y: padding, 
+            w: langBtnW, 
+            h: langBtnH,
+            label: "Chinese Toggle",
+            style: {
+                r: 8, onHoverMovement: 0.003, textColor: color(111),
+                predraw: () => {
+                    if (currentLang === 'chinese') {
+                        titleScreen.chiButton.style.mainColor = color(225,255,180);
+                        titleScreen.chiButton.style.shadeColor = theme.shadeColorCorrect;
+                        titleScreen.chiButton.style.hovering = true;
+                    } else {
+                        titleScreen.chiButton.style.mainColor = color(255,255,255);
+                        titleScreen.chiButton.style.shadeColor = theme.shadeColor;
+                        titleScreen.chiButton.style.hovering = false;
+                    }
+                }
+            },
+            getText: () => flagEmojiFallback ? "   中文   " : "  中文 🇨🇳  ",
+            onClick: () => { changeLanguage('chinese'); }
         });
 
         if (typeof channel !== 'undefined') {
@@ -133,23 +169,29 @@ class TitleScreen {
         this.battleButton.style.onHoverMovement = this.showBattleButton ? 0.0045 : 0;
         this.battleButton.draw();
 
+        this.engButton.draw();
+        this.chiButton.draw();
+
         noStroke();
         for(let y = 2; y>=-2; y-=2){
-            for(let x = y/3-1; x<y/3+1.1; x+=2){
+            for(let x = y/3-1; x<y/3+1.1; x+=1){
                 fill(y<0 ? color(255,255,255) : color(100,93,85));
                 textAlign(CENTER,CENTER);
                 textSize(constrain(width*0.07,55,90));
-                text("Make 24", width*0.5+x, height*0.14+y);
+                
+                let mainTitle = currentLang === 'chinese' ? "24点000" : "Make 24";
+                text(mainTitle, width*0.5+x, height*0.14+y);
+                
                 textSize(constrain(width*0.035,27,45));
-                text("Random",width*0.3+x, height*0.363+y*0.8);
-                text("Designed",width*0.7+x, height*0.363+y*0.8);
+                text(TRANSLATIONS[currentLang].randomSetSection,width*0.3+x, height*0.363+y*0.8);
+                text(TRANSLATIONS[currentLang].designedSetSection,width*0.7+x, height*0.363+y*0.8);
                 textAlign(RIGHT,BOTTOM);
                 if (isOnlineSession) {
                     if (gameCount !== undefined) {
                         let s = constrain(width * 0.035, 27, 35);
                         textSize(s);
-                        text((gameCount === 1 ? "game" : "games"), width - 15 + x, height - s - 15 + y * 0.8);
-                        text("won worldwide!", width - 15 + x, height - 15 + y * 0.8);
+                        text(TRANSLATIONS[currentLang].gameCountUpperText, width - 15 + x, height - s - 15 + y * 0.8);
+                        text(TRANSLATIONS[currentLang].gameCountLowerText, width - 15 + x, height - 15 + y * 0.8);
                         let w = textWidth(" games");
                         textSize(s * (gameCountDrawScale + 0.2));
                         text(gameCount, width - 15 - w + x, height - s - 15 + y * 0.8);
@@ -179,7 +221,7 @@ class TitleScreen {
         pop();
     }
 
-    drawBoxes() {
+    drawBoxes() { // distinct from Level boxes, which are for the number cards
         for (let b of this.boxes) {
             if (mx > b.x && mx < b.x + b.w && my > b.y && my < b.y + b.h) {
                 b.drawOffset += height * (b.isClassic ? 0.007 : -0.007);
@@ -207,10 +249,14 @@ class TitleScreen {
 
             const maxWidth = b.w - 10;
             const maxHeight = b.h - 10;
-            let fontSize = min(24, b.h * 0.4);
+            
+            // chinese has finer text so show it bigger relative to vertical height
+            let fontSize = min(currentLang === 'chinese' ? 30 : 24, b.h * 0.46);
             textSize(fontSize);
+            let label = b.isClassic 
+                ? TRANSLATIONS[currentLang].randomSets[b.setIndex] 
+                : TRANSLATIONS[currentLang].designedSets[b.setIndex];
 
-            let label = b.label;
             let fallbackWidth = textWidth(label);
             let fallbackHeight = fontSize * 1.2;
 
@@ -271,7 +317,7 @@ class TitleScreen {
             }
         }
         
-        const buttons = [this.duelButton];
+        const buttons = [this.duelButton, this.engButton, this.chiButton];
         if (this.showBattleButton) {
             buttons.push(this.battleButton);
         }

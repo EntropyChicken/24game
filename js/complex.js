@@ -1,3 +1,6 @@
+const EQUALITY_THRESHOLD = 1e-6;
+const DISPLAY_THRESHOLD = 7e-9;
+
 function numToString(x) {
 	if (!Number.isFinite(x)) return x.toString(); // for Infinity, NaN
 	// Fix to 11 decimal places, then remove trailing zeros and optional "."

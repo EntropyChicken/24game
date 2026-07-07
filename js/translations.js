@@ -27,19 +27,8 @@ const TRANSLATIONS = {
             designedSetSection: "精选关卡",
             duelButton: "双人模式",
             battleButton: "团战",
-            randomSets: [
-                "简单",   // Easy (Simple)
-                "普通",   // Medium (Normal)
-                "困难",   // Hard (Is difficult and Solution looks difficult)
-                "刁钻",   // Tricky (Trick-question vibes because it's difficult but the solution doesn't look difficult)
-                "极难"    // Very Hard (Is super difficult and solution looks super difficult because it requires fractions)
-            ],
-            designedSets: [
-                "极简",   // Simple
-                "有趣",   // Interesting
-                "代码",   // JavaScript (Code)
-                "大师级"  // CRAZY HARD (Master Level - sounds prestigious rather than silly but eh)
-            ],
+            randomSets: ["简单", "普通", "困难", "刁钻", "极难"],
+            designedSets: ["极简", "有趣", "代码", "大师级"],
             getGameCountUpperText: (val) => "次通关",
             gameCountLowerText: "来自全球玩家!",
         },
@@ -47,6 +36,27 @@ const TRANSLATIONS = {
             homeButton: "主页",
             skipButton: "跳过",
             undoButton: "撤销",
+            hintButton: "提示",
+            solutionButton: "解法",
+            getPointsText: (val) => " 分"
+        }
+    },
+    chinese_traditional: {
+        titleScreen:{
+            mainTitle: "24點000",
+            randomSetSection: "隨機挑戰",
+            designedSetSection: "精選關卡",
+            duelButton: "雙人模式",
+            battleButton: "團戰",
+            randomSets: ["簡單", "普通", "困難", "刁鑽", "極難"],
+            designedSets: ["極簡", "有趣", "程式碼", "大師級"],
+            getGameCountUpperText: (val) => "次通關",
+            gameCountLowerText: "來自全球玩家!",
+        },
+        level: {
+            homeButton: "主頁",
+            skipButton: "跳過",
+            undoButton: "撤銷",
             hintButton: "提示",
             solutionButton: "解法",
             getPointsText: (val) => " 分"

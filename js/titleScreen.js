@@ -96,13 +96,14 @@ class TitleScreen {
         let langGap = 10;
 
         let englishGetText = flagEmojiFallback ? " English " : "English🇺🇸";
-        let chineseGetText = flagEmojiFallback ? "  中文  " : " 中文🇨🇳 ";
+        let traditionalGetText = flagEmojiFallback ? "  繁體中文  " : " 繁體中文🇹🇼 ";
+        let chineseGetText = flagEmojiFallback ? "  简体中文  " : " 简体中文🇨🇳 ";
         if(langBtnW<65){
             englishGetText = flagEmojiFallback ? " Eng " : "Eng🇺🇸";
         }
 
         this.engButton = new Button({
-            x: width - langBtnW * 2 - langGap - padding, 
+            x: width - langBtnW * 3 - langGap * 2 - padding, 
             y: padding, 
             w: langBtnW, 
             h: langBtnH,
@@ -123,6 +124,30 @@ class TitleScreen {
             },
             getText: () => englishGetText,
             onClick: () => { changeLanguage('english'); }
+        });
+
+        this.traditionalButton = new Button({
+            x: width - langBtnW * 2 - langGap - padding, 
+            y: padding, 
+            w: langBtnW, 
+            h: langBtnH,
+            label: "Traditional Chinese Toggle",
+            style: {
+                r: 8, onHoverMovement: 0.003, textColor: color(111),
+                predraw: () => {
+                    if (currentLang === 'chinese_traditional') {
+                        titleScreen.traditionalButton.style.mainColor = color(225,255,180);
+                        titleScreen.traditionalButton.style.shadeColor = theme.shadeColorCorrect;
+                        titleScreen.traditionalButton.style.hovering = true;
+                    } else {
+                        titleScreen.traditionalButton.style.mainColor = color(255,255,255);
+                        titleScreen.traditionalButton.style.shadeColor = theme.shadeColor;
+                        titleScreen.traditionalButton.style.hovering = false;
+                    }
+                }
+            },
+            getText: () => traditionalGetText,
+            onClick: () => { changeLanguage('chinese_traditional'); }
         });
 
         this.chiButton = new Button({
@@ -175,6 +200,7 @@ class TitleScreen {
         this.battleButton.draw();
 
         this.engButton.draw();
+        this.traditionalButton.draw();
         this.chiButton.draw();
 
         noStroke();
@@ -184,8 +210,7 @@ class TitleScreen {
                 textAlign(CENTER,CENTER);
                 textSize(constrain(width*0.07,55,90));
                 
-                let mainTitle = currentLang === 'chinese' ? "24点000" : "Make 24";
-                text(mainTitle, width*0.5+x, height*0.14+y);
+                text(TRANSLATIONS[currentLang].titleScreen.mainTitle, width*0.5+x, height*0.14+y);
                 
                 textSize(constrain(width*0.035,27,45));
                 text(TRANSLATIONS[currentLang].titleScreen.randomSetSection,width*0.3+x, height*0.363+y*0.8);
@@ -322,7 +347,7 @@ class TitleScreen {
             }
         }
         
-        const buttons = [this.duelButton, this.engButton, this.chiButton];
+        const buttons = [this.duelButton, this.engButton, this.traditionalButton, this.chiButton];
         if (this.showBattleButton) {
             buttons.push(this.battleButton);
         }

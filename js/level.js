@@ -385,7 +385,7 @@ class Level {
 
 		// Battle mode: this result may register a "doubler" for the player's team
 		// (the battle master decides whether it counts and applies the effect).
-		maybeBroadcastBattleInvalidAction(res);
+		maybeBroadcastBattleDoublerAction(res);
 
 		this.sourceIdOfPos[this.boxes[i2].locName] = this.watcherSequence.actions.length-1;
 		this.boxes[i2].value = res;
@@ -558,7 +558,7 @@ class Level {
 						const a = this.boxes[this.firstIndex].value;
 						// For unary, ignore b param
 						const res = btn.apply(a, null, this.sourceIdOfPos[this.boxes[this.firstIndex].locName]);
-						maybeBroadcastBattleInvalidAction(res);
+						maybeBroadcastBattleDoublerAction(res);
 						this.sourceIdOfPos[this.boxes[this.firstIndex].locName] = this.watcherSequence.actions.length-1;
 						this.boxes[this.firstIndex].value = res;
 						this.boxes[this.firstIndex].drawScale += 0.1;
@@ -697,7 +697,7 @@ class Level {
 							this.saveState();
 							const a = this.boxes[this.firstIndex].value;
 							const res = btn.apply(a, null, this.sourceIdOfPos[this.boxes[this.firstIndex].locName]);
-							maybeBroadcastBattleInvalidAction(res);
+							maybeBroadcastBattleDoublerAction(res);
 							this.sourceIdOfPos[this.boxes[this.firstIndex].locName] = this.watcherSequence.actions.length-1;
 							this.boxes[this.firstIndex].value = res;
 							this.boxes[this.firstIndex].drawScale += 0.1;
@@ -748,33 +748,56 @@ class Level {
 	}
 }
 
-function getBattleInvalidActionReason(value) {
+// Returns EVERY doubler reason a value satisfies (not just the first match),
+// so a single number can simultaneously count for multiple doublers
+// (e.g. -9000.01 is negative_number AND non_integer AND over_9000 all at once).
+function getBattleDoublerActionReasons(value) {
+    const reasons = [];
     if (value instanceof Rational) {
-        if (isNaN(value.numerator) || isNaN(value.denominator)) return "invalid_number";
-        if (Math.abs(value.numerator / value.denominator) > 9000) return "over_9000";
-        if (!value.isInteger()) return "non_integer";
-        if (value.numerator < 0) return "negative_number";
-        return null;
+        if (isNaN(value.numerator) || isNaN(value.denominator)) {
+            // an undefined value can't also be meaningfully "negative" or "non-integer"
+            reasons.push("invalid_number");
+            return reasons;
+        }
+        if (Math.abs(value.numerator / value.denominator) > 9000) reasons.push("over_9000");
+        if (!value.isInteger()) reasons.push("non_integer");
+        if (value.numerator < 0) reasons.push("negative_number");
+        return reasons;
     }
     if (value instanceof Complex) {
-        if (value.isNaN()) return "invalid_number";
-        if (Math.hypot(value.real, value.imag) > 9000) return "over_9000";
-        if (value.imag !== 0) return "non_real";
-        if (!Number.isFinite(value.real)) return "invalid_number";
-        if (Math.round(value.real) !== value.real) return "non_integer";
-        if (value.real < 0) return "negative_number";
-        return null;
+        if (value.isNaN()) {
+            reasons.push("invalid_number");
+            return reasons;
+        }
+        if (Math.hypot(value.real, value.imag) > 9000) reasons.push("over_9000");
+        if (value.imag !== 0) reasons.push("non_real");
+        // Non-integer includes any non-real number (e.g. 1+i), per the doubler's definition,
+        // as well as real numbers with a fractional part.
+        if (value.imag !== 0 || (Number.isFinite(value.real) && Math.round(value.real) !== value.real)) {
+            reasons.push("non_integer");
+        }
+        if (value.imag === 0 && Number.isFinite(value.real) && value.real < 0) reasons.push("negative_number");
+        return reasons;
     }
-    return null;
+    return reasons;
 }
 
-function maybeBroadcastBattleInvalidAction(value) {
-	const reason = getBattleInvalidActionReason(value);
-	if (!reason) return;
+function maybeBroadcastBattleDoublerAction(value) {
+	const reasons = getBattleDoublerActionReasons(value);
+	if (!reasons.length) return;
 	if (typeof screen === 'undefined' || screen !== "battle") return;
 	if (!battleTeam) return;
-	if (typeof broadcastBattleInvalidAction === 'function') {
-		broadcastBattleInvalidAction(reason);
+	if (typeof broadcastBattleDoublerAction === 'function') {
+		broadcastBattleDoublerAction(reasons);
+	}
+}
+
+// Battle mode: a freshly loaded level's starting numbers should ALSO be checked
+// for doublers, not just numbers produced later by operations.
+function maybeBroadcastBattleDoublersForInitialValues(levelInstance) {
+	if (!levelInstance || !levelInstance.originalValues) return;
+	for (const value of levelInstance.originalValues) {
+		maybeBroadcastBattleDoublerAction(value);
 	}
 }
 

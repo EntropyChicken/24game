@@ -25,7 +25,7 @@ const BATTLE_DOUBLER_LABELS = {
     non_integer: "Non-Integer", // obtain a non-integer number (examples: 0.5, 1+i)
     non_real: "Non-Real", // obtain a non-real number (examples: i, 1+2i)
     invalid_number: "Undefined", // obtain something mathematically undefined (examples: division by zero, zero to the power of zero, natural log of zero)
-    over_9000: "It's Over 9000" // obtain something with an absolute value or modulus strictly greater than 9000
+    over_9000: "It's Over 9000" // obtain something with an absolute value or modulus strictly greater than 9000 (examples: 8000+8000i, -9000.01)
 };
 const DOUBLER_REASON_KEYS = Object.keys(BATTLE_DOUBLER_LABELS);
 
@@ -94,12 +94,16 @@ async function setupRealtime() {
         .on("broadcast", { event: "battle_invalid_action" }, (msg) => {
             if (screen === "battleMaster" && msg.payload) {
                 const team = msg.payload.team;
-                const reason = msg.payload.reason;
-                if (team && reason) {
+                // Support both the new "reasons" array (a value can satisfy several
+                // doublers at once) and the legacy single "reason" field.
+                const reasons = msg.payload.reasons || (msg.payload.reason ? [msg.payload.reason] : []);
+                if (team && reasons.length) {
                     if (!battleDoublers[team]) {
                         battleDoublers[team] = new Set();
                     }
-                    battleDoublers[team].add(reason);
+                    for (const reason of reasons) {
+                        battleDoublers[team].add(reason);
+                    }
                 }
             }
         })
@@ -138,6 +142,10 @@ async function setupRealtime() {
                     Level.setupKeyboard(level);
                     battleWaiting = false;
                     battleLossFlash = 2;
+
+                    // The level's starting numbers count toward doublers too,
+                    // not just numbers produced later by operations.
+                    maybeBroadcastBattleDoublersForInitialValues(level);
                 }
             }
         })
@@ -252,11 +260,15 @@ async function broadcastWin() {
     });
 }
 
-function broadcastBattleInvalidAction(reason) {
+function broadcastBattleDoublerAction(reasons) {
+    // Accept either a single reason (legacy) or an array of reasons, so that
+    // one value satisfying multiple doublers simultaneously reports all of them.
+    const reasonList = Array.isArray(reasons) ? reasons : [reasons];
+    if (!reasonList.length) return;
     channel.send({
         type: "broadcast",
         event: "battle_invalid_action",
-        payload: { team: battleTeam, reason: reason }
+        payload: { team: battleTeam, reasons: reasonList }
     });
 }
 
@@ -377,7 +389,7 @@ function drawBattleTeamSelection(){
     noStroke();
     textSize(baseTextSize);
     textAlign(CENTER,CENTER);
-    text("Create or\nChoose Team", 0, -5); 
+    text("Create or\nChoose Team", 0, -5);
     
     for (let i = 0; i < battleTeams.length; i++) {
         push();
@@ -448,7 +460,7 @@ function setBattleTeam(team){
     textAlign(CENTER,CENTER);
     textSize(30);
     fill(255);
-    text("Team: "+team+"\n...waiting for puzzle...", width / 2, height / 2);
+    text("Team: "+team+"\n...waiting to receive puzzle...", width / 2, height / 2);
     pop();
 
     channel.send({

@@ -195,7 +195,7 @@ class TitleScreen {
                     if (gameCount !== undefined) {
                         let s = constrain(width * 0.035, 27, 35);
                         textSize(s);
-                        text(TRANSLATIONS[currentLang].titleScreen.gameCountUpperText, width - 15 + x, height - s - 15 + y * 0.8);
+                        text(TRANSLATIONS[currentLang].titleScreen.getGameCountUpperText(gameCount), width - 15 + x, height - s - 15 + y * 0.8);
                         text(TRANSLATIONS[currentLang].titleScreen.gameCountLowerText, width - 15 + x, height - 15 + y * 0.8);
                         let w = textWidth(" games");
                         textSize(s * (gameCountDrawScale + 0.2));

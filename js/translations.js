@@ -8,8 +8,16 @@ const TRANSLATIONS = {
             battleButton: "Team\nBattle",
             randomSets: ["Easy", "Medium", "Hard", "Tricky", "Very Hard"],
             designedSets: ["Simple", "Interesting", "JavaScript", "CRAZY HARD"],
-            gameCountUpperText: "games",
+            getGameCountUpperText: (val) => val === 1 ? "game" : "games",
             gameCountLowerText: "won worldwide!",
+        },
+        level:{
+            homeButton:"Home",
+            skipButton:"Skip",
+            undoButton:"Undo",
+            hintButton:"Hint",
+            solutionButton:"Solution",
+            getPointsText: (val) => val === 1 ? " point" : " points"
         }
     },
     chinese: {
@@ -32,8 +40,16 @@ const TRANSLATIONS = {
                 "代码",   // JavaScript (Code)
                 "大师级"  // CRAZY HARD (Master Level - sounds prestigious rather than torturous)
             ],
-            gameCountUpperText: "次通关",
+            getGameCountUpperText: (val) => "次通关",
             gameCountLowerText: "来自全球玩家!",
         },
+        level: {
+            homeButton: "主页",
+            skipButton: "跳过",
+            undoButton: "撤销",
+            hintButton: "提示",
+            solutionButton: "答案",
+            getPointsText: (val) => " 分"
+        }
     }
 };

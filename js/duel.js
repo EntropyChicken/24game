@@ -126,7 +126,7 @@ class Duel {
             textAlign(CENTER,CENTER);
             textSize(this.height * 0.045);
             fill(0);
-            text(this.scores[i]+" point"+(this.scores[i]===1 ? "" : "s"),scoreLoc.x,scoreLoc.y+scoreLoc.h/2);
+            text(this.scores[i]+TRANSLATIONS[currentLang].level.getPointsText(this.scores[i]),scoreLoc.x,scoreLoc.y+scoreLoc.h/2);
             // fill(255,0,0);ellipse(mx,my,200,200);
             pop();
         }

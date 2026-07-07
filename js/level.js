@@ -23,7 +23,7 @@ class Level {
 		this.selectedOp = null;
 		this.history = [];
 		this.winTimer = 0;
-		this.solved = false; // for external use
+		this.solved = false; // for external use (to make a new Level after 24 is made and the win timer has finished)
 		this.useRational = useRational;
 
 		this.watcherSequence = new Sequence(undefined, useRational);

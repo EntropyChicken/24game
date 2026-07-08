@@ -6,6 +6,6 @@
     {"cards":[3,3,3],"ops":["-","^"],"hint":"3 raised to the power of 3 equals 27","sols":["3^3-3"]},
     {"cards":[1,1,1,1,1,1,1,1],"ops":["+","×","^"],"hint":"2^3 = 8","sols":["(1+1+1)×(1+1)^(1+1+1)"]},
     {"cards":[0,0,0,0],"ops":["+","!"],"hint":"4! = 24","sols":["(0!+0!+0!+0!)!"]},
-    {"cards":[2026,26],"ops":["%"],"hint":"Congrats to the class of 2026! Oops, I accidentally took the factorial of 2026","sols":["4.89897948556635619 × 4.89897948556635619"]},
+    {"cards":[2026,26],"ops":["%"],"hint":"Congrats to the class of 2026! Oops, I accidentally took the factorial of 2026","sols":["2026%26"]},
     {"cards":[20,4],"ops":["√","tan","^","acos","ln","sin","!","cos","%","+","cot","asin","abs"],"hint":"Toward the right","sols":["20+4"]}
 ]

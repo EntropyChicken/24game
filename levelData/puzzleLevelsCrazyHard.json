@@ -5,9 +5,9 @@
     {"cards":[15,17,45],"ops":["÷","cot","acos"],"hint":"A right triangle with side lengths 8, 15, 17 can be dilated to be 24, 45, 51","sols":["45÷cot(acos(15÷17))"]},
     {"cards":[0.02,0.3,7],"ops":["-","×","cot","asin"],"hint":"There exists a right triangle with side lengths 7, 24, 25","sols":["7×cot(asin(0.3-0.02))"]},
     {"cards":[3,3,32],"ops":["-","÷","√","ln"],"hint":"Final step is 32-8","sols":["32-ln(3)÷ln(√√√3)"]},
-    
+    {"cards":[2,2,2],"ops":["÷","√","ln"],"hint":"One possible solution starts by square rooting 24 times. Use base change formula","sols":["ln(ln(2)÷ln(√√√√√√√√√√√√√√√√√√√√√√√√2))÷ln(2)","ln(ln(2)÷ln(√√√2))÷ln(√√√2)"]},
+    {"cards":[-1,-1],"ops":["÷","√","ln","!"],"hint":"24 = 4! and 4 is a power of 2. Taking a square root is the same as raising to the power of 1/2","sols":["(ln(-1)÷ln(√√-1))!"]},
     {"cards":[0,0],"ops":["÷","√","ln","!","sin"],"hint":"Sine turns numbers that aren't changed by square root into numbers that are changed by square root (and log-able)","sols":["(ln(sin(0!))÷ln(√√sin(0!)))!"]},
-
     {"cards":[-1,-1,2],"ops":["+","÷","√","ln"],"hint":"Make -√0.5+(√0.5)i from √0.5+(√0.5)i and √2. Notice this has arg = 3π/4. Once we obtain 3, we're only off by a power of 2","sols":["ln(√√(-1)-√2)÷ln(√√√√√(-1))","ln(ln(-1)÷ln(√√√(-1)))÷ln(√√√2)"]},
     {"cards":[-1,-1,-1,-2],"ops":["-","÷","√","ln"],"hint":"Make -√0.5-(√0.5)i and √0.5-(√0.5)i. From these, it is possible to obtain 3, which is only off by a power of 2","sols":["ln((√√(-1))÷(-1))÷ln(√√√((√√(-1))-√(-2)))","ln(ln(-1)÷ln(√√√(-1)))÷ln(√√√((-2)÷(-1)))"]},
 
@@ -15,5 +15,9 @@
     {"cards":[0,0,0],"ops":["÷","√","ln","cos"],"hint":"Generalize exploit: 24 from log base c^(1/32) of c^(3/4)","sols":["ln(cos(cos(0))÷√√cos(cos(0)))÷ln(√√√√√cos(cos(0)))"]},
     {"cards":[-1,-0.25,24],"ops":["÷","√","ln","cos"],"hint":"There's a solution where, at some point, you divide two expressions to obtain 2π","sols":["24÷cos(ln(-1)÷√(-0.25))"]},
     {"cards":[-1,2,-3,-16],"ops":["÷","√","ln","cos"],"hint":"You can turn -1 and -16 into (-1/8)ln(2)","sols":["-3÷(ln(√√cos(ln(-1)÷√(-16)))÷ln(2))"]},
-    {"cards":[2,5,5,6,24000000000000],"ops":["+","-","×","÷","%"],"hint":"24 × 1000000000000 % 999999999999 = 24. Therefore, if n is a factor of 999999999999 and n > 24, then 24000000000000 % n = 24","sols":["24000000000000%(5×5+2×6)","24000000000000%(5×5+2+6)"]}
+    {"cards":[2,5,5,6,24000000000000],"ops":["+","-","×","÷","%"],"hint":"24 × 1000000000000 % 999999999999 = 24. Therefore, if n is a factor of 999999999999 and n > 24, then 24000000000000 % n = 24","sols":["24000000000000%(5×5+2×6)","24000000000000%(5×5+2+6)"]},
+
+    {"cards":[-0.5,-0.5,-4],"ops":["×","!","cos"],"hint":"(-0.5)! = √π is a fact that can help obtain π","sols":["(cos((-0.5)!×(-0.5)!)×(-4))!"]},
+    {"cards":[-0.5,-0.5,-0.5,-4],"ops":["×","!","sin"],"hint":"(-0.5)! = √π is a fact that can help obtain -π/2","sols":["(sin((-0.5)!×(-0.5)!×(-0.5))×(-4))"]},
+    {"cards":[-64,-4,1.5,1.5,3],"ops":["-","×","√","ln","cos","sin"],"hint":"e^(-3i) = cos(-3)+i×sin(-3) = cos(3)+i×sin(-3)... but we want to get the 3 back out to make 24","sols":["ln(cos(3)-cos(1.5)sin(1.5)×√-4)×√-64"]}
 ]

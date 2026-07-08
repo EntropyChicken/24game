@@ -1,5 +1,6 @@
 const EQUALITY_THRESHOLD = 1e-6;
 const DISPLAY_THRESHOLD = 7e-9;
+const DRAW_INTEGER_MULTIPLES_OF_PI = false;
 
 function numToString(x) {
 	if (!Number.isFinite(x)) return x.toString(); // for Infinity, NaN
@@ -362,7 +363,7 @@ class Complex {
         }
 
         let txt = "";
-        if(checkDebug&&keyIsDown(32)){
+        if(checkDebug&&keyIsDown(32)&&keyIsDown(191)){
             txt = this.real.toString()+"+"+this.imag.toString()+"i";
             fill(0,100,0);
         }
@@ -371,6 +372,16 @@ class Complex {
         }
         else if(this.equals(new Complex(Math.PI),DISPLAY_THRESHOLD)){
             txt = "π";
+        }
+        else if (DRAW_INTEGER_MULTIPLES_OF_PI&&round(this.real / Math.PI) !== 0 && this.equals(new Complex(round(this.real / Math.PI) * Math.PI), DISPLAY_THRESHOLD)) {
+            let multiplier = round(this.real / Math.PI);
+            if (multiplier === 1) {
+                txt = "π";
+            } else if (multiplier === -1) {
+                txt = "-π";
+            } else {
+                txt = multiplier + "π";
+            }
         }
         else if(this.equals(new Complex(Math.E),DISPLAY_THRESHOLD)){
             txt = "e";

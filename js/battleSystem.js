@@ -28,7 +28,7 @@ const BATTLE_DOUBLER_LABELS = {
     negative_number: "Negative", // obtain a negative real number (examples: -1, -3.14)
     non_integer: "Non-Integer", // obtain a non-integer number (examples: 0.5, 1+i)
     non_real: "Non-Real", // obtain a non-real number (examples: i, 1+2i)
-    invalid_number: "NaN", // obtain something mathematically undefined, indeterminate, or too big for javascript to handle (examples: division by zero, zero to the power of zero, natural log of zero)
+    invalid_number: "NaN", // obtain something mathematically undefined, indeterminate, or too big for javascript to handle (examples: division by zero, zero to the power of zero, natural log of zero, factorial of negative integers)
     over_24: "Over 24", // obtain something with an absolute value or modulus strictly greater than 9000 (examples: 20+20i, -24.01)
     over_9000: "IT'S OVER 9000" // obtain something with an absolute value or modulus strictly greater than 24 (examples: 8000+8000i, -9000.01)
 };

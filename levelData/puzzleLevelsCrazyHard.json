@@ -15,5 +15,5 @@
     {"cards":[0,0,0],"ops":["÷","√","ln","cos"],"hint":"Generalize exploit: 24 from log base c^(1/32) of c^(3/4)","sols":["ln(cos(cos(0))÷√√cos(cos(0)))÷ln(√√√√√cos(cos(0)))"]},
     {"cards":[-1,-0.25,24],"ops":["÷","√","ln","cos"],"hint":"There's a solution where, at some point, you divide two expressions to obtain 2π","sols":["24÷cos(ln(-1)÷√(-0.25))"]},
     {"cards":[-1,2,-3,-16],"ops":["÷","√","ln","cos"],"hint":"You can turn -1 and -16 into (-1/8)ln(2)","sols":["-3÷(ln(√√cos(ln(-1)÷√(-16)))÷ln(2))"]},
-    {"cards":[2,5,5,6,24000000000000],"ops":["+","-","×","÷","%"],"hint":"1000000 % 999999 = 1, which means 24000000 % 999999 = 24. Therefore, for any integer n that is a factor of 999999 and is greater than 24, 24000000 % n = 24","sols":["24000000%(5×5+2×6)","24000000%(5×5+2+6)"]}
+    {"cards":[2,5,5,6,24000000000000],"ops":["+","-","×","÷","%"],"hint":"24 × 1000000000000 % 999999999999 = 24. Therefore, if n is a factor of 999999999999 and n > 24, then 24000000000000 % n = 24","sols":["24000000000000%(5×5+2×6)","24000000000000%(5×5+2+6)"]}
 ]

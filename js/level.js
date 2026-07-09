@@ -638,17 +638,15 @@ class Level {
 		}
 		*/
 		if (/^[0-9]$/.test(key)) {
-			// Find first box with that number (real part, imag==0)
 			for (let i = 0; i < this.boxes.length; i++) {
 				let v = this.boxes[i].value;
-				let valMatch;
-				if(this.useRational){
-					valMatch = (v.isInteger() && v.numerator.toString() === key);
-				}
-				else{
-					valMatch = (v.imag === 0 && v.real.toString() === key);
-				}
-				if (valMatch && (i !== this.firstIndex || !(this.firstIndex !== null && this.selectedOp))) {
+				let valMatch = this.useRational ? 
+					(v.isInteger() && v.numerator.toString() === key) : 
+					(v.imag === 0 && v.real.toString() === key);
+
+				if (valMatch) {
+					if (i === this.firstIndex) return; // ALREADY SELECTED: do nothing
+					
 					if (this.firstIndex !== null && this.selectedOp) {
 						this.applyOperation(this.firstIndex, i, this.selectedOp);
 					} else {
@@ -658,24 +656,6 @@ class Level {
 					return;
 				}
 			}
-			// (didn't find it) deselection
-			if(this.firstIndex!==null&&this.selectedOp){
-				let v = this.boxes[this.firstIndex].value;
-
-				let valMatch;
-				if(this.useRational){
-					valMatch = (v.isInteger() && v.numerator.toString() === key);
-				}
-				else{
-					valMatch = (v.imag === 0 && v.real.toString() === key);
-				}
-
-				if (valMatch){
-					this.firstIndex = null;
-					this.selectedOp = null;
-				}
-			}
-
 			return;
 		}
 		// Map keys to op symbols
@@ -720,8 +700,8 @@ class Level {
 							btn.drawAngle -= 0.16;
 						}
 						else{
-							this.selectedOp = (this.selectedOp === btn) ? null : btn;
-							if(this.selectedOp){
+							if (this.selectedOp !== btn) { // keep selected if re-selecting the same op
+								this.selectedOp = btn;
 								btn.drawScale -= 0.065;
 							}
 						}
@@ -738,13 +718,10 @@ class Level {
 			if (idx !== -1) {
 				for (let i = 0; i < this.boxes.length; i++) {
 					if (this.boxes[i].locName === idx) {
-						if (this.firstIndex !== null && this.selectedOp) {
-							if (i === this.firstIndex) {
-								this.firstIndex = null;
-								this.selectedOp = null;
-							} else {
-								this.applyOperation(this.firstIndex, i, this.selectedOp);
-							}
+						if (i === this.firstIndex) {
+							return;
+						} else if (this.firstIndex !== null && this.selectedOp) {
+							this.applyOperation(this.firstIndex, i, this.selectedOp);
 						} else {
 							this.firstIndex = i;
 							this.boxes[i].drawScale -= 0.065;

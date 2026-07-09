@@ -669,7 +669,7 @@ function getUserLanguage() {
         if (lang.startsWith('zh')) {
             return (lang.startsWith('zh-TW') || lang.startsWith('zh-HK') || lang.startsWith('zh-MO') || lang.includes('Hant'))
                 ? 'chinese_traditional'
-                : 'chinese';
+                : 'chinese_simplified';
         }
         if (lang.startsWith('en')) return 'english';
     }
@@ -678,7 +678,7 @@ function getUserLanguage() {
         if (intlLocale.startsWith('zh')) {
             return (intlLocale.startsWith('zh-TW') || intlLocale.startsWith('zh-HK') || intlLocale.startsWith('zh-MO') || intlLocale.includes('Hant'))
                 ? 'chinese_traditional'
-                : 'chinese';
+                : 'chinese_simplified';
         }
         if (intlLocale.startsWith('en')) return 'english';
     } catch (e) {}

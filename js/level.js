@@ -503,7 +503,7 @@ class Level {
 				hint += (solCount===1 ? "Final step: " : "Possible final step: ") + finalStep; 
 			}
 		}
-		else if(currentLang==="chinese"){ // simplified chinese
+		else if(currentLang==="chinese_simplified"){ // simplified chinese
 			hint += "已知解法："+solCount+"种。";
 			if(solCount!==0){
 				let sol = this.metaData.sols[0];

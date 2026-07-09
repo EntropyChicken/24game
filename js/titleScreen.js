@@ -164,7 +164,7 @@ class TitleScreen {
             style: {
                 r: 8, onHoverMovement: 0.003, textColor: color(111),
                 predraw: () => {
-                    if (currentLang === 'chinese') {
+                    if (currentLang === 'chinese_simplified') {
                         titleScreen.chiButton.style.mainColor = color(225,255,180);
                         titleScreen.chiButton.style.shadeColor = theme.shadeColorCorrect;
                         titleScreen.chiButton.style.hovering = true;
@@ -176,7 +176,7 @@ class TitleScreen {
                 }
             },
             getText: () => simplifiedChineseGetText,
-            onClick: () => { changeLanguage('chinese'); }
+            onClick: () => { changeLanguage('chinese_simplified'); }
         });
 
         if (typeof channel !== 'undefined') {

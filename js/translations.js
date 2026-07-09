@@ -20,7 +20,7 @@ const TRANSLATIONS = {
             getPointsText: (val) => val === 1 ? " point" : " points"
         }
     },
-    chinese: {
+    chinese_simplified: {
         titleScreen:{
             mainTitle: "24点000",
             randomSetSection: "随机挑战",

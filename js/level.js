@@ -439,11 +439,12 @@ class Level {
 	}
 
 	getHint() {
+		if(this.metaData.hint!==undefined) return this.metaData.hint;
 		let hint = "";
-		if(this.metaData.hint===undefined){
-			let factorable = this.metaData.factorable;
-			let needsFrac = this.metaData.needsFrac;
-			let solCount = this.metaData.sols.length;
+		let factorable = this.metaData.factorable;
+		let needsFrac = this.metaData.needsFrac;
+		let solCount = this.metaData.sols.length;
+		if(currentLang==="english"){
 			hint += solCount+" known solution";
 			if(solCount!==1){
 				hint += "s";
@@ -502,8 +503,99 @@ class Level {
 				hint += (solCount===1 ? "Final step: " : "Possible final step: ") + finalStep; 
 			}
 		}
-		else{
-			hint = this.metaData.hint;
+		else if(currentLang==="chinese"){ // simplified chinese
+			hint += "已知解法："+solCount+"种。";
+			if(solCount!==0){
+				let sol = this.metaData.sols[0];
+				if(needsFrac!==undefined){
+					if(needsFrac){
+						hint += "需要分数。";
+					}
+					else{
+						hint += "不需要分数。";
+					}
+				}
+				if(factorable!==undefined){
+					if(!factorable){
+						hint += "最后一步不能是乘法。";
+					}
+				}
+
+				let finalStep;
+				let shorten = false;
+				while(sol.length>=2&&sol[sol.length-1]==="1"&&(["÷","×"].includes(sol[sol.length-2]))){
+					sol = sol.substring(0,sol.length-2);
+				}
+				while(sol.length>=2&&sol[0]==="1"&&(["÷","×"].includes(sol[1]))){
+					sol = sol.substring(2);
+				}
+				if(sol.length>=4&&sol[sol.length-1]===sol[sol.length-3]&&["1","2","3","4","5","6","7","8","9"].includes(sol[sol.length-1])){
+					if((sol[sol.length-2]==="÷"&&sol[sol.length-4]==="×")||(sol[sol.length-2]==="×"&&sol[sol.length-4]==="÷")){
+						shorten = true;
+					}
+					if((sol[sol.length-2]==="-"&&sol[sol.length-4]==="+")||(sol[sol.length-2]==="+"&&sol[sol.length-4]==="-")){
+						shorten = true;
+					}
+				}
+				if(shorten){
+					finalStep = getFinalStep(sol.substring(0,sol.length-4));
+					if(finalStep.startsWith("getFinalStep failed")){
+						console.log ("getFinalStep failed on simplified sol. using original")
+						finalStep = getFinalStep(sol);
+					}
+				}
+				else{
+					finalStep = getFinalStep(sol);
+				}
+				hint += (solCount===1 ? "最后一步：" : "可能的最后一步：") + finalStep;
+			}
+		}
+		else if(currentLang==="chinese_traditional"){ // traditional chinese
+			hint += "已知解法："+solCount+"種。";
+			if(solCount!==0){
+				let sol = this.metaData.sols[0];
+				if(needsFrac!==undefined){
+					if(needsFrac){
+						hint += "需要分數。";
+					}
+					else{
+						hint += "不需要分數。";
+					}
+				}
+				if(factorable!==undefined){
+					if(!factorable){
+						hint += "最後一步不能是乘法。";
+					}
+				}
+
+				let finalStep;
+				let shorten = false;
+				while(sol.length>=2&&sol[sol.length-1]==="1"&&(["÷","×"].includes(sol[sol.length-2]))){
+					sol = sol.substring(0,sol.length-2);
+				}
+				while(sol.length>=2&&sol[0]==="1"&&(["÷","×"].includes(sol[1]))){
+					sol = sol.substring(2);
+				}
+				if(sol.length>=4&&sol[sol.length-1]===sol[sol.length-3]&&["1","2","3","4","5","6","7","8","9"].includes(sol[sol.length-1])){
+					if((sol[sol.length-2]==="÷"&&sol[sol.length-4]==="×")||(sol[sol.length-2]==="×"&&sol[sol.length-4]==="÷")){
+						shorten = true;
+					}
+					if((sol[sol.length-2]==="-"&&sol[sol.length-4]==="+")||(sol[sol.length-2]==="+"&&sol[sol.length-4]==="-")){
+						shorten = true;
+					}
+				}
+				if(shorten){
+					finalStep = getFinalStep(sol.substring(0,sol.length-4));
+					if(finalStep.startsWith("getFinalStep failed")){
+						console.log ("getFinalStep failed on simplified sol. using original")
+						finalStep = getFinalStep(sol);
+					}
+				}
+				else{
+					finalStep = getFinalStep(sol);
+				}
+				hint += (solCount===1 ? "最後一步：" : "可能的最後一步：") + finalStep;
+			}
 		}
 		return hint;
 	}

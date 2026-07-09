@@ -1,6 +1,6 @@
 [
     {"cards":[24,24,24,24],"ops":["-","×"],"hint":"Multiply by 0","sols":["24-24×(24-24)"],"tags":["elimination"]},
-    {"cards":[8,8,8,8,8],"ops":["-"],"hint":"Subtract negative 16","sols":["8-(8-8-8-8)"],"tags":[]},
+    {"cards":[8,8,8,8,8],"ops":["-"],"hint":"Subtract negative 16","sols":["8-(8-8-8-8)"],"tags":["algebraic vision"]},
     {"cards":[2,2,2,2,2],"ops":["+","×"],"hint":"The final step is 6×4","sols":["(2+2+2)×2×2"],"tags":[]},
     {"cards":[4,4,100],"ops":["-","÷"],"hint":"Division is the last step","sols":["(100-4)÷4"],"tags":[]},
     {"cards":[2,2,2,100],"ops":["-","÷"],"hint":"The final step is 48÷2","sols":["(100÷2-2)÷2"],"tags":[]},

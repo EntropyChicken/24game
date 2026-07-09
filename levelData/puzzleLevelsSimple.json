@@ -1,11 +1,11 @@
 [
-    {"cards":[24,24,24,24],"ops":["-","×"],"hint":"Multiply by 0","sols":["24-24×(24-24)"],"tags":["elimination"]},
-    {"cards":[8,8,8,8,8],"ops":["-"],"hint":"Subtract negative 16","sols":["8-(8-8-8-8)"],"tags":["algebraic vision"]},
-    {"cards":[2,2,2,2,2],"ops":["+","×"],"hint":"The final step is 6×4","sols":["(2+2+2)×2×2"],"tags":[]},
-    {"cards":[4,4,100],"ops":["-","÷"],"hint":"Division is the last step","sols":["(100-4)÷4"],"tags":[]},
-    {"cards":[2,2,2,100],"ops":["-","÷"],"hint":"The final step is 48÷2","sols":["(100÷2-2)÷2"],"tags":[]},
-    {"cards":[3,3,3],"ops":["-","^"],"hint":"3^3 = 3×3×3 = 27","sols":["3^3-3"],"tags":["exponents"]},
-    {"cards":[2026,26],"ops":["%"],"hint":"Congrats to the class of 2026! Oops, I accidentally took the factorial of 2026","sols":["2026%26"],"tags":["modulo"]},
-    {"cards":[20,4],"ops":["√","tan","^","acos","ln","sin","!","cos","%","+","cot","asin","abs"],"hint":"Toward the right","sols":["20+4"],"tags":[]},
-    {"cards":[1,1,1,1,1,1,1,1],"ops":["+","×","^"],"hint":"2^3 = 8","sols":["(1+1+1)×(1+1)^(1+1+1)"],"tags":["exponents"]}
+    {"cards":[24,24,24,24],"ops":["-","×"],"hint":{"english":"Multiply by 0","chinese_simplified":"利用乘以 0","chinese_traditional":"利用乘以 0"},"sols":["24-24×(24-24)"],"tags":["elimination"]},
+    {"cards":[8,8,8,8,8],"ops":["-"],"hint":{"english":"Subtract negative 16","chinese_simplified":"减去一个负 16","chinese_traditional":"減去一個負 16"},"sols":["8-(8-8-8-8)"],"tags":["algebraic vision"]},
+    {"cards":[2,2,2,2,2],"ops":["+","×"],"hint":{"english":"The final step is 6×4","chinese_simplified":"最后一步是 6×4","chinese_traditional":"最後一步是 6×4"},"sols":["(2+2+2)×2×2"],"tags":[]},
+    {"cards":[4,4,100],"ops":["-","÷"],"hint":{"english":"Division is the last step","chinese_simplified":"除法是最后一步","chinese_traditional":"除法是最後一步"},"sols":["(100-4)÷4"],"tags":[]},
+    {"cards":[2,2,2,100],"ops":["-","÷"],"hint":{"english":"The final step is 48÷2","chinese_simplified":"最后一步是 48÷2","chinese_traditional":"最後一步是 48÷2"},"sols":["(100÷2-2)÷2"],"tags":[]},
+    {"cards":[3,3,3],"ops":["-","^"],"hint":{"english":"3^3 = 3×3×3 = 27","chinese_simplified":"3^3 = 3×3×3 = 27","chinese_traditional":"3^3 = 3×3×3 = 27"},"sols":["3^3-3"],"tags":["exponents"]},
+    {"cards":[2026,26],"ops":["%"],"hint":{"english":"Congrats to the class of 2026! Oops, I accidentally took the factorial of 2026","chinese_simplified":"祝贺2026届毕业生！哎呀，我不小心算成了2026的阶乘","chinese_traditional":"祝賀2026屆畢業生！哎呀，我不小心算成了2026的階乘"},"sols":["2026%26"],"tags":["modulo"]},
+    {"cards":[20,4],"ops":["√","tan","^","acos","ln","sin","!","cos","%","+","cot","asin","abs"],"hint":{"english":"Toward the right","chinese_simplified":"向右看齐","chinese_traditional":"向右看齊"},"sols":["20+4"],"tags":[]},
+    {"cards":[1,1,1,1,1,1,1,1],"ops":["+","×","^"],"hint":{"english":"2^3 = 8","chinese_simplified":"凑出 2^3 = 8","chinese_traditional":"湊出 2^3 = 8"},"sols":["(1+1+1)×(1+1)^(1+1+1)"],"tags":["exponents"]}
 ]

@@ -7,7 +7,7 @@ const TRANSLATIONS = {
             duelButton: "Two-Player\nMode",
             battleButton: "Team\nBattle",
             randomSets: ["Easy", "Medium", "Hard", "Tricky", "Very Hard"],
-            designedSets: ["Simple", "Interesting", "JavaScript", "Crazy Hard"],
+            designedSets: ["Discovery", "Insight", "Theory", "JavaScript", "Crazy Hard"],
             getGameCountUpperText: (val) => val === 1 ? "game" : "games",
             gameCountLowerText: "won worldwide!",
         },
@@ -28,7 +28,7 @@ const TRANSLATIONS = {
             duelButton: "双人模式",
             battleButton: "团战",
             randomSets: ["简单", "中等", "困难", "刁钻", "极难"],
-            designedSets: ["纯粹", "有趣", "JS代码", "大师级"], // or 博士级
+            designedSets: ["探索", "洞察", "理论", "JS代码", "抓狂"],
             getGameCountUpperText: (val) => "次通关",
             gameCountLowerText: "来自全球玩家!",
         },
@@ -49,7 +49,7 @@ const TRANSLATIONS = {
             duelButton: "雙人模式",
             battleButton: "團戰",
             randomSets: ["簡單", "中等", "困難", "刁鑽", "極難"],
-            designedSets: ["純粹", "有趣", "JS程式碼", "大師級"], // or 博士級
+            designedSets: ["探索", "洞察", "理論", "JS程式碼", "抓狂"],
             getGameCountUpperText: (val) => "次通關",
             gameCountLowerText: "來自全球玩家!",
         },

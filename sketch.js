@@ -25,10 +25,11 @@ function preload() {
     loadJSON("levelData/classicLevelsHard.json", data => { originalClassicSets[2] = data; });
     loadJSON("levelData/classicLevelsTricky.json", data => { originalClassicSets[3] = data; });
     loadJSON("levelData/classicLevelsVeryHard.json", data => { originalClassicSets[4] = data; });
-    loadJSON("levelData/puzzleLevelsSimple.json", data => { originalPuzzleSets[0] = data; });
-    loadJSON("levelData/puzzleLevelsInteresting.json", data => { originalPuzzleSets[1] = data; });
-    loadJSON("levelData/puzzleLevelsJavascript.json", data => { originalPuzzleSets[2] = data; });
-    loadJSON("levelData/puzzleLevelsCrazyHard.json", data => { originalPuzzleSets[3] = data; });
+    loadJSON("levelData/puzzleLevelsDiscovery.json", data => { originalPuzzleSets[0] = data; });
+    loadJSON("levelData/puzzleLevelsInsight.json", data => { originalPuzzleSets[1] = data; });
+    loadJSON("levelData/puzzleLevelsTheory.json", data => { originalPuzzleSets[2] = data; });
+    loadJSON("levelData/puzzleLevelsJavaScript.json", data => { originalPuzzleSets[3] = data; });
+    loadJSON("levelData/puzzleLevelsCrazyHard.json", data => { originalPuzzleSets[4] = data; });
 }
 
 function setup() {

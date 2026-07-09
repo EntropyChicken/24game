@@ -9,7 +9,7 @@
     {"cards":["2","2","2","2","2"],"ops":["+","-"],"hint":{"english":"Requires a negative number","chinese_simplified":"需要用到负数","chinese_traditional":"需要用到負數"},"sols":["\"2\"+\"2\"-(\"2\"-\"2\"-\"2\")"]},
     {"cards":[0,1,"7","7"],"ops":["+","-"],"hint":{"english":"Requires a negative number","chinese_simplified":"需要用到负数","chinese_traditional":"需要用到負數"},"sols":["1+\"7\"-(0-\"7\")"]},
     {"cards":[1,2,"8","8"],"ops":["+","-"],"hint":{"english":"Requires a negative number","chinese_simplified":"需要用到负数","chinese_traditional":"需要用到負數"},"sols":["1+\"8\"-(2-\"8\")"]},
-    {"cards":[0.5,"1","1",2,5],"ops":["+","-","÷"],"hint":{"english":"Get \"12.5\"","chinese_simplified":"设法凑出 \"12.5\"","chinese_traditional":"設法湊出 \"12.5\""},"sols":["(\"1\"+(5÷2))÷0.5-1","((\"1\"÷\"1\")+5)÷(0.5÷2)"]},
+    {"cards":[0.5,"1","1",2,5],"ops":["+","-","÷"],"hint":{"english":"Make \"12.5\"","chinese_simplified":"设法凑出 \"12.5\"","chinese_traditional":"設法湊出 \"12.5\""},"sols":["(\"1\"+(5÷2))÷0.5-1","((\"1\"÷\"1\")+5)÷(0.5÷2)"]},
     {"cards":[2,2,"2"],"ops":["+"],"hint":{"english":"2 concat 4","chinese_simplified":"2 拼接 4","chinese_traditional":"2 拼接 4"},"sols":["\"2\"+(2+2)"]},
-    {"cards":[0,0,0,"3",5,5,5],"ops":["+","÷"],"hint":{"english":"3000","chinese_simplified":"设法凑出 3000","chinese_traditional":"設法湊出 3000"},"sols":["(\"3\"+0+0+0)÷5÷5÷5"]}
+    {"cards":[0,0,0,"3",5,5,5],"ops":["+","÷"],"hint":{"english":"Make 3000","chinese_simplified":"设法凑出 3000","chinese_traditional":"設法湊出 3000"},"sols":["(\"3\"+0+0+0)÷5÷5÷5"]}
 ]

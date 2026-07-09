@@ -1,4 +1,4 @@
-const CACHE_NAME = "24game-cache-v82";
+const CACHE_NAME = "24game-cache-v83";
 const CACHE_FILES = [
     "./", // root directory URL
     "./index.html",
@@ -35,10 +35,11 @@ const CACHE_FILES = [
     "./levelData/classicLevelsHard.json",
     "./levelData/classicLevelsMedium.json",
     "./levelData/classicLevelsTricky.json",
+    "./levelData/puzzleLevelsDiscovery.json",
+    "./levelData/puzzleLevelsInsight.json",
+    "./levelData/puzzleLevelsTheory.json",
+    "./levelData/puzzleLevelsJavaScript.json",
     "./levelData/puzzleLevelsCrazyHard.json",
-    "./levelData/puzzleLevelsInteresting.json",
-    "./levelData/puzzleLevelsJavascript.json",
-    "./levelData/puzzleLevelsSimple.json",
     "./levelData/scrapped.json",
 ];
 

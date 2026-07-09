@@ -615,7 +615,7 @@ class Level {
 			this.opSymbols = Level.SYMBOLS;
 			this.setupOps();
 		}
-		if (key === 'u' || key === 'z'){
+		if (key === 'u' || key === 'z' || key === 'Backspace'){
 			this.undo();
 			return;
 		}
@@ -690,7 +690,8 @@ class Level {
 			'!': '!',
 			'|': 'abs',
 			'%': '%',
-			'x': '×', // sus
+			'x': '×',
+			'=': '+', // for typo or tryhard
 		};
 		if (key in opKeyMap) {
 			const symbol = opKeyMap[key];

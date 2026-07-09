@@ -32,7 +32,6 @@ function preload() {
 }
 
 function setup() {
-    console.log("currentLang: "+currentLang);
     for(let s of originalClassicSets){
         classicSets.push(shuffle([...s]));
     }

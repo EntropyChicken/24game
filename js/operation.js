@@ -87,11 +87,11 @@ class Operation {
 			console.assert(symbolIsUnary(this.symbol));
 			this.watcherSequence.actions.push({
 				s:this.symbol,
-				b:b,
+				b:a,
 				bId:id1
 			});
 		}
-		// console.log(this.watcherSequence.toExpr());
+		console.log(this.watcherSequence.toExpr());
 		return this.fn(a, b);
 	}
 }

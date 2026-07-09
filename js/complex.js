@@ -263,6 +263,19 @@ class Complex {
         const c = this.cos();
         return c.divide(s);
     }
+
+    sec() {
+        if(this.isNaN()) return new Complex(NaN,NaN);
+        const c = this.cos();
+        return (new Complex(1, 0)).divide(c);
+    }
+
+    csc() {
+        if(this.isNaN()) return new Complex(NaN,NaN);
+        const s = this.sin();
+        return (new Complex(1, 0)).divide(s);
+    }
+
     asin() {
         if(this.isNaN()) return new Complex(NaN,NaN);
         const i = new Complex(0, 1);
@@ -346,6 +359,8 @@ class Complex {
             case 'cot': return this.cot();
             case 'acos': return this.acos();
             case 'asin': return this.asin();
+            case 'sec': return this.sec();
+            case 'csc': return this.csc();
             case 'abs': return this.abs();
             case '%': return this.modulo(b);
             case 'floor': return this.floor();

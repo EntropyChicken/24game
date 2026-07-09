@@ -10,7 +10,7 @@ function smoothErp(a,recursion=1){
 }
 
 class Level {
-	static SYMBOLS = ["+","-","×","÷","^","√","ln","!","sin","cos","tan","cot","asin","acos","abs","%"]; // round, floor, and ceil are not included for space purposes
+	static SYMBOLS = ["+","-","×","÷","^","√","ln","!","sin","cos","tan","cot","asin","acos","sec","csc","abs","%"]; // round, floor, and ceil are not included for space purposes
 	static WIN_TIMER_START = 70;
 	static BACK_SLASH_CHEAT = false;
 
@@ -164,6 +164,8 @@ class Level {
 					case 'cot': return a.cot();
 					case 'acos': return a.acos();
 					case 'asin': return a.asin();
+					case 'sec': return a.sec();
+					case 'csc': return a.csc();
 					case 'abs': return a.abs();
 					case '%': return a.modulo(b);
 					case 'floor': return a.floor();

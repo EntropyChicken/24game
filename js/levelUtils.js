@@ -50,7 +50,7 @@ function checkResetSet() {
 }
 
 function symbolIsUnary(symbol) {
-    const unaryOperators = ['√', 'ln', '!', 'sin', 'cos', 'tan', 'cot', 'asin', 'acos', 'abs', 'floor', 'round', 'ceil'];
+    const unaryOperators = ['√', 'ln', '!', 'sin', 'cos', 'tan', 'cot', 'asin', 'acos', 'sec', 'csc', 'abs', 'floor', 'round', 'ceil'];
     return unaryOperators.includes(symbol);
 }
 

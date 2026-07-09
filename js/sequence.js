@@ -1,5 +1,5 @@
 class Sequence {
-    static SYMBOLS = ["+","-","×","÷","^","√","ln","!","sin","cos","tan","cot","asin","acos","abs","%","round","ceil","floor"];
+    static SYMBOLS = ["+","-","×","÷","^","√","ln","!","sin","cos","tan","cot","asin","acos","sec","csc","abs","%","round","ceil","floor"];
 
     constructor(expr, useRational = false) {
         // indexing is crucial for toExpr()

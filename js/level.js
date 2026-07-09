@@ -439,7 +439,9 @@ class Level {
 	}
 
 	getHint() {
-		if(this.metaData.hint!==undefined) return this.metaData.hint;
+		const custom_hints = this.metaData?.hint;
+		if (custom_hints) return custom_hints[currentLang] ?? custom_hints.english;
+
 		let hint = "";
 		let factorable = this.metaData.factorable;
 		let needsFrac = this.metaData.needsFrac;

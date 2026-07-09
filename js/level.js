@@ -440,7 +440,10 @@ class Level {
 
 	getHint() {
 		const custom_hints = this.metaData?.hint;
-		if (custom_hints) return custom_hints[currentLang] ?? custom_hints.english;
+		if (custom_hints && typeof custom_hints === 'object') {
+			const selectedHint = custom_hints[currentLang] ?? custom_hints.english;
+			if (typeof selectedHint === 'string') return selectedHint;
+		}
 
 		let hint = "";
 		let factorable = this.metaData.factorable;

@@ -28,7 +28,7 @@ function preload() {
     loadJSON("levelData/puzzleLevelsDiscovery.json", data => { originalPuzzleSets[0] = data; });
     loadJSON("levelData/puzzleLevelsInsight.json", data => { originalPuzzleSets[1] = data; });
     loadJSON("levelData/puzzleLevelsTheory.json", data => { originalPuzzleSets[2] = data; });
-    loadJSON("levelData/puzzleLevelsJavaScript.json", data => { originalPuzzleSets[3] = data; });
+    loadJSON("levelData/puzzleLevelsJavaScriptWeirdness.json", data => { originalPuzzleSets[3] = data; });
     loadJSON("levelData/puzzleLevelsCrazyHard.json", data => { originalPuzzleSets[4] = data; });
 }
 

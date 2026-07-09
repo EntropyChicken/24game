@@ -15,7 +15,7 @@ let battleSetLabels = [
     "Random Easy", "Random Medium", "Random Hard", "Random Tricky", "Random Very Hard",
     "Designed Simple", "Designed Interesting", "Designed Crazy Hard", "Designed Javascript 😭"
 ];
-let battleSetChecked = [true, true, false, false, false, true, false, false, false];
+let battleSetChecked = [true, false, false, false, false, false, false, false, false];
 let battleMasterAwardForNegativeNumber = true;
 let battleMasterAwardForNonInteger = true;
 let battleMasterAwardForNonReal = true;

@@ -1,4 +1,4 @@
-const CACHE_NAME = "24game-cache-v73";
+const CACHE_NAME = "24game-cache-v74";
 const CACHE_FILES = [
     "./", // root directory URL
     "./index.html",

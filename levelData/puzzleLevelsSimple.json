@@ -1,11 +1,11 @@
 [
-    {"cards":[24,24,24,24],"ops":["-","×"],"hint":"Multiply by 0","sols":["24-24×(24-24)"]},
-    {"cards":[8,8,8,8,8],"ops":["-"],"hint":"Subtract negative 16","sols":["8-(8-8-8-8)"]},
-    {"cards":[2,2,2,2,2],"ops":["+","×"],"hint":"The final step is 6×4","sols":["(2+2+2)×2×2"]},
-    {"cards":[4,4,100],"ops":["-","÷"],"hint":"Division is the last step","sols":["(100-4)÷4"]},
-    {"cards":[3,3,3],"ops":["-","^"],"hint":"3 raised to the power of 3 equals 27","sols":["3^3-3"]},
-    {"cards":[1,1,1,1,1,1,1,1],"ops":["+","×","^"],"hint":"2^3 = 8","sols":["(1+1+1)×(1+1)^(1+1+1)"]},
-    {"cards":[0,0,0,0],"ops":["+","!"],"hint":"4! = 24","sols":["(0!+0!+0!+0!)!"]},
-    {"cards":[2026,26],"ops":["%"],"hint":"Congrats to the class of 2026! Oops, I accidentally took the factorial of 2026","sols":["2026%26"]},
-    {"cards":[20,4],"ops":["√","tan","^","acos","ln","sin","!","cos","%","+","cot","asin","abs"],"hint":"Toward the right","sols":["20+4"]}
+    {"cards":[24,24,24,24],"ops":["-","×"],"hint":"Multiply by 0","sols":["24-24×(24-24)"],"tags":["elimination"]},
+    {"cards":[8,8,8,8,8],"ops":["-"],"hint":"Subtract negative 16","sols":["8-(8-8-8-8)"],"tags":[]},
+    {"cards":[2,2,2,2,2],"ops":["+","×"],"hint":"The final step is 6×4","sols":["(2+2+2)×2×2"],"tags":[]},
+    {"cards":[4,4,100],"ops":["-","÷"],"hint":"Division is the last step","sols":["(100-4)÷4"],"tags":[]},
+    {"cards":[2,2,2,100],"ops":["-","÷"],"hint":"The final step is 48÷2","sols":["(100÷2-2)÷2"],"tags":[]},
+    {"cards":[3,3,3],"ops":["-","^"],"hint":"3^3 = 3×3×3 = 27","sols":["3^3-3"],"tags":["exponents"]},
+    {"cards":[2026,26],"ops":["%"],"hint":"Congrats to the class of 2026! Oops, I accidentally took the factorial of 2026","sols":["2026%26"],"tags":["modulo"]},
+    {"cards":[20,4],"ops":["√","tan","^","acos","ln","sin","!","cos","%","+","cot","asin","abs"],"hint":"Toward the right","sols":["20+4"],"tags":[]},
+    {"cards":[1,1,1,1,1,1,1,1],"ops":["+","×","^"],"hint":"2^3 = 8","sols":["(1+1+1)×(1+1)^(1+1+1)"],"tags":["exponents"]}
 ]

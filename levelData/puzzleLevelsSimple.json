@@ -5,7 +5,7 @@
     {"cards":[4,4,100],"ops":["-","÷"],"hint":{"english":"Division is the last step","chinese_simplified":"除法是最后一步","chinese_traditional":"除法是最後一步"},"sols":["(100-4)÷4"],"tags":[]},
     {"cards":[2,2,2,100],"ops":["-","÷"],"hint":{"english":"The final step is 48÷2","chinese_simplified":"最后一步是 48÷2","chinese_traditional":"最後一步是 48÷2"},"sols":["(100÷2-2)÷2"],"tags":[]},
     {"cards":[3,3,3],"ops":["-","^"],"hint":{"english":"3^3 = 3×3×3 = 27","chinese_simplified":"3^3 = 3×3×3 = 27","chinese_traditional":"3^3 = 3×3×3 = 27"},"sols":["3^3-3"],"tags":["exponents"]},
-    {"cards":[2026,26],"ops":["%"],"hint":{"english":"Congrats to the class of 2026! Oops, I accidentally took the factorial of 2026","chinese_simplified":"祝贺2026届毕业生！哎呀，我不小心算成了2026的阶乘","chinese_traditional":"祝賀2026屆畢業生！哎呀，我不小心算成了2026的階乘"},"sols":["2026%26"],"tags":["modulo"]},
+    {"cards":[2026,26],"ops":["%"],"hint":{"english":"Congrats to the class of 2026! Oops, I accidentally took the factorial of 2026. Congrats to the class of 2026","chinese_simplified":"猜猜我是哪一年高中毕业的？2026！哎呀，我不小心算成了2026的阶乘。恭喜2026届毕业生！","chinese_traditional":"猜猜我是哪一年高中畢業的？2026！哎呀，我不小心算成了2026的階乘。恭喜2026屆畢業生！"},"sols":["2026%26"],"tags":["modulo"]},
     {"cards":[20,4],"ops":["√","tan","^","acos","ln","sin","!","cos","%","+","cot","asin","abs"],"hint":{"english":"Toward the right","chinese_simplified":"向右看齐","chinese_traditional":"向右看齊"},"sols":["20+4"],"tags":[]},
     {"cards":[1,1,1,1,1,1,1,1],"ops":["+","×","^"],"hint":{"english":"2^3 = 8","chinese_simplified":"凑出 2^3 = 8","chinese_traditional":"湊出 2^3 = 8"},"sols":["(1+1+1)×(1+1)^(1+1+1)"],"tags":["exponents"]}
 ]

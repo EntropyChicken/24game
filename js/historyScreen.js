@@ -26,7 +26,7 @@ class HistoryScreen {
 			label: "Home",
 			style: {
 				r: 10,
-				onHoverMovement: -0.004
+				onHoverMovement: 0.004
 			},
 			getText: () => TRANSLATIONS[currentLang].level.homeButton,
 			onClick: () => { setScreen("title"); }
@@ -101,8 +101,11 @@ class HistoryScreen {
 
 		this.totalPages = Math.max(1, Math.ceil(allRecent.length / this.pageSize));
 		// clamp in case wins changed (or shrank) while the screen was open
-		if (this.currentPage > this.totalPages - 1) this.currentPage = this.totalPages - 1;
-		if (this.currentPage < 0) this.currentPage = 0;
+		this.currentPage = constrain(this.currentPage,0,this.totalPages-1);
+        this.nextButton.style.transparent = (this.currentPage === this.totalPages-1);
+        this.nextButton.style.onHoverMovement = (this.currentPage === this.totalPages-1) ? 0 : 0.0045;
+        this.prevButton.style.transparent = (this.currentPage === 0);
+        this.prevButton.style.onHoverMovement = (this.currentPage === 0) ? 0 : 0.0045;
 
 		const start = this.currentPage * this.pageSize;
 		const pageItems = allRecent.slice(start, start + this.pageSize);

@@ -103,7 +103,7 @@ class Rational {
             return `${this.numerator}/${this.denominator}`;
         }
         if (isNaN(this.numerator) || isNaN(this.denominator)) {
-            return "🤯⁉️";
+            return "🤯❓";
         }
         let txt = "";
         if (this.denominator === 1) {

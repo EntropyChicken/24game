@@ -383,7 +383,7 @@ class Complex {
             fill(0,100,0);
         }
         else if(isNaN(this.real)||isNaN(this.imag)){
-            txt = "🤯⁉️"; // interrobang messes up text positioning on some devices
+            txt = "🤯❓"; // interrobang messes up text positioning on some devices
         }
         else if(this.equals(new Complex(Math.PI),DISPLAY_THRESHOLD)){
             txt = "π";

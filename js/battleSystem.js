@@ -71,7 +71,7 @@ async function setupRealtime() {
     channel
         .on("broadcast", { event: "win" }, (msg) => {
             gameCount = msg.payload.gameCount;
-            gameCountDrawScale = 2.2; // this is just, in general. for the game count
+            gameCountDrawScale = 2.15; // this is just, in general. for the game count
         })
         .on("broadcast", { event: "battle_win", filter: {} }, (msg) => {
             let winningTeam = msg.payload.team;

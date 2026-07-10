@@ -231,7 +231,7 @@ class TitleScreen {
                         text(TRANSLATIONS[currentLang].titleScreen.gameCountLowerText, width - 15 + x, height - 15 + y * 0.8);
                         let w = textWidth(" games");
                         textSize(s * (gameCountDrawScale + 0.2));
-                        text(gameCount, width - 15 - w + x + (gameCountDrawScale-1)*5, height - s - 15 + y * 0.8 + (gameCountDrawScale-1)*5);
+                        text(gameCount, width - 15 - w + x + (gameCountDrawScale-1)*4, height - s - 12 + y * 0.8 + (gameCountDrawScale-1)*8);
                     }
                 } else {
                     let s = constrain(width * 0.035, 27, 35);

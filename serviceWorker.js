@@ -39,50 +39,42 @@ const CACHE_FILES = [
 ];
 
 self.addEventListener("install", (event) => {
-    self.skipWaiting();
     event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            // Removing the individual .catch() forces Promise.all to reject 
-            // if ANY file returns a 404. This ensures offline mode is complete.
-            return cache.addAll(CACHE_FILES); 
-        })
+        caches.open(CACHE_NAME)
+            .then((cache) => cache.addAll(CACHE_FILES))
+            .then(() => self.skipWaiting())
     );
 });
 
 self.addEventListener("fetch", (event) => {
+    if (event.request.method !== 'GET') return;
+
     event.respondWith(
-        caches.open(CACHE_NAME).then((cache) => {
-            return cache.match(event.request).then((response) => {
-                if (response) {
-                    return response;
-                }
-                if (event.request.mode === 'navigate') {
-                    return cache.match("./index.html");
-                }
-                return fetch(event.request).catch(() => {
-                    if (event.request.mode === 'navigate') {
-                        return new Response("Offline", { status: 503, statusText: "Offline" });
-                    }
-                    return new Response(null, { status: 404 });
-                });
-            });
+        caches.match(event.request).then((response) => {
+            if (response) {
+                return response;
+            }
+            if (event.request.mode === 'navigate') {
+                return caches.match("./index.html");
+            }
+            return fetch(event.request).catch(() => new Response(null, { status: 404 }));
         })
     );
 });
 
-self.addEventListener('activate', event => {
+self.addEventListener('activate', (event) => {
     event.waitUntil(
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames.map(name => {
-                    if (name !== CACHE_NAME) {
-                        return caches.delete(name);
-                    }
-                })
-            );
-        }).then(() => {
-            // Forces the new service worker to take control of the current tab immediately
-            return self.clients.claim(); 
-        })
+        caches.keys()
+            .then((cacheNames) => Promise.all(
+                cacheNames
+                    .filter((name) => name !== CACHE_NAME)
+                    .map((name) => caches.delete(name))
+            ))
+            .then(() => self.clients.claim())
+            .then(() => self.clients.matchAll({ type: 'window' }))
+            .then((clients) => {
+                // tell every open tab a new version just took over
+                clients.forEach((client) => client.postMessage({ type: 'NEW_VERSION_ACTIVATED' }));
+            })
     );
 });

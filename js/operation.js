@@ -91,7 +91,7 @@ class Operation {
 				bId:id1
 			});
 		}
-		console.log(this.watcherSequence.toExpr());
+		// console.log(this.watcherSequence.toExpr());
 		return this.fn(a, b);
 	}
 }

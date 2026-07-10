@@ -3,8 +3,8 @@ class TitleScreen {
         this.showBattleButton = false;
         this.boxes = [];
         this.boxW = min(220, width * 0.35);
-        this.boxH = min(80, height * 0.1);
-        this.marginY = min(16, height * 0.016);
+        this.boxH = min(80, height * 0.09);
+        this.marginY = 2; // min(16, height * 0.016);
         this.bubbleBox = new BubbleBox(0,0,width,height,20,0);
         this.duelMode = false;
         
@@ -36,7 +36,7 @@ class TitleScreen {
             });
         }
 
-        this.gap = 13;
+        this.gap = 2; // 13;
         this.btnSumW = this.boxW * 1.2 + this.gap;
         this.btnStartX = width / 2 - this.btnSumW / 2;
         this.btnY = height * 0.2;
@@ -87,13 +87,13 @@ class TitleScreen {
                     this.showBattleButton = false;
                     isOnlineSession = false;
                 }
-            } 
+            }
         });
 
         let langBtnW = min(100, width * 0.13); 
         let langBtnH = 30;
         let padding = 12;
-        let langGap = 10;
+        let langGap = 2; // 10;
 
         let englishGetText, traditionalChineseGetText, simplifiedChineseGetText;
         if(langBtnW<60){
@@ -259,7 +259,7 @@ class TitleScreen {
     drawBoxes() { // distinct from Level boxes, which are for the number cards
         for (let b of this.boxes) {
             if (mx > b.x && mx < b.x + b.w && my > b.y && my < b.y + b.h) {
-                b.drawOffset += height * (b.isClassic ? 0.007 : -0.007);
+                b.drawOffset += constrain((width*0.7-this.boxW)*0.025,1,5) * (b.isClassic ? 1 : -1);
             }
 
             push();

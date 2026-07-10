@@ -670,6 +670,9 @@ function touchStarted() {
             }
         }
     }
+    if (screen === "history") {
+        return true; // for the html boxes
+    }
     return false;
 }
 

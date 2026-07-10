@@ -31,6 +31,8 @@ const TRANSLATIONS = {
             copyButton: "copy",
             copyButtonSucceeded: "copied!",
             copyButtonFailed: "failed",
+            clearButton: "Delete all data",
+            warningText: "Are you sure you want to clear your win history? This action is permanent and cannot be undone.",
             getWinsText: (val) => val === 1 ? "win" : "wins"
         },
     },
@@ -66,6 +68,8 @@ const TRANSLATIONS = {
             copyButton: "复制",
             copyButtonSucceeded: "已复制！",
             copyButtonFailed: "失败",
+            clearButton: "删除所有数据",
+            warningText: "您确定要清除您的获胜历史记录吗？此操作是永久性的，且无法撤销。",
             getWinsText: (val) => " 次获胜"
         }
     },
@@ -101,6 +105,8 @@ const TRANSLATIONS = {
             copyButton: "複製",
             copyButtonSucceeded: "已複製！",
             copyButtonFailed: "失敗",
+            clearButton: "刪除所有資料",
+            warningText: "您確定要清除您的獲勝歷史紀錄嗎？此操作是永久性的，且無法撤銷。",
             getWinsText: (val) => " 次獲勝"
         }
     }

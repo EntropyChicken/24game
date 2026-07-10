@@ -20,6 +20,9 @@ This mode does not require internet connection. Caching makes single-player and 
 Play against other teams, quickly completing side quests like dividing by zero in order to boost your teammates' scores.
 This mode is player-hosted, so one player in the match acts as the host.
 
+### Language Support
+English, Traditional Chinese, and Simplified Chinese
+
 ---
 
 ## Traditional "24 Puzzle" vs. make24.org

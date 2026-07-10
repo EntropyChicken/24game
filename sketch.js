@@ -57,7 +57,7 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
     
     teamInput = createInput('');
-    teamInput.attribute('placeholder', 'Type custom team name...');
+    teamInput.attribute('placeholder', TRANSLATIONS[currentLang].battleScreen.teamSelection.inputBox);
     teamInput.style('font-size', '20px');
     teamInput.style('padding', '10px');
     teamInput.style('border-radius', '8px');

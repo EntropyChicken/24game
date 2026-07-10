@@ -396,7 +396,7 @@ function drawBattleTeamSelection(){
     noStroke();
     textSize(baseTextSize);
     textAlign(CENTER,CENTER);
-    text("Create or\nChoose Team", 0, -5);
+    text(TRANSLATIONS[currentLang].battleScreen.teamSelection.instructions, 0, -5);
     
     for (let i = 0; i < battleTeams.length; i++) {
         push();
@@ -445,7 +445,7 @@ function drawBattleTeamSelection(){
     fill(255);
     textSize(22);
     textAlign(CENTER, CENTER);
-    text("JOIN", btnX + btnW / 2, btnY + btnH / 2);
+    text(TRANSLATIONS[currentLang].battleScreen.teamSelection.join, btnX + btnW / 2, btnY + btnH / 2);
 }
 
 function handleTeamSubmit() {
@@ -467,7 +467,7 @@ function setBattleTeam(team){
     textAlign(CENTER,CENTER);
     textSize(30);
     fill(255);
-    text("Team: "+team+"\n...waiting to receive puzzle...", width / 2, height / 2);
+    text(TRANSLATIONS[currentLang].battleScreen.waitingRoom.team+team+"\n"+TRANSLATIONS[currentLang].battleScreen.waitingRoom.waiting, width / 2, height / 2);
     pop();
 
     channel.send({
@@ -485,7 +485,6 @@ function setBattleTeam(team){
 
 function drawBattleBackground(scaleFactor=1.0003, iterations=3, fadeFreq=0.1, col) {
     background(lerpColor(lerpColor(color(140),color(255),battleLossFlash),theme.backgroundColorCorrect,min(1,battleVictoryFlash)));
-    theme.shadeColor = lerpColor(lerpColor(color(190),color(255),battleLossFlash),theme.backgroundColorCorrect,min(1,battleVictoryFlash));
     battleVictoryFlash*=0.9;
     battleLossFlash*=0.95;
 }

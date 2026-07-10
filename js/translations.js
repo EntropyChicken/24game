@@ -20,7 +20,7 @@ const TRANSLATIONS = {
             solutionButton:"Solution",
             getPointsText: (val) => val === 1 ? " point" : " points"
         },
-        history:{
+        historyScreen:{
             screenToMode:{
                 game:"solo",
                 duel:"two-player",
@@ -35,6 +35,17 @@ const TRANSLATIONS = {
             warningText: "Are you sure you want to clear your win history? This action is permanent and cannot be undone.",
             getWinsText: (val) => val === 1 ? "win" : "wins"
         },
+        battleScreen: {
+            teamSelection: {
+                instructions: "Create or\nChoose Team",
+                inputBox: "Type custom team name...",
+                join: "Join",
+            },
+            waitingRoom:{
+                team: "Team: ",
+                waiting: "...waiting to receive puzzle..."
+            }
+        }
     },
     chinese_simplified: {
         titleScreen:{
@@ -57,7 +68,7 @@ const TRANSLATIONS = {
             solutionButton: "解法",
             getPointsText: (val) => " 分"
         },
-        history: {
+        historyScreen: {
             screenToMode: {
                 game: "单人模式",
                 duel: "双人模式",
@@ -71,6 +82,17 @@ const TRANSLATIONS = {
             clearButton: "删除所有数据",
             warningText: "您确定要清除您的获胜历史记录吗？此操作是永久性的，且无法撤销。",
             getWinsText: (val) => " 次获胜"
+        },
+        battleScreen: {
+            teamSelection: {
+                instructions: "创建或\n选择队伍",
+                inputBox: "输入自定义队伍名称...",
+                join: "加入",
+            },
+            waitingRoom:{
+                team: "队伍: ",
+                waiting: "...正在等待接收谜题..."
+            }
         }
     },
     chinese_traditional: {
@@ -94,7 +116,7 @@ const TRANSLATIONS = {
             solutionButton: "解法",
             getPointsText: (val) => " 分"
         },
-        history: {
+        historyScreen: {
             screenToMode: {
                 game: "單人模式",
                 duel: "雙人模式",
@@ -108,6 +130,17 @@ const TRANSLATIONS = {
             clearButton: "刪除所有資料",
             warningText: "您確定要清除您的獲勝歷史紀錄嗎？此操作是永久性的，且無法撤銷。",
             getWinsText: (val) => " 次獲勝"
+        },
+        battleScreen: {
+            teamSelection: {
+                instructions: "建立或\n選擇隊伍",
+                inputBox: "輸入自訂隊伍名稱...",
+                join: "加入",
+            },
+            waitingRoom:{
+                team: "隊伍: ",
+                waiting: "...正在等待接收謎題..."
+            }
         }
     }
 };

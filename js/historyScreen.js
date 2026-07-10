@@ -46,7 +46,7 @@ class HistoryScreen {
 				onHoverMovement: 0.003
 			},
 			getText: () => {
-				return TRANSLATIONS[currentLang].history.clearButton;
+				return TRANSLATIONS[currentLang].historyScreen.clearButton;
 			},
 			onClick: () => this.handleClearHistory()
 		});
@@ -63,7 +63,7 @@ class HistoryScreen {
 				r: 10,
 				onHoverMovement: -0.003
 			},
-			getText: () => TRANSLATIONS[currentLang].history.nextButton,
+			getText: () => TRANSLATIONS[currentLang].historyScreen.nextButton,
 			onClick: () => this.goToNextPage()
 		});
 
@@ -74,7 +74,7 @@ class HistoryScreen {
 				r: 10,
 				onHoverMovement: -0.003
 			},
-			getText: () => TRANSLATIONS[currentLang].history.prevButton,
+			getText: () => TRANSLATIONS[currentLang].historyScreen.prevButton,
 			onClick: () => this.goToPrevPage()
 		});
 
@@ -114,7 +114,7 @@ class HistoryScreen {
 
 	// Trigger confirmation prompt and wipe data if confirmed
 	handleClearHistory() {
-		if (confirm(TRANSLATIONS[currentLang].history.warningText)) {
+		if (confirm(TRANSLATIONS[currentLang].historyScreen.warningText)) {
 			localStorage.removeItem('winHistory');
 			this.currentPage = 0;
 			this.refresh();
@@ -152,7 +152,7 @@ class HistoryScreen {
 
 		let html = pageItems.map((win, i) => {
 			let dateStr = new Date(win.timestamp).toLocaleString();
-			let modeLabel = TRANSLATIONS[currentLang].history.screenToMode[win.screen] ?? win.screen;
+			let modeLabel = TRANSLATIONS[currentLang].historyScreen.screenToMode[win.screen] ?? win.screen;
 			let p1 = escapeHtml(`${dateStr} (${modeLabel}${win.hintUsed ? ' with hint' : ''})`);
 			let p2 = escapeHtml(`[${win.originalValues.join(', ')}] ${win.opSymbols.join('')} `);
 			let metaHtml = `${p1}<br>${p2}`;
@@ -161,11 +161,11 @@ class HistoryScreen {
 				<div>
 					<div style="${rowStyle}">
 						<div class="win-box" data-copy-idx="${i}-meta" style="${boxStyle}">${metaHtml}</div>
-						<button class="win-copy-btn" data-copy-target="${i}-meta" style="${copyBtnStyle}">${TRANSLATIONS[currentLang].history.copyButton}</button>
+						<button class="win-copy-btn" data-copy-target="${i}-meta" style="${copyBtnStyle}">${TRANSLATIONS[currentLang].historyScreen.copyButton}</button>
 					</div>
 					<div style="${rowStyle} margin-left: 40px; width: calc(100% - 40px);">
 						<div class="win-box" data-copy-idx="${i}-sol" style="${boxStyle}">${escapeHtml(win.solution)}</div>
-						<button class="win-copy-btn" data-copy-target="${i}-sol" style="${copyBtnStyle}">${TRANSLATIONS[currentLang].history.copyButton}</button>
+						<button class="win-copy-btn" data-copy-target="${i}-sol" style="${copyBtnStyle}">${TRANSLATIONS[currentLang].historyScreen.copyButton}</button>
 					</div>
 				</div>
 			`;
@@ -186,11 +186,11 @@ class HistoryScreen {
 			btn.addEventListener('click', () => {
 				const text = textByIdx[btn.dataset.copyTarget] || '';
 				navigator.clipboard.writeText(text).then(() => {
-					btn.textContent = TRANSLATIONS[currentLang].history.copyButtonSucceeded;
-					setTimeout(() => { btn.textContent = TRANSLATIONS[currentLang].history.copyButton; }, 1200);
+					btn.textContent = TRANSLATIONS[currentLang].historyScreen.copyButtonSucceeded;
+					setTimeout(() => { btn.textContent = TRANSLATIONS[currentLang].historyScreen.copyButton; }, 1200);
 				}).catch(() => {
-					btn.textContent = TRANSLATIONS[currentLang].history.copyButtonFailed;
-					setTimeout(() => { btn.textContent = TRANSLATIONS[currentLang].history.copyButton; }, 1200);
+					btn.textContent = TRANSLATIONS[currentLang].historyScreen.copyButtonFailed;
+					setTimeout(() => { btn.textContent = TRANSLATIONS[currentLang].historyScreen.copyButton; }, 1200);
 				});
 			});
 		});
@@ -206,7 +206,7 @@ class HistoryScreen {
 
 	getNavGapText() {
 		textSize(constrain(width*0.04,16,24));
-		return `${min(this.wins.length,(this.currentPage + 1)*this.pageSize)}/${this.wins.length}\n${TRANSLATIONS[currentLang].history.getWinsText()}`;
+		return `${min(this.wins.length,(this.currentPage + 1)*this.pageSize)}/${this.wins.length}\n${TRANSLATIONS[currentLang].historyScreen.getWinsText()}`;
 	}
 
 	draw() {

@@ -46,7 +46,11 @@ class Level {
 		this.undoButton = new Button({
 			x: this.width * 0.05, y: this.height * 0.77, w: this.width * 0.22, h: this.height * 0.18,
 			label: "Undo",
-			style: { r: 10, transparentOnWin: true },
+			style: {
+				r: 10,
+				onHoverMovement: -0.004,
+				transparentOnWin: true
+			},
 			getText: () => TRANSLATIONS[currentLang].level.undoButton,
 			onClick: () => {
 				if(this.history.length){
@@ -59,28 +63,54 @@ class Level {
 		this.hintButton = new Button({
 			x: this.width * 0.45, y: this.height * 0.77, w: this.width * 0.3, h: this.height * 0.18,
 			label: "Hint",
-			style: { r: 10, transparentOnWin: true },
+			style: {
+				r: 10,
+				onHoverMovement: -0.004,
+				transparentOnWin: true
+			},
 			getText: () => this.hintButton.state.showHint ? this.getHint() : TRANSLATIONS[currentLang].level.hintButton,
 			onClick: () => {
 				this.hintButton.state.showHint = !this.hintButton.state.showHint;
 				if (this.hintButton.state.showHint) {
 					this.hintUsed = true; // remember for good, even if the hint is toggled back off
+					// Apply active theme colors
+					this.hintButton.style.mainColor = theme.selectedColor;
+					this.hintButton.style.shadeColor = theme.shadeColorCorrect;
+				} else {
+					// Clear custom colors to trigger button.js default fallbacks
+					this.hintButton.style.mainColor = undefined;
+					this.hintButton.style.shadeColor = undefined;
 				}
 			}
 		});
 		this.solutionButton = new Button({
 			x: this.hintButton.x+this.hintButton.w+2, y: this.height * 0.77, w: this.width * 0.2, h: this.height * 0.18,
 			label: "Solution",
-			style: { r: 10, transparentOnWin: true },
+			style: {
+				r: 10,
+				onHoverMovement: -0.004,
+				transparentOnWin: true
+			},
 			getText: () => this.solutionButton.state.showSolution ? (this.metaData.sols ? this.metaData.sols[0] : "Sorry, no solution 💀😭 Code is bugged") : (TRANSLATIONS[currentLang].level.solutionButton),
-			onClick: () => { this.solutionButton.state.showSolution = !this.solutionButton.state.showSolution; }
+			onClick: () => { 
+				this.solutionButton.state.showSolution = !this.solutionButton.state.showSolution; 
+				if (this.solutionButton.state.showSolution) {
+					// Apply active theme colors
+					this.solutionButton.style.mainColor = theme.selectedColor;
+					this.solutionButton.style.shadeColor = theme.shadeColorCorrect;
+				} else {
+					// Clear custom colors to trigger button.js default fallbacks
+					this.solutionButton.style.mainColor = undefined;
+					this.solutionButton.style.shadeColor = undefined;
+				}
+			}
 		});
 		this.homeButton = new Button({
 			x: this.width * 0.05, y: this.height * 0.05, w: max(60, this.width * 0.1), h: this.height * 0.1,
 			label: "Home",
 			style: {
 				r: 10,
-				onHoverMovement: -0.004,
+				onHoverMovement: 0.004,
 				transparentOnWin: true
 			},
 			getText: () => TRANSLATIONS[currentLang].level.homeButton,
@@ -91,7 +121,7 @@ class Level {
 			label: "Skip",
 			style: {
 				r: 10,
-				onHoverMovement: -0.004,
+				onHoverMovement: 0.004,
 				transparentOnWin: true
 			},
 			getText: () => TRANSLATIONS[currentLang].level.skipButton,

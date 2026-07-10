@@ -26,6 +26,12 @@ const TRANSLATIONS = {
                 duel:"two-player",
                 battle:"team battle"
             },
+            prevButton: "prev",
+            nextButton: "next",
+            copyButton: "copy",
+            copyButtonSucceeded: "copied!",
+            copyButtonFailed: "failed",
+            getWinsText: (val) => val === 1 ? " win" : " wins"
         },
     },
     chinese_simplified: {
@@ -48,6 +54,19 @@ const TRANSLATIONS = {
             hintButton: "提示",
             solutionButton: "解法",
             getPointsText: (val) => " 分"
+        },
+        history: {
+            screenToMode: {
+                game: "单人模式",
+                duel: "双人模式",
+                battle: "团队战"
+            },
+            prevButton: "上一页",
+            nextButton: "下一页",
+            copyButton: "复制",
+            copyButtonSucceeded: "已复制！",
+            copyButtonFailed: "失败",
+            getWinsText: (val) => " 次获胜"
         }
     },
     chinese_traditional: {
@@ -70,6 +89,19 @@ const TRANSLATIONS = {
             hintButton: "提示",
             solutionButton: "解法",
             getPointsText: (val) => " 分"
+        },
+        history: {
+            screenToMode: {
+                game: "單人模式",
+                duel: "雙人模式",
+                battle: "團隊戰"
+            },
+            prevButton: "上一頁",
+            nextButton: "下一頁",
+            copyButton: "複製",
+            copyButtonSucceeded: "已複製！",
+            copyButtonFailed: "失敗",
+            getWinsText: (val) => " 次獲勝"
         }
     }
 };

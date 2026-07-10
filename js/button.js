@@ -10,6 +10,8 @@ function drawShadedButton(x, y, w, h, r = 8, shadeColor = theme.shadeColor, main
 	// or no round bottoms: rect(x, y, w, h * (1 - shadeHeightFrac), r, r, 0, 0);
 	rect(x, y, w, h - min(16,h*shadeHeightFrac), r);
 }
+
+// function used by Button and also informal "box" thingies like in Level
 function drawTextInBox(txt, x, y, w, h, maxFontSize = height * 0.045, minFontSize = 20, textColor = color(0,0,0)) {
 	fill(textColor); noStroke();
 	textAlign(CENTER, CENTER);

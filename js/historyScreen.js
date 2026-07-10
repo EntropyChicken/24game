@@ -9,7 +9,7 @@ class HistoryScreen {
 		this.container.style('font-family', 'Arial, sans-serif');
 		this.container.hide();
 
-		this.pageSize = 6;      // wins per page
+		this.pageSize = 5;      // wins per page
 		this.currentPage = 0;    // 0-indexed
 		this.totalPages = 1;
 
@@ -46,7 +46,7 @@ class HistoryScreen {
 				r: 10,
 				onHoverMovement: -0.004
 			},
-			getText: () => TRANSLATIONS[currentLang]?.history?.nextButton ?? "Next",
+			getText: () => TRANSLATIONS[currentLang].history.nextButton,
 			onClick: () => this.goToNextPage()
 		});
 
@@ -57,7 +57,7 @@ class HistoryScreen {
 				r: 10,
 				onHoverMovement: -0.004
 			},
-			getText: () => TRANSLATIONS[currentLang]?.history?.prevButton ?? "Prev",
+			getText: () => TRANSLATIONS[currentLang].history.prevButton,
 			onClick: () => this.goToPrevPage()
 		});
 
@@ -96,8 +96,8 @@ class HistoryScreen {
 
 	// rebuilds the win-history HTML from localStorage, for the current page only
 	refresh() {
-		let victories = JSON.parse(localStorage.getItem('winHistory')) || [];
-		let allRecent = victories.slice().reverse(); // most recent first, full list
+		this.wins = JSON.parse(localStorage.getItem('winHistory')) || [];
+		let allRecent = this.wins.slice().reverse(); // most recent first, full list
 
 		this.totalPages = Math.max(1, Math.ceil(allRecent.length / this.pageSize));
 		// clamp in case wins changed (or shrank) while the screen was open
@@ -127,31 +127,27 @@ class HistoryScreen {
 		`;
 
 		let html = pageItems.map((win, i) => {
-        let dateStr = new Date(win.timestamp).toLocaleString();
-        let modeLabel = TRANSLATIONS[currentLang].history.screenToMode[win.screen] ?? win.screen;
-        
-        // 1. Escape each piece of text individually
-        let p1 = escapeHtml(`${dateStr} (${modeLabel}${win.hintUsed ? ' (hint used)' : ''})`);
-        let p2 = escapeHtml(`[${win.originalValues.join(', ')}] ${win.opSymbols.join('')} `);
+			let dateStr = new Date(win.timestamp).toLocaleString();
+			let modeLabel = TRANSLATIONS[currentLang].history.screenToMode[win.screen] ?? win.screen;
+			let p1 = escapeHtml(`${dateStr} (${modeLabel}${win.hintUsed ? ' with hint' : ''})`);
+			let p2 = escapeHtml(`[${win.originalValues.join(', ')}] ${win.opSymbols.join('')} `);
+			let metaHtml = `${p1}<br>${p2}`;
 
-        // 2. Join them with HTML line break tags
-        let metaHtml = `${p1}<br>${p2}`;
+			return `
+				<div>
+					<div style="${rowStyle}">
+						<div class="win-box" data-copy-idx="${i}-meta" style="${boxStyle}">${metaHtml}</div>
+						<button class="win-copy-btn" data-copy-target="${i}-meta" style="${copyBtnStyle}">${TRANSLATIONS[currentLang].history.copyButton}</button>
+					</div>
+					<div style="${rowStyle} margin-left: 40px; width: calc(100% - 40px);">
+						<div class="win-box" data-copy-idx="${i}-sol" style="${boxStyle}">${escapeHtml(win.solution)}</div>
+						<button class="win-copy-btn" data-copy-target="${i}-sol" style="${copyBtnStyle}">${TRANSLATIONS[currentLang].history.copyButton}</button>
+					</div>
+				</div>
+			`;
+		});
 
-        return `
-            <div>
-                <div style="${rowStyle}">
-                    <div class="win-box" data-copy-idx="${i}-meta" style="${boxStyle}">${metaHtml}</div>
-                    <button class="win-copy-btn" data-copy-target="${i}-meta" style="${copyBtnStyle}">Copy</button>
-                </div>
-                <div style="${rowStyle} margin-left: 40px; width: calc(100% - 40px);">
-                    <div class="win-box" data-copy-idx="${i}-sol" style="${boxStyle}">${escapeHtml(win.solution)}</div>
-                    <button class="win-copy-btn" data-copy-target="${i}-sol" style="${copyBtnStyle}">Copy</button>
-                </div>
-            </div>
-        `;
-    }).join('');
-
-		this.container.html(html || '<div style="color:white;">No wins yet... Go make some 24s!</div>');
+		this.container.html(html.join('') || '<div style="color:white;">No wins yet... go make some 24s!</div>');
 		this.wireCopyButtons();
 	}
 
@@ -166,12 +162,11 @@ class HistoryScreen {
 			btn.addEventListener('click', () => {
 				const text = textByIdx[btn.dataset.copyTarget] || '';
 				navigator.clipboard.writeText(text).then(() => {
-					const original = btn.textContent;
-					btn.textContent = 'Copied!';
-					setTimeout(() => { btn.textContent = original; }, 1200);
+					btn.textContent = btn.textContent = TRANSLATIONS[this.currentLang].history.copyButtonSucceeded;
+					setTimeout(() => { btn.textContent = TRANSLATIONS[this.currentLang].history.copyButton; }, 1200);
 				}).catch(() => {
-					btn.textContent = 'Failed';
-					setTimeout(() => { btn.textContent = 'Copy'; }, 1200);
+					btn.textContent = btn.textContent = TRANSLATIONS[this.currentLang].history.copyButtonFailed;
+					setTimeout(() => { btn.textContent = TRANSLATIONS[this.currentLang].history.copyButton; }, 1200);
 				});
 			});
 		});
@@ -196,6 +191,15 @@ class HistoryScreen {
 		let midX = (this.prevButton.x + this.prevButton.w + this.nextButton.x) / 2;
 		let midY = this.prevButton.y + this.prevButton.h / 2;
 		text(`${this.currentPage + 1} / ${this.totalPages}`, midX, midY);
+		pop();
+
+		// big win count
+		push();
+		textAlign(CENTER, CENTER);
+		textSize(50);
+		fill(0);
+		noStroke();
+		text(this.wins.length+TRANSLATIONS[currentLang].history.getWinsText(), width/2, midY);
 		pop();
 	}
 

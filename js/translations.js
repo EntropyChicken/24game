@@ -4,7 +4,7 @@ const TRANSLATIONS = {
             mainTitle: "Make 24",
             randomSetSection: "Random",
             designedSetSection: "Designed",
-            duelButton: "Two-Player\nMode",
+            duelButton: "Two-Player\nMode\n",
             battleButton: "Team\nBattle",
             randomSets: ["Easy", "Medium", "Hard", "Tricky", "Very Hard"],
             designedSets: ["Discovery", "Insight", "Theory", "JavaScript", "Crazy Hard"],

@@ -56,14 +56,14 @@ class Level {
 			}
 		});
 		this.hintButton = new Button({
-			x: this.width * 0.43, y: this.height * 0.77, w: this.width * 0.3, h: this.height * 0.18,
+			x: this.width * 0.45, y: this.height * 0.77, w: this.width * 0.3, h: this.height * 0.18,
 			label: "Hint",
 			style: { r: 10, transparentOnWin: true },
 			getText: () => this.hintButton.state.showHint ? this.getHint() : TRANSLATIONS[currentLang].level.hintButton,
 			onClick: () => { this.hintButton.state.showHint = !this.hintButton.state.showHint; }
 		});
 		this.solutionButton = new Button({
-			x: this.width * 0.75, y: this.height * 0.77, w: this.width * 0.2, h: this.height * 0.18,
+			x: this.hintButton.x+this.hintButton.w+2, y: this.height * 0.77, w: this.width * 0.2, h: this.height * 0.18,
 			label: "Solution",
 			style: { r: 10, transparentOnWin: true },
 			getText: () => this.solutionButton.state.showSolution ? (this.metaData.sols ? this.metaData.sols[0] : "Sorry, no solution 💀😭 Code is bugged") : (TRANSLATIONS[currentLang].level.solutionButton),
@@ -81,7 +81,7 @@ class Level {
 			onClick: () => { setScreen("title"); }
 		});
 		this.skipButton = new Button({
-			x: max(this.width * 0.17, this.homeButton.x+this.homeButton.w+this.width*0.02), y: this.height * 0.05, w: max(60, this.width * 0.1), h: this.height * 0.1,
+			x: this.homeButton.x+this.homeButton.w+2, y: this.height * 0.05, w: max(60, this.width * 0.1), h: this.height * 0.1,
 			label: "Skip",
 			style: {
 				r: 10,

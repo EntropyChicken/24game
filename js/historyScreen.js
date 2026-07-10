@@ -153,8 +153,8 @@ class HistoryScreen {
 		let html = pageItems.map((win, i) => {
 			let dateStr = new Date(win.timestamp).toLocaleString();
 			let modeLabel = TRANSLATIONS[currentLang].historyScreen.screenToMode[win.screen] ?? win.screen;
-			let p1 = escapeHtml(`${dateStr} (${modeLabel}${win.hintUsed ? ' with hint' : ''})`);
-			let p2 = escapeHtml(`[${win.originalValues.join(', ')}] ${win.opSymbols.join('')} `);
+			let p1 = escapeHtml(`${dateStr} (${modeLabel}${win.hintUsed ? ' with hint' : ''}) `);
+			let p2 = escapeHtml(`[${win.originalValues.join(', ')}] [${win.opSymbols.join(', ')}] `);
 			let metaHtml = `${p1}<br>${p2}`;
 
 			return `

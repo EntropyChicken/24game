@@ -25,6 +25,7 @@ class Level {
 		this.winTimer = 0;
 		this.solved = false; // for external use (to make a new Level after 24 is made and the win timer has finished)
 		this.useRational = useRational;
+		this.hintUsed = false; // becomes true forever once the hint has been revealed at least once
 
 		this.watcherSequence = new Sequence(undefined, useRational);
 		this.sourceIdOfPos = numbers.map(n => -1);
@@ -60,7 +61,12 @@ class Level {
 			label: "Hint",
 			style: { r: 10, transparentOnWin: true },
 			getText: () => this.hintButton.state.showHint ? this.getHint() : TRANSLATIONS[currentLang].level.hintButton,
-			onClick: () => { this.hintButton.state.showHint = !this.hintButton.state.showHint; }
+			onClick: () => {
+				this.hintButton.state.showHint = !this.hintButton.state.showHint;
+				if (this.hintButton.state.showHint) {
+					this.hintUsed = true; // remember for good, even if the hint is toggled back off
+				}
+			}
 		});
 		this.solutionButton = new Button({
 			x: this.hintButton.x+this.hintButton.w+2, y: this.height * 0.77, w: this.width * 0.2, h: this.height * 0.18,
@@ -215,9 +221,10 @@ class Level {
 		}
 
 		
-		if (this.winTimer === 0 && this.boxes.length === 1 && this.boxes[0].value.equals24()) {
+		if (this.winTimer === 0 && this.boxes.length === 1 && this.boxes[0].value.equals24()) { // MOMENT OF WIN
 			this.winTimer = Level.WIN_TIMER_START;
-			incrementGameCounter(); // backend global counter (only happens once per win)
+			this.recordWinToLocalStorage();
+			incrementGameCounter();
 			setThemeColor(theme.backgroundColorCorrect);
 		}
 		if (this.winTimer > 0) {
@@ -280,7 +287,7 @@ class Level {
 
 
 			stroke(100,93,85); strokeWeight(3);
-			drawShadedButton(b.x,b.y,b.w,b.h,15,this.firstIndex===i ? theme.shadeColorCorrect : theme.shadeColor,this.firstIndex===i ? color(225,255,180) : color(255,255,255));
+			drawShadedButton(b.x,b.y,b.w,b.h,15,this.firstIndex===i ? theme.shadeColorCorrect : theme.shadeColor,this.firstIndex===i ? theme.selectedColor : color(255,255,255));
 
 			noStroke();
 			textAlign(CENTER, CENTER);
@@ -605,6 +612,33 @@ class Level {
 			}
 		}
 		return hint;
+	}
+
+	recordWinToLocalStorage() {
+		const record = {
+			originalValues: this.originalValues.map(v => this.useRational ? (v.numerator / v.denominator) : v.real),
+			opSymbols: this.opSymbols.slice(),
+			hintUsed: this.hintUsed,
+			screen: (typeof screen !== 'undefined') ? screen : null,
+			solution: this.watcherSequence.toExpr(),
+			timestamp: Date.now()
+		};
+
+		let history;
+		try {
+			history = JSON.parse(localStorage.getItem('winHistory')) || [];
+			if (!Array.isArray(history)) history = [];
+		} catch (e) {
+			history = [];
+		}
+
+		history.push(record);
+
+		try {
+			localStorage.setItem('winHistory', JSON.stringify(history));
+		} catch (e) {
+			console.log("Failed to save victory to localStorage", e);
+		}
 	}
 
 	handleClick(mx, my) {

@@ -1,4 +1,4 @@
-const CACHE_NAME = "24game-cache-v89";
+const CACHE_NAME = "24game-cache-v90";
 const CACHE_FILES = [
     "./", 
     "./index.html",
@@ -22,6 +22,7 @@ const CACHE_FILES = [
     "./js/levelUtils.js",
     "./js/battleSystem.js",
     "./js/translations.js",
+    "./js/historyScreen.js",
     "./libraries/p5.min.js",
     "./libraries/p5.sound.min.js",
     "./levelData/classicLevelsVeryHard.json",

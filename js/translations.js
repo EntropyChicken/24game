@@ -10,6 +10,7 @@ const TRANSLATIONS = {
             designedSets: ["Discovery", "Insight", "Theory", "JavaScript", "Crazy Hard"],
             getGameCountUpperText: (val) => val === 1 ? "game" : "games",
             gameCountLowerText: "won worldwide!",
+            historyButton: "My\nwins"
         },
         level:{
             homeButton:"Home",
@@ -18,7 +19,14 @@ const TRANSLATIONS = {
             hintButton:"Hint",
             solutionButton:"Solution",
             getPointsText: (val) => val === 1 ? " point" : " points"
-        }
+        },
+        history:{
+            screenToMode:{
+                game:"solo",
+                duel:"two-player",
+                battle:"team battle"
+            },
+        },
     },
     chinese_simplified: {
         titleScreen:{
@@ -31,6 +39,7 @@ const TRANSLATIONS = {
             designedSets: ["探索", "洞察", "理论", "JS代码", "抓狂"],
             getGameCountUpperText: (val) => "次通关",
             gameCountLowerText: "来自全球玩家!",
+            historyButton: "我的\n通关"
         },
         level: {
             homeButton: "主页",
@@ -52,6 +61,7 @@ const TRANSLATIONS = {
             designedSets: ["探索", "洞察", "理論", "JS程式碼", "抓狂"],
             getGameCountUpperText: (val) => "次通關",
             gameCountLowerText: "來自全球玩家!",
+            historyButton: "我的\n通關"
         },
         level: {
             homeButton: "主頁",

@@ -4,7 +4,7 @@ const USE_FLAG_EMOJIS = false;
 let showFlagEmojis = false;
 
 let screen = "title";
-let level, duel, titleScreen, masterPreviewLevel;
+let level, duel, titleScreen, masterPreviewLevel, historyScreen;
 let originalClassicSets = [[], [], [], [], []];
 let originalPuzzleSets = [[], [], [], []];
 let classicSets = []; 
@@ -50,7 +50,8 @@ function setup() {
         shadeColor : color(255,0,255),
         shadeColorCorrect : color(155,200,155),
         backgroundColor : color(210,225,250),
-        backgroundColorCorrect : color(160,205,120)
+        backgroundColorCorrect : color(160,205,120),
+        selectedColor : color(225,255,180)
     };
 
     createCanvas(windowWidth, windowHeight);
@@ -63,6 +64,9 @@ function setup() {
     teamInput.style('border', '2px solid #323232');
     teamInput.style('text-align', 'center');
     teamInput.style('box-sizing', 'border-box');
+    teamInput.style('font-family', 'Arial, sans-serif');
+
+    historyScreen = new HistoryScreen();
 
     let inputWidth = teamInput.elt.offsetWidth;
     let inputHeight = teamInput.elt.offsetHeight;
@@ -351,6 +355,8 @@ function draw() {
 
             battleMasterVictoryFlash *= 0.94;
         }
+    } else if (screen === "history") {
+        historyScreen.draw();
     }
 }
 
@@ -367,6 +373,11 @@ function setThemeColor(color) {
 
 function setScreen(s){
     screen = s;
+    
+    if(screen !== "history"){
+        historyScreen.hide();
+    }
+
     if(screen === "title"){
         theme.shadeColor = color(210,210,210);
         setThemeColor(color(175,175,175));
@@ -405,6 +416,9 @@ function setScreen(s){
             });
         }
     }
+    else if(screen === "history"){
+        historyScreen.show();
+    }
     else{
         setThemeColor(color(0,0,0));
     }
@@ -428,6 +442,9 @@ function windowResized() {
     if(masterPreviewLevel!==undefined){
         masterPreviewLevel.reSetupLayout();
     }
+    if(historyScreen!==undefined){
+        historyScreen.reSetupLayout();
+    }
 }
 
 function mouseMoved() {
@@ -444,6 +461,8 @@ function mousePressed() {
         titleScreen.handleClick(mouseX, mouseY);
     } else if (screen === "duel") {
         duel.handleClick(mouseX, mouseY);
+    } else if (screen === "history") {
+        historyScreen.handleClick(mouseX, mouseY);
     } else if (screen === "battle") {
         if (battleTeam === null) {  
             let centralOrbitRadius = 220;
@@ -586,6 +605,8 @@ function touchStarted() {
                 titleScreen.handleClick(t.x, t.y);
             } else if (screen === "duel") {
                 duel.handleClick(t.x, t.y);
+            } else if (screen === "history") {
+                historyScreen.handleClick(t.x, t.y);
             } else if (screen === "battle") {
                 if (battleTeam === null) {
                     let centralOrbitRadius = 220;

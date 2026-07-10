@@ -5,6 +5,7 @@ class TitleScreen {
         this.boxW = min(220, width * 0.35);
         this.boxH = min(80, height * 0.09);
         this.marginY = 2; // min(16, height * 0.016);
+        this.padding = 12; // for little corner buttons like language buttons
         this.bubbleBox = new BubbleBox(0,0,width,height,20,0);
         this.duelMode = false;
         this.mainTitleSize = constrain(width*0.08,65,105);
@@ -55,7 +56,7 @@ class TitleScreen {
                 r: 15, onHoverMovement: 0.0035, textColor: color(111),
                 predraw: () => {
                     if(titleScreen.duelMode){
-                        titleScreen.duelButton.style.mainColor = color(225,255,180);
+                        titleScreen.duelButton.style.mainColor = theme.selectedColor;
                         titleScreen.duelButton.style.shadeColor = theme.shadeColorCorrect;
                         titleScreen.duelButton.style.hovering = true;
                     } else {
@@ -94,7 +95,6 @@ class TitleScreen {
 
         let langBtnW = min(100, width * 0.13); 
         let langBtnH = 30;
-        let padding = 12;
         let langGap = 2; // 10;
 
         let englishGetText, traditionalChineseGetText, simplifiedChineseGetText;
@@ -109,9 +109,20 @@ class TitleScreen {
             simplifiedChineseGetText = showFlagEmojis ? "简体中文🇨🇳" : "简体中文";
         }
 
+        this.historyButton = new Button({
+            x: width-this.padding-45, 
+            y: height-this.padding-70,
+            w: 45,
+            h: 70,
+            label: "History Button",
+            style: {r: 8, onHoverMovement: -0.003, textColor: color(111)},
+            getText: () => TRANSLATIONS[currentLang].titleScreen.historyButton,
+            onClick: () => { setScreen('history'); }
+        });
+
         this.engButton = new Button({
-            x: width - langBtnW * 3 - langGap * 2 - padding, 
-            y: padding, 
+            x: width - langBtnW * 3 - langGap * 2 - this.padding, 
+            y: this.padding, 
             w: langBtnW, 
             h: langBtnH,
             label: "English Button",
@@ -119,7 +130,7 @@ class TitleScreen {
                 r: 8, onHoverMovement: 0.003, textColor: color(111),
                 predraw: () => {
                     if (currentLang === 'english') {
-                        titleScreen.engButton.style.mainColor = color(225,255,180);
+                        titleScreen.engButton.style.mainColor = theme.selectedColor;
                         titleScreen.engButton.style.shadeColor = theme.shadeColorCorrect;
                         titleScreen.engButton.style.hovering = true;
                     } else {
@@ -134,8 +145,8 @@ class TitleScreen {
         });
 
         this.traditionalButton = new Button({
-            x: width - langBtnW * 2 - langGap - padding, 
-            y: padding, 
+            x: width - langBtnW * 2 - langGap - this.padding, 
+            y: this.padding, 
             w: langBtnW, 
             h: langBtnH,
             label: "Traditional Chinese Button",
@@ -143,7 +154,7 @@ class TitleScreen {
                 r: 8, onHoverMovement: 0.003, textColor: color(111),
                 predraw: () => {
                     if (currentLang === 'chinese_traditional') {
-                        titleScreen.traditionalButton.style.mainColor = color(225,255,180);
+                        titleScreen.traditionalButton.style.mainColor = theme.selectedColor;
                         titleScreen.traditionalButton.style.shadeColor = theme.shadeColorCorrect;
                         titleScreen.traditionalButton.style.hovering = true;
                     } else {
@@ -158,8 +169,8 @@ class TitleScreen {
         });
 
         this.chiButton = new Button({
-            x: width - langBtnW - padding, 
-            y: padding, 
+            x: width - langBtnW - this.padding, 
+            y: this.padding, 
             w: langBtnW, 
             h: langBtnH,
             label: "Simplified Chinese Button",
@@ -167,7 +178,7 @@ class TitleScreen {
                 r: 8, onHoverMovement: 0.003, textColor: color(111),
                 predraw: () => {
                     if (currentLang === 'chinese_simplified') {
-                        titleScreen.chiButton.style.mainColor = color(225,255,180);
+                        titleScreen.chiButton.style.mainColor = theme.selectedColor;
                         titleScreen.chiButton.style.shadeColor = theme.shadeColorCorrect;
                         titleScreen.chiButton.style.hovering = true;
                     } else {
@@ -206,6 +217,7 @@ class TitleScreen {
         this.battleButton.style.onHoverMovement = this.showBattleButton ? 0.0045 : 0;
         this.battleButton.draw();
 
+        this.historyButton.draw();
         this.engButton.draw();
         this.traditionalButton.draw();
         this.chiButton.draw();
@@ -227,11 +239,11 @@ class TitleScreen {
                     if (gameCount !== undefined) {
                         let s = constrain(width * 0.035, 27, 35);
                         textSize(s);
-                        text(TRANSLATIONS[currentLang].titleScreen.getGameCountUpperText(gameCount), width - 15 + x, height - s - 15 + y * 0.8);
-                        text(TRANSLATIONS[currentLang].titleScreen.gameCountLowerText, width - 15 + x, height - 15 + y * 0.8);
+                        text(TRANSLATIONS[currentLang].titleScreen.getGameCountUpperText(gameCount), width - this.historyButton.w - 2*this.padding + x, height - s - this.padding + y * 0.8);
+                        text(TRANSLATIONS[currentLang].titleScreen.gameCountLowerText, width - this.historyButton.w - 2*this.padding + x, height - this.padding + y * 0.8);
                         let w = textWidth(" games");
-                        textSize(s * (gameCountDrawScale + 0.2));
-                        text(gameCount, width - 15 - w + x + (gameCountDrawScale-1)*4, height - s - 12 + y * 0.8 + (gameCountDrawScale-1)*8);
+                        textSize(s * (gameCountDrawScale + 0.3));
+                        text(gameCount, width - this.historyButton.w - 2*this.padding - w + x + (gameCountDrawScale-1)*4, height - s - this.padding + 2 + y * 0.8 + (gameCountDrawScale-1)*8);
                     }
                 } else {
                     let s = constrain(width * 0.035, 27, 35);
@@ -354,7 +366,7 @@ class TitleScreen {
             }
         }
         
-        const buttons = [this.duelButton, this.engButton, this.traditionalButton, this.chiButton];
+        const buttons = [this.duelButton, this.historyButton, this.engButton, this.traditionalButton, this.chiButton];
         if (this.showBattleButton) {
             buttons.push(this.battleButton);
         }

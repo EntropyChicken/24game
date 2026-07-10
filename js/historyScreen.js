@@ -122,6 +122,7 @@ class HistoryScreen {
 	}
 
 	// rebuilds the win-history HTML from localStorage, for the current page only
+	// rebuilds the win-history HTML from localStorage, for the current page only
 	refresh() {
 		this.prevButton.x = this.nextButton.x - (textWidth(this.getNavGapText())+10) - this.prevButton.w;
 
@@ -151,20 +152,38 @@ class HistoryScreen {
 		`;
 
 		let html = pageItems.map((win, i) => {
-			let dateStr = new Date(win.timestamp).toLocaleString();
+			let dateObj = new Date(win.timestamp);
+			let dateStr = dateObj.toLocaleString();
+			
+			// Separate date and time for the generalized clipboard string
+			let dateOnly = dateObj.toLocaleDateString();
+			let timeOnly = dateObj.toLocaleTimeString();
+
 			let modeLabel = TRANSLATIONS[currentLang].historyScreen.screenToMode[win.screen] ?? win.screen;
 			let p1 = escapeHtml(`${dateStr} (${modeLabel}${win.hintUsed ? ' with hint' : ''}) `);
-			let p2 = escapeHtml(`[${win.originalValues.join(', ')}] [${win.opSymbols.join(', ')}] `);
+			let p2 = escapeHtml(`[${win.originalValues.join(', ')}] ${win.opSymbols.join(' ')} `);
 			let metaHtml = `${p1}<br>${p2}`;
+
+			// Create the custom clipboard string schema (JSON-safe to inject into dataset attributes)
+			let customMetaString;
+			if(currentLang === "chinese_simplified") {
+				customMetaString = `${dateOnly} ${timeOnly}，我在${modeLabel}模式中，用 [${win.originalValues.join(', ')}] 配合 ${win.opSymbols.join(' ')} 算出了 24`;
+			}
+			else if(currentLang === "chinese_traditional") {
+				customMetaString = `${dateOnly} ${timeOnly}，我在${modeLabel}模式中，用 [${win.originalValues.join(', ')}] 配合 ${win.opSymbols.join(' ')} 算出了 24`;
+			}
+			else { // fallback is english
+				customMetaString = `I made 24 from [${win.originalValues.join(', ')}] using ${win.opSymbols.join(' ')} on ${dateOnly} at ${timeOnly} in ${modeLabel} mode`;
+			}
 
 			return `
 				<div>
 					<div style="${rowStyle}">
-						<div class="win-box" data-copy-idx="${i}-meta" style="${boxStyle}">${metaHtml}</div>
+						<div class="win-box" data-copy-idx="${i}-meta" data-custom-text="${escapeHtml(customMetaString)}" style="${boxStyle}">${metaHtml}</div>
 						<button class="win-copy-btn" data-copy-target="${i}-meta" style="${copyBtnStyle}">${TRANSLATIONS[currentLang].historyScreen.copyButton}</button>
 					</div>
 					<div style="${rowStyle} margin-left: 40px; width: calc(100% - 40px);">
-						<div class="win-box" data-copy-idx="${i}-sol" style="${boxStyle}">${escapeHtml(win.solution)}</div>
+						<div class="win-box" data-copy-idx="${i}-sol" style="${boxStyle}">${escapeHtml(win.solution+" = 24")}</div>
 						<button class="win-copy-btn" data-copy-target="${i}-sol" style="${copyBtnStyle}">${TRANSLATIONS[currentLang].historyScreen.copyButton}</button>
 					</div>
 				</div>
@@ -179,7 +198,11 @@ class HistoryScreen {
 	wireCopyButtons() {
 		const boxes = this.container.elt.querySelectorAll('.win-box');
 		const textByIdx = {};
-		boxes.forEach(box => { textByIdx[box.dataset.copyIdx] = box.textContent; });
+		
+		// If custom text exists on the dataset, use it. Otherwise, default to textContent (for solutions)
+		boxes.forEach(box => { 
+			textByIdx[box.dataset.copyIdx] = box.dataset.customText || box.textContent; 
+		});
 
 		const buttons = this.container.elt.querySelectorAll('.win-copy-btn');
 		buttons.forEach(btn => {

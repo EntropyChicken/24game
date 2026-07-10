@@ -261,7 +261,7 @@ class Level {
 			*/
 			for(let b of this.boxes){
 				if(b.value.equals24()){
-					let factor = constrain((Level.WIN_TIMER_START-this.winTimer)*0.006-0.03,-0.02,1);
+					let factor = constrain((Level.WIN_TIMER_START-this.winTimer)*0.006-0.03,-0.02,0.2);
 					let vel = {
 						x:(this.width/2-b.w/2-b.x)*factor,
 						y:(this.height*0.32-b.h/2-b.y)*factor

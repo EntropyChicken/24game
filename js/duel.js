@@ -9,7 +9,7 @@ function inverseRotate(x,y,ang){
 
 class Duel {
     static SKIP_LOSER = false;
-    static LOSER_WIN_ANIMATION = false;
+    static LOSER_WIN_ANIMATION = true;
     static WIN_TIMER_FREEZE = 3;
 
 	constructor(numbers, opSymbols = Level.SYMBOLS, metaData = {}, scores = [0,0]) {
@@ -73,7 +73,7 @@ class Duel {
                 style: {
                     r: 10,
                     onHoverMovement: 0.004,
-                    transparentOnWin: true,
+                    transparentOnWin: true
                 },
                 getText: () => TRANSLATIONS[currentLang].level.skipButton,
                 onClick: () => {
@@ -138,8 +138,8 @@ class Duel {
         mx = iot.x;
         my = iot.y;
 
-        this.homeButton.draw();
-        this.skipButton.draw();
+        this.homeButton.draw(this.isSolved(0)&&this.isSolved(1));
+        this.skipButton.draw(this.isSolved(0)&&this.isSolved(1));
 
         mx = trueMx;
         my = trueMy;
@@ -157,7 +157,9 @@ class Duel {
             if(this.isJustSolved(0)&&this.isJustSolved(1)){ // frame perfect tie
                 this.scores[0]++;
                 this.scores[1]++;
-                this.solved = true;
+                if(!Duel.LOSER_WIN_ANIMATION){
+                    this.solved = true;
+                }
             }
             else{
                 for(let i = 0; i<2; i++){
@@ -174,8 +176,24 @@ class Duel {
                 }
             }
             if(Duel.LOSER_WIN_ANIMATION){
-                if(this.isSolved(0)&&this.isSolved(1)&&this.levels[0].winTimer<=Duel.WIN_TIMER_FREEZE&&this.levels[1].winTimer<=Duel.WIN_TIMER_FREEZE){
-                    this.solved = true;
+                if(this.isSolved(0)&&this.isSolved(1)){
+                    let maxWinTimer = max(this.levels[0].winTimer,this.levels[1].winTimer);
+                    for(let i = 0; i<2; i++){
+                        this.levels[i].winTimer+=0.5;
+                        for(let b of this.levels[i].boxes){
+                            if(b.value.equals24()){
+                                let factor = constrain((Level.WIN_TIMER_START-maxWinTimer)*0.006-0.03,-0.02,0.2);
+                                b.x += cos(maxWinTimer*0.3)*30*factor;
+                                b.y += (sin(maxWinTimer*0.3)-1)*30*factor;
+                                b.drawOffset = 0;
+                                b.drawAngle = 0;
+                                b.drawScale = 1;
+                            }
+                        }
+                    }
+                    if(this.levels[0].winTimer<=Duel.WIN_TIMER_FREEZE&&this.levels[1].winTimer<=Duel.WIN_TIMER_FREEZE){
+                        this.solved = true;
+                    }
                 }
             }
         }

@@ -7,6 +7,7 @@ class TitleScreen {
         this.marginY = 2; // min(16, height * 0.016);
         this.bubbleBox = new BubbleBox(0,0,width,height,20,0);
         this.duelMode = false;
+        this.mainTitleSize = constrain(width*0.08,65,105);
         
         // We only need the loops to capture the indices structurally
         let labels = [];
@@ -37,20 +38,21 @@ class TitleScreen {
         }
 
         this.gap = 2; // 13;
-        this.btnSumW = this.boxW * 1.2 + this.gap;
+        textSize(this.mainTitleSize);
+        this.btnSumW = textWidth(TRANSLATIONS[currentLang].titleScreen.mainTitle); // this.boxW * 1.2 + this.gap;
         this.btnStartX = width / 2 - this.btnSumW / 2;
         this.btnY = height * 0.2;
         this.btnH = this.boxes[0].h;
         
-        this.duelW = (this.btnSumW-this.gap) * 0.64; 
-        this.battleW = (this.btnSumW-this.gap) * 0.36;
+        this.duelW = (this.btnSumW-this.gap) * 0.6; 
+        this.battleW = (this.btnSumW-this.gap) * 0.4;
 
         this.duelButton = new Button({
             x: this.btnStartX, 
             y: this.btnY, w: this.duelW, h: this.btnH,
             label: "Duel button",
             style: {
-                r: 15, onHoverMovement: 0.003, textColor: color(111),
+                r: 15, onHoverMovement: 0.0035, textColor: color(111),
                 predraw: () => {
                     if(titleScreen.duelMode){
                         titleScreen.duelButton.style.mainColor = color(225,255,180);
@@ -71,7 +73,7 @@ class TitleScreen {
             x: this.btnStartX + this.duelW + this.gap, y: this.btnY, w: this.battleW, h: this.btnH,
             label: "Battle button",
             style: {
-                r: 15, onHoverMovement: 0.003, textColor: color(111),
+                r: 15, onHoverMovement: 0.0035, textColor: color(111),
                 predraw: () => {
                     titleScreen.battleButton.style.mainColor = color(255,255,255);
                     titleScreen.battleButton.style.shadeColor = theme.shadeColor;
@@ -213,7 +215,7 @@ class TitleScreen {
             for(let x = y/3-1; x<y/3+1.1; x+=1){
                 fill(y<0 ? color(255,255,255) : color(100,93,85));
                 textAlign(CENTER,CENTER);
-                textSize(constrain(width*0.07,55,90));
+                textSize(this.mainTitleSize);
                 
                 text(TRANSLATIONS[currentLang].titleScreen.mainTitle, width*0.5+x, height*0.14+y);
                 

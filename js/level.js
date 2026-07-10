@@ -126,7 +126,6 @@ class Level {
 			},
 			getText: () => TRANSLATIONS[currentLang].level.skipButton,
 			onClick: () => { this.solved = true; },
-			onHoverMovement: -0.0035
 		});
 	}
 

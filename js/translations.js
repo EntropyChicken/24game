@@ -31,7 +31,7 @@ const TRANSLATIONS = {
             copyButton: "copy",
             copyButtonSucceeded: "copied!",
             copyButtonFailed: "failed",
-            getWinsText: (val) => val === 1 ? " win" : " wins"
+            getWinsText: (val) => val === 1 ? "win" : "wins"
         },
     },
     chinese_simplified: {

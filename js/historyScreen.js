@@ -12,6 +12,7 @@ class HistoryScreen {
 		this.pageSize = 5;      // wins per page
 		this.currentPage = 0;    // 0-indexed
 		this.totalPages = 1;
+		this.wins = JSON.parse(localStorage.getItem('winHistory')) || [];
 
 		this.reSetupLayout(w, h);
 	}
@@ -26,48 +27,48 @@ class HistoryScreen {
 			label: "Home",
 			style: {
 				r: 10,
-				onHoverMovement: 0.004
+				onHoverMovement: 0.003
 			},
 			getText: () => TRANSLATIONS[currentLang].level.homeButton,
 			onClick: () => { setScreen("title"); }
 		});
 
-		// pagination controls, top right
-		const navBtnW = max(50, this.width * 0.07);
+		const navBtnW = max(40, this.width * 0.08);
 		const navBtnH = this.height * 0.1;
 		const margin = this.width * 0.05;
-		const pageLabelW = 70; // reserved space for the "x / y" text between the buttons
-		const navGap = 10;
+		textSize(24);
+		const navGap = textWidth(this.getNavGapText())+18;
 
 		this.nextButton = new Button({
 			x: this.width - margin - navBtnW, y: this.height * 0.05, w: navBtnW, h: navBtnH,
 			label: "Next",
 			style: {
 				r: 10,
-				onHoverMovement: -0.004
+				onHoverMovement: -0.003
 			},
 			getText: () => TRANSLATIONS[currentLang].history.nextButton,
 			onClick: () => this.goToNextPage()
 		});
 
 		this.prevButton = new Button({
-			x: this.nextButton.x - navGap - pageLabelW - navGap - navBtnW, y: this.height * 0.05, w: navBtnW, h: navBtnH,
+			x: this.nextButton.x - navGap - navBtnW, y: this.height * 0.05, w: navBtnW, h: navBtnH,
 			label: "Prev",
 			style: {
 				r: 10,
-				onHoverMovement: -0.004
+				onHoverMovement: -0.003
 			},
 			getText: () => TRANSLATIONS[currentLang].history.prevButton,
 			onClick: () => this.goToPrevPage()
 		});
 
+		this.updateNavigationButtonStyles();
 		this.positionContainer();
 	}
 
 	positionContainer() {
 		this.container.position(this.homeButton.x, this.homeButton.y+this.homeButton.h+20);
-		this.container.style('width', (this.width - 110) + 'px');
-		this.container.style('height', (this.height - 110) + 'px');
+		this.container.style('width', (this.width - this.homeButton.x*2) + 'px');
+		this.container.style('height', (this.height - this.homeButton.x*2) + 'px');
 	}
 
 	show() {
@@ -100,12 +101,7 @@ class HistoryScreen {
 		let allRecent = this.wins.slice().reverse(); // most recent first, full list
 
 		this.totalPages = Math.max(1, Math.ceil(allRecent.length / this.pageSize));
-		// clamp in case wins changed (or shrank) while the screen was open
-		this.currentPage = constrain(this.currentPage,0,this.totalPages-1);
-        this.nextButton.style.transparent = (this.currentPage === this.totalPages-1);
-        this.nextButton.style.onHoverMovement = (this.currentPage === this.totalPages-1) ? 0 : 0.0045;
-        this.prevButton.style.transparent = (this.currentPage === 0);
-        this.prevButton.style.onHoverMovement = (this.currentPage === 0) ? 0 : 0.0045;
+		this.updateNavigationButtonStyles();
 
 		const start = this.currentPage * this.pageSize;
 		const pageItems = allRecent.slice(start, start + this.pageSize);
@@ -116,7 +112,7 @@ class HistoryScreen {
 			white-space: normal; word-wrap: break-word; overflow-wrap: break-word;
 			user-select: text; -webkit-user-select: text;
 			background: rgba(255,255,255,1); border-radius: 8px;
-			padding: 8px 12px; font-size: 16px; max-height: 100px; overflow-y: auto;
+			padding: 8px 12px; font-size: 16px; max-height: 1000px; overflow-y: auto;
 			flex: 1 1 auto;
 		`;
 		const copyBtnStyle = `
@@ -162,14 +158,26 @@ class HistoryScreen {
 			btn.addEventListener('click', () => {
 				const text = textByIdx[btn.dataset.copyTarget] || '';
 				navigator.clipboard.writeText(text).then(() => {
-					btn.textContent = btn.textContent = TRANSLATIONS[this.currentLang].history.copyButtonSucceeded;
-					setTimeout(() => { btn.textContent = TRANSLATIONS[this.currentLang].history.copyButton; }, 1200);
+					btn.textContent = btn.textContent = TRANSLATIONS[currentLang].history.copyButtonSucceeded;
+					setTimeout(() => { btn.textContent = TRANSLATIONS[currentLang].history.copyButton; }, 1200);
 				}).catch(() => {
-					btn.textContent = btn.textContent = TRANSLATIONS[this.currentLang].history.copyButtonFailed;
-					setTimeout(() => { btn.textContent = TRANSLATIONS[this.currentLang].history.copyButton; }, 1200);
+					btn.textContent = btn.textContent = TRANSLATIONS[currentLang].history.copyButtonFailed;
+					setTimeout(() => { btn.textContent = TRANSLATIONS[currentLang].history.copyButton; }, 1200);
 				});
 			});
 		});
+	}
+
+	updateNavigationButtonStyles() {
+		this.currentPage = constrain(this.currentPage,0,this.totalPages-1);
+        this.nextButton.style.transparent = (this.currentPage === this.totalPages-1);
+        this.nextButton.style.onHoverMovement = (this.currentPage === this.totalPages-1) ? 0 : 0.004;
+        this.prevButton.style.transparent = (this.currentPage === 0);
+        this.prevButton.style.onHoverMovement = (this.currentPage === 0) ? 0 : 0.004;
+	}
+
+	getNavGapText() {
+		return `${min(this.wins.length,(this.currentPage + 1)*this.pageSize)} / ${this.wins.length}\n${TRANSLATIONS[currentLang].history.getWinsText()}`;
 	}
 
 	draw() {
@@ -185,22 +193,22 @@ class HistoryScreen {
 		// page indicator, centered between prev/next buttons
 		push();
 		textAlign(CENTER, CENTER);
-		textSize(25);
+		textSize(24);
 		fill(0);
 		noStroke();
 		let midX = (this.prevButton.x + this.prevButton.w + this.nextButton.x) / 2;
 		let midY = this.prevButton.y + this.prevButton.h / 2;
-		text(`${this.currentPage + 1} / ${this.totalPages}`, midX, midY);
+		text(this.getNavGapText(), midX, midY);
 		pop();
 
-		// big win count
-		push();
-		textAlign(CENTER, CENTER);
-		textSize(50);
-		fill(0);
-		noStroke();
-		text(this.wins.length+TRANSLATIONS[currentLang].history.getWinsText(), width/2, midY);
-		pop();
+		// // big win count (redundant, also no space for it)
+		// push();
+		// textAlign(CENTER, CENTER);
+		// textSize(50);
+		// fill(0);
+		// noStroke();
+		// text(this.wins.length+TRANSLATIONS[currentLang].history.getWinsText(), width/2, midY);
+		// pop();
 	}
 
 	handleClick(mx, my) {

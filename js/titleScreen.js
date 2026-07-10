@@ -115,7 +115,7 @@ class TitleScreen {
             w: 45,
             h: 70,
             label: "History Button",
-            style: {r: 8, onHoverMovement: -0.003, textColor: color(111)},
+            style: {r: 8, onHoverMovement: -0.0035, textColor: color(111)},
             getText: () => TRANSLATIONS[currentLang].titleScreen.historyButton,
             onClick: () => { setScreen('history'); }
         });
@@ -127,7 +127,7 @@ class TitleScreen {
             h: langBtnH,
             label: "English Button",
             style: {
-                r: 8, onHoverMovement: 0.003, textColor: color(111),
+                r: 8, onHoverMovement: 0.0025, textColor: color(111),
                 predraw: () => {
                     if (currentLang === 'english') {
                         titleScreen.engButton.style.mainColor = theme.selectedColor;
@@ -151,7 +151,7 @@ class TitleScreen {
             h: langBtnH,
             label: "Traditional Chinese Button",
             style: {
-                r: 8, onHoverMovement: 0.003, textColor: color(111),
+                r: 8, onHoverMovement: 0.0025, textColor: color(111),
                 predraw: () => {
                     if (currentLang === 'chinese_traditional') {
                         titleScreen.traditionalButton.style.mainColor = theme.selectedColor;
@@ -175,7 +175,7 @@ class TitleScreen {
             h: langBtnH,
             label: "Simplified Chinese Button",
             style: {
-                r: 8, onHoverMovement: 0.003, textColor: color(111),
+                r: 8, onHoverMovement: 0.0025, textColor: color(111),
                 predraw: () => {
                     if (currentLang === 'chinese_simplified') {
                         titleScreen.chiButton.style.mainColor = theme.selectedColor;

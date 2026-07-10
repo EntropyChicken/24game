@@ -143,7 +143,7 @@ class HistoryScreen {
 			`;
 		});
 
-		this.container.html(html.join('') || '<div style="color:white;">No wins yet... go make some 24s!</div>');
+		this.container.html(html.join('') || '<div style="color:black;">No wins yet... go make some 24s!</div>');
 		this.wireCopyButtons();
 	}
 

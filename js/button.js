@@ -1,3 +1,5 @@
+const FALLBACK_MIN_FONT_SIZE = 18;
+
 function drawShadedButton(x, y, w, h, r = 8, shadeColor = theme.shadeColor, mainColor = color(255,255,255), shadeHeightFrac = 0.1) {
 	fill(shadeColor); stroke(100,93,85); strokeWeight(3);
 	rect(x, y, w, h, r);
@@ -56,12 +58,12 @@ function drawTextInBox(txt, x, y, w, h, maxFontSize = height * 0.045, minFontSiz
 	if (currentLine.length > 0) lines.push(currentLine.trim());
 
 	// Draw each line centered
-	let lineHeight = fontSize * (minFontSize>14 ? 1.1 : 1);
+	let lineHeight = fontSize * (minFontSize>FALLBACK_MIN_FONT_SIZE ? 1.1 : 1);
 	let totalHeight = lines.length * lineHeight;
 	let startY = y + h / 2 - totalHeight / 2 + lineHeight / 2;
 
-	if(minFontSize>14&&lines.length>=5){
-		return drawTextInBox(txt,x,y,w,h,maxFontSize,14);
+	if(minFontSize>FALLBACK_MIN_FONT_SIZE&&lines.length>=5){
+		return drawTextInBox(txt,x,y,w,h,maxFontSize,FALLBACK_MIN_FONT_SIZE,textColor);
 	}
 	
 	let maxLineWidth = 0;

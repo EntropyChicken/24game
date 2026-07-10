@@ -269,7 +269,7 @@ class TitleScreen {
         this.bubbleBox.draw(width/2+mDst*cos(mAng),height/2+mDst*sin(mAng));
         pop();
     }
-
+    
     drawBoxes() { // distinct from Level boxes, which are for the number cards
         for (let b of this.boxes) {
             if (mx > b.x && mx < b.x + b.w && my > b.y && my < b.y + b.h) {
@@ -314,13 +314,30 @@ class TitleScreen {
             } else {
                 let lines = [];
                 let currentLine = '';
-                for (let char of label) {
-                    let testLine = currentLine + char;
-                    if (textWidth(testLine) > maxWidth && currentLine.length > 0) {
-                        lines.push(currentLine);
-                        currentLine = char;
-                    } else {
-                        currentLine = testLine;
+
+                if (currentLang.startsWith('chinese')) {
+                    // Chinese doesn't use spaces, so keep splitting by character
+                    for (let char of label) {
+                        let testLine = currentLine + char;
+                        if (textWidth(testLine) > maxWidth && currentLine.length > 0) {
+                            lines.push(currentLine);
+                            currentLine = char;
+                        } else {
+                            currentLine = testLine;
+                        }
+                    }
+                } else {
+                    // Split by whole words for English and other spaced languages
+                    let words = label.split(' ');
+                    for (let word of words) {
+                        let testLine = currentLine === '' ? word : currentLine + ' ' + word;
+                        
+                        if (textWidth(testLine) > maxWidth && currentLine.length > 0) {
+                            lines.push(currentLine);
+                            currentLine = word;
+                        } else {
+                            currentLine = testLine;
+                        }
                     }
                 }
                 if (currentLine.length > 0) lines.push(currentLine);

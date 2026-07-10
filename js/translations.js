@@ -7,7 +7,7 @@ const TRANSLATIONS = {
             duelButton: "Two-Player Mode",
             battleButton: "Team Battle",
             randomSets: ["Easy", "Medium", "Hard", "Tricky", "Very Hard"],
-            designedSets: ["Discovery", "Insight", "Theory", "JavaScript", "Crazy Hard"],
+            designedSets: ["Discovery", "Insight", "Theory", "JavaScript", "CRAZY HARD"],
             getGameCountUpperText: (val) => val === 1 ? "game" : "games",
             gameCountLowerText: "won worldwide!",
             historyButton: "My\nwins"

@@ -1,6 +1,3 @@
-// shrink or make multiple lines to fit in a box
-const WRAP_BREAK_CHARS = ["+", "-", "×", "÷", "^", "√", "!", "*", "/", "(", ")", " ", ",", ":"];
-
 function smoothErp(a,recursion=1){
 	a = constrain(a,0,1);
 	if(recursion>0){

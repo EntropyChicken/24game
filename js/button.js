@@ -1,15 +1,6 @@
+// shrink or make multiple lines to fit in a box
+const WRAP_BREAK_CHARS = ["+", "-", "×", "÷", "^", "√", "!", "*", "/", "(", ")", " ", ",", ":"];
 const FALLBACK_MIN_FONT_SIZE = 18;
-
-function drawShadedButton(x, y, w, h, r = 8, shadeColor = theme.shadeColor, mainColor = color(255,255,255), shadeHeightFrac = 0.1) {
-	fill(shadeColor); stroke(100,93,85); strokeWeight(3);
-	rect(x, y, w, h, r);
-	noStroke();
-	rect(x, y, w, h, r);
-	fill(mainColor); noStroke();
-
-	// or no round bottoms: rect(x, y, w, h * (1 - shadeHeightFrac), r, r, 0, 0);
-	rect(x, y, w, h - min(16,h*shadeHeightFrac), r);
-}
 
 // function used by Button and also informal "box" thingies like in Level
 function drawTextInBox(txt, x, y, w, h, maxFontSize = height * 0.045, minFontSize = 20, textColor = color(0,0,0)) {
@@ -74,6 +65,17 @@ function drawTextInBox(txt, x, y, w, h, maxFontSize = height * 0.045, minFontSiz
 		text(lines[i], x + w / 2, startY + i * lineHeight);
 	}
 	return maxLineWidth;
+}
+
+function drawShadedButton(x, y, w, h, r = 8, shadeColor = theme.shadeColor, mainColor = color(255,255,255), shadeHeightFrac = 0.1) {
+	fill(shadeColor); stroke(100,93,85); strokeWeight(3);
+	rect(x, y, w, h, r);
+	noStroke();
+	rect(x, y, w, h, r);
+	fill(mainColor); noStroke();
+
+	// or no round bottoms: rect(x, y, w, h * (1 - shadeHeightFrac), r, r, 0, 0);
+	rect(x, y, w, h - min(16,h*shadeHeightFrac), r);
 }
 
 class Button {

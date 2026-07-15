@@ -49,7 +49,7 @@ const TRANSLATIONS = {
     },
     chinese_simplified: {
         titleScreen:{
-            mainTitle: "24点000",
+            mainTitle: "凑24", // 24点000
             randomSetSection: "随机挑战",
             designedSetSection: "精选关卡",
             duelButton: "双人模式",
@@ -97,7 +97,7 @@ const TRANSLATIONS = {
     },
     chinese_traditional: {
         titleScreen:{
-            mainTitle: "24點000",
+            mainTitle: "湊24", // 24點000
             randomSetSection: "隨機挑戰",
             designedSetSection: "精選關卡",
             duelButton: "雙人模式",

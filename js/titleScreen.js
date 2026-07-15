@@ -38,19 +38,9 @@ class TitleScreen {
             });
         }
 
-        this.gap = 2; // 13;
-        textSize(this.mainTitleSize);
-        this.btnSumW = textWidth(TRANSLATIONS[currentLang].titleScreen.mainTitle); // this.boxW * 1.2 + this.gap;
-        this.btnStartX = width / 2 - this.btnSumW / 2;
-        this.btnY = height * 0.2;
-        this.btnH = this.boxes[0].h;
-        
-        this.duelW = (this.btnSumW-this.gap) * 0.6; 
-        this.battleW = (this.btnSumW-this.gap) * 0.4;
-
+        this.getTitleBasedSizes(false);
         this.duelButton = new Button({
-            x: this.btnStartX, 
-            y: this.btnY, w: this.duelW, h: this.btnH,
+            x: this.btnStartX, y: this.btnY, w: this.duelW, h: this.btnH,
             label: "Duel button",
             style: {
                 r: 15, onHoverMovement: 0.0035, textColor: color(111),
@@ -69,7 +59,6 @@ class TitleScreen {
             getText: () => TRANSLATIONS[currentLang].titleScreen.duelButton,
             onClick: () => { titleScreen.duelMode = !titleScreen.duelMode }
         });
-
         this.battleButton = new Button({
             x: this.btnStartX + this.duelW + this.gap, y: this.btnY, w: this.battleW, h: this.btnH,
             label: "Battle button",
@@ -194,6 +183,27 @@ class TitleScreen {
 
         if (typeof channel !== 'undefined') {
             channel.send({ type: "broadcast", event: "ping_game_master", payload: {} });
+        }
+    }
+
+    getTitleBasedSizes(resizeButtons) { // resizeButtons edits the width of the duel and battle buttons
+        textSize(this.mainTitleSize);
+        this.gap = 2; // 13;
+        this.btnSumW = textWidth(TRANSLATIONS[currentLang].titleScreen.mainTitle); // this.boxW * 1.2 + this.gap;
+        this.btnStartX = width / 2 - this.btnSumW / 2;
+        this.btnY = height * 0.2;
+        this.btnH = this.boxes[0].h;
+        this.duelW = (this.btnSumW-this.gap) * 0.6; 
+        this.battleW = (this.btnSumW-this.gap) * 0.4;
+        if(resizeButtons){
+            this.duelButton.x = this.btnStartX;
+            this.duelButton.y = this.btnY;
+            this.duelButton.w = this.duelW;
+            this.duelButton.h = this.btnH;
+            this.battleButton.x = this.btnStartX + this.duelW + this.gap;
+            this.battleButton.y = this.btnY;
+            this.battleButton.w = this.battleW;
+            this.battleButton.h = this.btnH;
         }
     }
 

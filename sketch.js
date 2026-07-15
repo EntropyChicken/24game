@@ -714,6 +714,10 @@ function getUserLanguage() {
 
 function changeLanguage(newLang) {
     currentLang = newLang;
+    if(titleScreen!==undefined){
+        titleScreen.getTitleBasedSizes(true);
+        console.log("OK")
+    }
     localStorage.setItem('user_lang_preference', newLang);
 }
 

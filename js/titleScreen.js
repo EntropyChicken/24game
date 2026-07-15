@@ -325,19 +325,8 @@ class TitleScreen {
                 let lines = [];
                 let currentLine = '';
 
-                if (currentLang.startsWith('chinese')) {
-                    // Chinese doesn't use spaces, so keep splitting by character
-                    for (let char of label) {
-                        let testLine = currentLine + char;
-                        if (textWidth(testLine) > maxWidth && currentLine.length > 0) {
-                            lines.push(currentLine);
-                            currentLine = char;
-                        } else {
-                            currentLine = testLine;
-                        }
-                    }
-                } else {
-                    // Split by whole words for English and other spaced languages
+                if (currentLang.startsWith('english')) { // REMEMBER TO ALSO DO THIS FOR OTHER SPACED LANGUAGES IF I EVER ADD THEM
+                    // Split word by word
                     let words = label.split(' ');
                     for (let word of words) {
                         let testLine = currentLine === '' ? word : currentLine + ' ' + word;
@@ -349,11 +338,21 @@ class TitleScreen {
                             currentLine = testLine;
                         }
                     }
+                } else { // non-spaced langauge like chinese or japanese
+                    for (let char of label) {
+                        let testLine = currentLine + char;
+                        if (textWidth(testLine) > maxWidth && currentLine.length > 0) {
+                            lines.push(currentLine);
+                            currentLine = char;
+                        } else {
+                            currentLine = testLine;
+                        }
+                    }
                 }
                 if (currentLine.length > 0) lines.push(currentLine);
 
                 const lineHeight = fontSize * 1.1;
-                const startY = b.y + b.h / 2 - (lines.length - 1) * lineHeight / 2 + 3;
+                const startY = b.y + b.h / 2 - (lines.length - 1) * lineHeight / 2;
 
                 lines.forEach((line, j) => {
                     text(line, b.x + b.w / 2, startY + j * lineHeight);

@@ -1,4 +1,4 @@
-# Make24 Math Game
+# Make 24 Math Game
 
 make24.org is a web app that extends the "24 Puzzle" game to advanced mathematics through handcrafted puzzles. It also includes multiplayer modes: both local and online.
 
@@ -25,7 +25,7 @@ English, Traditional Chinese, and Simplified Chinese
 
 ---
 
-## Traditional "24 Puzzle" vs. make24.org
+## Traditional 24 Puzzle vs. make24.org
 
 In the classic game, you use basic operations ($+$, $-$, $\times$, $\div$) to combine four numbers to make 24.
 Does that sound too simple? Try "Crazy Hard" mode's complex logarithms and outside-the-box cleverness to turn 0, 0, and 0 into 24 :D

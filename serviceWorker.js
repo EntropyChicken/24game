@@ -1,4 +1,4 @@
-const CACHE_NAME = "24game-cache-v111";
+const CACHE_NAME = "24game-cache-v112";
 const CACHE_FILES = [
     "./", 
     "./index.html",

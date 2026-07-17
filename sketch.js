@@ -102,9 +102,6 @@ function draw() {
     
     if (screen === "title") {
         titleScreen.draw();
-        if (keyIsDown(220) && keyIsDown(191) && screen !== "battleMaster") {
-            setScreen("battleMaster");
-        }
     } else if (screen === "game") {
         background(220);
         level.draw();

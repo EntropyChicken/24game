@@ -10,6 +10,7 @@ let battleVictoryFlash = 0;
 let battleLossFlash = 0;
 let battleMasterBackgroundImg;
 let teamInput; 
+let battleMasterCheckTimeout = null;
 
 let battleSetLabels = [
     "Random Easy", "Random Medium", "Random Hard", "Random Tricky", "Random Very Hard",
@@ -201,6 +202,10 @@ async function setupRealtime() {
             if (screen === "title" && titleScreen) {
                 titleScreen.revealBattleButton();
             }
+            if (battleMasterCheckTimeout) {
+                clearTimeout(battleMasterCheckTimeout);
+                battleMasterCheckTimeout = null;
+            }
         })
         .on("broadcast", { event: "new_team_created" }, (msg) => {
             let newTeam = msg.payload.teamName.trim();
@@ -265,6 +270,30 @@ async function broadcastWin() {
         event: "win",
         payload: { gameCount: gameCount, battleTeam: battleTeam }
     });
+}
+
+function attemptBecomeBattleMaster() {
+    // Ask if anyone out there is already the battle master. Any existing
+    // battle master will respond with "game_master_pong", which reveals the
+    // "Join Battle" state (see setupRealtime above) and cancels this check.
+    channel.send({ type: "broadcast", event: "ping_game_master", payload: {} });
+
+    if (battleMasterCheckTimeout) {
+        clearTimeout(battleMasterCheckTimeout);
+    }
+
+    battleMasterCheckTimeout = setTimeout(() => {
+        battleMasterCheckTimeout = null;
+        if (titleScreen) {
+            titleScreen.checkingHostBattle = false;
+        }
+        // Only claim the role if nobody answered our ping - i.e. there is
+        // still no known battle master. This keeps there from ever being
+        // two battle masters at once.
+        if (screen === "title" && titleScreen && !titleScreen.showBattleButton) {
+            setScreen("battleMaster");
+        }
+    }, 600);
 }
 
 function broadcastBattleDoublerAction(reasons) {

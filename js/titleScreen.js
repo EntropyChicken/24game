@@ -1,6 +1,7 @@
 class TitleScreen {
     constructor() {
         this.showBattleButton = false;
+        this.checkingHostBattle = false;
         this.boxes = [];
         this.boxW = min(220, width * 0.35);
         this.boxH = min(80, height * 0.09);
@@ -38,9 +39,8 @@ class TitleScreen {
             });
         }
 
-        this.getTitleBasedSizes(false);
         this.duelButton = new Button({
-            x: this.btnStartX, y: this.btnY, w: this.duelW, h: this.btnH,
+            x: 1, y: 1, w: 1, h: 1, // placeholder. will resize
             label: "Duel button",
             style: {
                 r: 15, onHoverMovement: 0.0035, textColor: color(111),
@@ -60,7 +60,7 @@ class TitleScreen {
             onClick: () => { titleScreen.duelMode = !titleScreen.duelMode }
         });
         this.battleButton = new Button({
-            x: this.btnStartX + this.duelW + this.gap, y: this.btnY, w: this.battleW, h: this.btnH,
+            x: 1, y: 1, w: 1, h: 1, // placeholder. will resize
             label: "Battle button",
             style: {
                 r: 15, onHoverMovement: 0.0035, textColor: color(111),
@@ -70,17 +70,32 @@ class TitleScreen {
                     titleScreen.battleButton.style.hovering = false;
                 }
             },
-            getText: () => TRANSLATIONS[currentLang].titleScreen.battleButton,
+            getText: () => {
+                if (this.showBattleButton) {
+                    return TRANSLATIONS[currentLang].titleScreen.joinBattleButton;
+                }
+                if (this.checkingHostBattle) {
+                    return (TRANSLATIONS[currentLang].titleScreen.hostBattleChecking) || "Checking...";
+                }
+                return (TRANSLATIONS[currentLang].titleScreen.hostBattleButton) || "Host Battle";
+            },
             onClick: () => {
-                if (isOnlineSession && navigator.onLine) {
-                    setScreen("battle"); 
+                if (this.showBattleButton) {
+                    // A battle master already exists elsewhere - join their battle.
+                    if (isOnlineSession && navigator.onLine) {
+                        setScreen("battle"); 
+                    } else {
+                        alert("Connection lost! Please reconnect and reload to play Team Battle");
+                        this.showBattleButton = false;
+                        isOnlineSession = false;
+                    }
                 } else {
-                    alert("Connection lost! Please reconnect and reload to play Team Battle");
-                    this.showBattleButton = false;
-                    isOnlineSession = false;
+                    // No battle master exists - become one.
+                    this.hostBattle();
                 }
             }
         });
+        this.getTitleBasedSizes(true); // set proper sizes
 
         let langBtnW = min(100, width * 0.13); 
         let langBtnH = 30;
@@ -193,8 +208,10 @@ class TitleScreen {
         this.btnStartX = width / 2 - this.btnSumW / 2;
         this.btnY = height * 0.2;
         this.btnH = this.boxes[0].h;
-        this.duelW = (this.btnSumW-this.gap) * 0.6; 
-        this.battleW = (this.btnSumW-this.gap) * 0.4;
+        // let split = (currentLang === "english" ? 0.6 : 0.5); 
+        let split = 0.5;
+        this.duelW = (this.btnSumW-this.gap) * split; 
+        this.battleW = (this.btnSumW-this.gap) * (1-split);
         if(resizeButtons){
             this.duelButton.x = this.btnStartX;
             this.duelButton.y = this.btnY;
@@ -209,6 +226,22 @@ class TitleScreen {
 
     revealBattleButton() {
         this.showBattleButton = true;
+        this.checkingHostBattle = false;
+    }
+
+    hostBattle() {
+        // Guard against double-clicks and against hosting when a battle
+        // master is already known to exist.
+        if (this.showBattleButton || this.checkingHostBattle) return;
+
+        if (!(isOnlineSession && navigator.onLine)) {
+            alert("Connection lost! Please reconnect and reload to host Team Battle");
+            isOnlineSession = false;
+            return;
+        }
+
+        this.checkingHostBattle = true;
+        attemptBecomeBattleMaster();
     }
 
     draw() {
@@ -223,8 +256,8 @@ class TitleScreen {
         
         this.duelButton.draw();
         
-        this.battleButton.style.transparent = !this.showBattleButton;
-        this.battleButton.style.onHoverMovement = this.showBattleButton ? 0.0045 : 0;
+        this.battleButton.style.transparent = false;
+        this.battleButton.style.onHoverMovement = 0.0045;
         this.battleButton.draw();
 
         this.historyButton.draw();
@@ -392,10 +425,7 @@ class TitleScreen {
             }
         }
         
-        const buttons = [this.duelButton, this.historyButton, this.engButton, this.traditionalButton, this.chiButton];
-        if (this.showBattleButton) {
-            buttons.push(this.battleButton);
-        }
+        const buttons = [this.duelButton, this.battleButton, this.historyButton, this.engButton, this.traditionalButton, this.chiButton];
 
         for(const btn of buttons) {
             if(btn.contains(mx, my)) {

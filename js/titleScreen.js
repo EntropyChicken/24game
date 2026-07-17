@@ -65,8 +65,15 @@ class TitleScreen {
             style: {
                 r: 15, onHoverMovement: 0.0035, textColor: color(111),
                 predraw: () => {
-                    titleScreen.battleButton.style.mainColor = color(255,255,255);
-                    titleScreen.battleButton.style.shadeColor = theme.shadeColor;
+                    if (titleScreen.isBattleButtonActive()) {
+                        titleScreen.battleButton.style.mainColor = color(255,255,255);
+                        titleScreen.battleButton.style.shadeColor = theme.shadeColor;
+                    } else {
+                        // Greyed out: either offline entirely, or trying to
+                        // host from a phone (joining still works normally).
+                        titleScreen.battleButton.style.mainColor = color(210,210,210);
+                        titleScreen.battleButton.style.shadeColor = color(160,160,160);
+                    }
                     titleScreen.battleButton.style.hovering = false;
                 }
             },
@@ -80,15 +87,10 @@ class TitleScreen {
                 return (TRANSLATIONS[currentLang].titleScreen.hostBattleButton) || "Host Battle";
             },
             onClick: () => {
+                if (!this.isBattleButtonActive()) return; // inactive: do nothing
                 if (this.showBattleButton) {
                     // A battle master already exists elsewhere - join their battle.
-                    if (isOnlineSession && navigator.onLine) {
-                        setScreen("battle"); 
-                    } else {
-                        alert("Connection lost! Please reconnect and reload to play Team Battle");
-                        this.showBattleButton = false;
-                        isOnlineSession = false;
-                    }
+                    setScreen("battle");
                 } else {
                     // No battle master exists - become one.
                     this.hostBattle();
@@ -229,16 +231,40 @@ class TitleScreen {
         this.checkingHostBattle = false;
     }
 
-    hostBattle() {
-        // Guard against double-clicks and against hosting when a battle
-        // master is already known to exist.
-        if (this.showBattleButton || this.checkingHostBattle) return;
+    // Single source of truth for "is the realtime session actually up".
+    // isOnlineSession reflects whether the realtime channel is subscribed;
+    // navigator.onLine reflects the browser's own network status. Both need
+    // to hold for battle features to work.
+    isOnline() {
+        return isOnlineSession && navigator.onLine;
+    }
 
-        if (!(isOnlineSession && navigator.onLine)) {
-            alert("Connection lost! Please reconnect and reload to host Team Battle");
-            isOnlineSession = false;
-            return;
-        }
+    // Hosting is never available on phones, and never while offline.
+    canHostBattle() {
+        return this.isOnline() && !isPhone;
+    }
+
+    // Joining works from any device, but still requires being online.
+    canJoinBattle() {
+        return this.isOnline();
+    }
+
+    isBattleButtonVisible() {
+        return this.showBattleButton || SHOW_HOST_BATTLE_BUTTON;
+    }
+
+    isBattleButtonActive() {
+        return this.showBattleButton ? this.canJoinBattle() : this.canHostBattle();
+    }
+
+    hostBattle() {
+        // Guard against double-clicks, against hosting when a battle master
+        // is already known to exist, and against hosting from a phone or
+        // while offline (isBattleButtonActive/canHostBattle already keep the
+        // button from being clickable in those cases, but this is a safe
+        // fallback in case hostBattle() is ever called directly).
+        if (this.showBattleButton || this.checkingHostBattle) return;
+        if (!this.canHostBattle()) return;
 
         this.checkingHostBattle = true;
         attemptBecomeBattleMaster();
@@ -256,9 +282,9 @@ class TitleScreen {
         
         this.duelButton.draw();
         
-        const battleButtonVisible = this.showBattleButton || SHOW_HOST_BATTLE_BUTTON;
+        const battleButtonVisible = this.isBattleButtonVisible();
         this.battleButton.style.transparent = !battleButtonVisible;
-        this.battleButton.style.onHoverMovement = battleButtonVisible ? 0.0045 : 0;
+        this.battleButton.style.onHoverMovement = this.isBattleButtonActive() ? 0.0045 : 0;
         this.battleButton.draw();
 
         this.historyButton.draw();
@@ -427,7 +453,7 @@ class TitleScreen {
         }
         
         const buttons = [this.duelButton, this.historyButton, this.engButton, this.traditionalButton, this.chiButton];
-        if (this.showBattleButton || SHOW_HOST_BATTLE_BUTTON) {
+        if (this.isBattleButtonVisible() && this.isBattleButtonActive()) {
             buttons.push(this.battleButton);
         }
 

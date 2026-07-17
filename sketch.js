@@ -15,6 +15,7 @@ let currentIsClassic = true;
 
 let theme = {};
 let canHover;
+let isPhone;
 let mx = -1, my = -1;
 let canSetThemeColor = true;
 let processedTouchIds = new Set();
@@ -42,6 +43,10 @@ function setup() {
     // testAllSolutions();
 
     canHover = window.matchMedia('(hover: hover)').matches;
+    // Touch-primary input + a small viewport is our best available signal
+    // for "this is a phone" (as opposed to a desktop/laptop, or a tablet,
+    // which has more room for the battle-master screen).
+    isPhone = window.matchMedia('(pointer: coarse)').matches && min(windowWidth, windowHeight) < 768;
     if(canHover){
         canSetThemeColor = false;
     }

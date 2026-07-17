@@ -4,7 +4,7 @@
 // exists, matching the original behavior - the only way to become battle
 // master is the slash + backslash shortcut (see sketch.js), which always
 // works regardless of this flag.
-const SHOW_HOST_BATTLE_BUTTON = false;
+const SHOW_HOST_BATTLE_BUTTON = true;
 
 let battleTeams = []; 
 let battleTeam = null;
@@ -262,9 +262,12 @@ async function setupRealtime() {
         });
     await channel.subscribe((status) => {
         if (status === "SUBSCRIBED") {
+            isOnlineSession = true;
             if (screen === "title" && titleScreen) {
                 channel.send({ type: "broadcast", event: "ping_game_master", payload: {} });
             }
+        } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || status === "CLOSED") {
+            isOnlineSession = false;
         }
     }); 
 }

@@ -1,3 +1,11 @@
+// When true: the battle button shows "Host Battle" (and lets anyone become
+// battle master) when no battle master currently exists.
+// When false: the battle button is hidden entirely when no battle master
+// exists, matching the original behavior - the only way to become battle
+// master is the slash + backslash shortcut (see sketch.js), which always
+// works regardless of this flag.
+const SHOW_HOST_BATTLE_BUTTON = false;
+
 let battleTeams = []; 
 let battleTeam = null;
 let battleScores = {};

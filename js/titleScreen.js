@@ -256,8 +256,9 @@ class TitleScreen {
         
         this.duelButton.draw();
         
-        this.battleButton.style.transparent = false;
-        this.battleButton.style.onHoverMovement = 0.0045;
+        const battleButtonVisible = this.showBattleButton || SHOW_HOST_BATTLE_BUTTON;
+        this.battleButton.style.transparent = !battleButtonVisible;
+        this.battleButton.style.onHoverMovement = battleButtonVisible ? 0.0045 : 0;
         this.battleButton.draw();
 
         this.historyButton.draw();
@@ -425,7 +426,10 @@ class TitleScreen {
             }
         }
         
-        const buttons = [this.duelButton, this.battleButton, this.historyButton, this.engButton, this.traditionalButton, this.chiButton];
+        const buttons = [this.duelButton, this.historyButton, this.engButton, this.traditionalButton, this.chiButton];
+        if (this.showBattleButton || SHOW_HOST_BATTLE_BUTTON) {
+            buttons.push(this.battleButton);
+        }
 
         for(const btn of buttons) {
             if(btn.contains(mx, my)) {

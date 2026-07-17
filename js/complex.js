@@ -123,6 +123,10 @@ class Complex {
         if(this.isNaN()) return new Complex(NaN,NaN);
         return this.power(new Complex(0.5));
     };
+    cbrt() {
+        if(this.isNaN()) return new Complex(NaN,NaN);
+        return this.power(new Complex(1/3));
+    };
 
     
     negate() {
@@ -351,6 +355,7 @@ class Complex {
             case '÷': return this.divide(b);
             case '^': return this.power(b);
             case '√': return this.sqrt();
+            case '∛': return this.cbrt();
             case 'ln': return this.naturalLog();
             case '!': return this.factorial();
             case 'sin': return this.sin();

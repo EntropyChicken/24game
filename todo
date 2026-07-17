@@ -1,0 +1,16 @@
+when there is no battle master, people have a button to become the battle master (a "host")
+    so instead of having no button, there's just a different button: to become host
+    must make sure that nobody can become a second host if for whatever reason they have an old button
+    should check for hosts when you click such a button
+
+when the player gets a doubler, they should see bright energetic flashes on their own screen in fact, each doubler should have its own associated color, and it should also be how it is displayed on the battle master's screen.
+    negative: bright hot pink (like the text color)
+    non-integer: bright yellow (like the text color)
+    non-real: bright purple (like the text color)
+    NaN: black
+    over 24: bright cyan
+    over 9000: uhhhhhhhhhh idk honestly maybe just delete this one because it never really gets used anyway LOL
+
+the HTML "type custom name" box should hide if you get booted out of the select team screen (battle master leaves)
+
+all team names should be erased from everyone's memory if the battle master ends the battle or leaves

@@ -34,6 +34,7 @@ const TRANSLATIONS = {
             copyButtonFailed: "failed",
             clearButton: "Delete all data",
             warningText: "Are you sure you want to clear your win history? This action is permanent and cannot be undone.",
+            noWinsYet: "No wins yet... go make some 24s!",
             getWinsText: (val) => val === 1 ? "win" : "wins"
         },
         battleScreen: {
@@ -83,6 +84,7 @@ const TRANSLATIONS = {
             copyButtonFailed: "失败",
             clearButton: "删除所有数据",
             warningText: "您确定要清除您的获胜历史记录吗？此操作是永久性的，且无法撤销。",
+            noWinsYet: "暂无获胜记录……快去凑些 24 吧！",
             getWinsText: (val) => " 次获胜"
         },
         battleScreen: {
@@ -132,6 +134,7 @@ const TRANSLATIONS = {
             copyButtonFailed: "失敗",
             clearButton: "刪除所有資料",
             warningText: "您確定要清除您的獲勝歷史紀錄嗎？此操作是永久性的，且無法撤銷。",
+            noWinsYet: "暫無獲勝記錄……快去湊些 24 吧！",
             getWinsText: (val) => " 次獲勝"
         },
         battleScreen: {

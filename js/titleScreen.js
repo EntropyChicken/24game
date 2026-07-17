@@ -245,9 +245,10 @@ class TitleScreen {
                 text(TRANSLATIONS[currentLang].titleScreen.randomSetSection,width*0.3+x, height*0.363+y*0.8);
                 text(TRANSLATIONS[currentLang].titleScreen.designedSetSection,width*0.7+x, height*0.363+y*0.8);
                 textAlign(RIGHT,BOTTOM);
+                
+                let s = constrain(width * 0.035, 27, 35);
                 if (isOnlineSession) {
                     if (gameCount !== undefined) {
-                        let s = constrain(width * 0.035, 27, 35);
                         textSize(s);
                         text(TRANSLATIONS[currentLang].titleScreen.getGameCountUpperText(gameCount), width - this.historyButton.w - 2*this.padding + x, height - s - this.padding + y * 0.8);
                         text(TRANSLATIONS[currentLang].titleScreen.gameCountLowerText, width - this.historyButton.w - 2*this.padding + x, height - this.padding + y * 0.8);
@@ -256,7 +257,6 @@ class TitleScreen {
                         text(gameCount, width - this.historyButton.w - 2*this.padding - w + x + (gameCountDrawScale-1)*4, height - s - this.padding + 2 + y * 0.8 + (gameCountDrawScale-1)*8);
                     }
                 } else {
-                    let s = constrain(width * 0.035, 27, 35);
                     textSize(s);
                     text("📡❌", width - this.historyButton.w - 2*this.padding + x, height - s - this.padding + y * 0.8);
                     text(TRANSLATIONS[currentLang].titleScreen.offlineMode, width - this.historyButton.w - 2*this.padding + x, height - this.padding + y * 0.8);

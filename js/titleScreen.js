@@ -258,8 +258,8 @@ class TitleScreen {
                 } else {
                     let s = constrain(width * 0.035, 27, 35);
                     textSize(s);
-                    text("📡❌", width - this.historyButton.w - 2*this.padding - 15 + x, height - s - 15 + y * 0.8);
-                    text(TRANSLATIONS[currentLang].titleScreen.offlineMode, width - this.historyButton.w - 2*this.padding - 15 + x, height - 15 + y * 0.8);
+                    text("📡❌", width - this.historyButton.w - 2*this.padding + x, height - s - this.padding + y * 0.8);
+                    text(TRANSLATIONS[currentLang].titleScreen.offlineMode, width - this.historyButton.w - 2*this.padding + x, height - this.padding + y * 0.8);
                 }
             }
         }

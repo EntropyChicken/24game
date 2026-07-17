@@ -14,3 +14,8 @@ when the player gets a doubler, they should see bright energetic flashes on thei
 the HTML "type custom name" box should hide if you get booted out of the select team screen (battle master leaves)
 
 all team names should be erased from everyone's memory if the battle master ends the battle or leaves
+
+make the JOIN battle button more obvious. maybe flash red or has particle effects even
+
+make this https://entropychicken.github.io/24game/ redirect to make24.org (because of people who are still on the old url)
+make this https://entropychicken.github.io/make-24/ redirect to make24.org and have this be the official github name

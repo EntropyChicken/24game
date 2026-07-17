@@ -22,3 +22,5 @@ make this https://entropychicken.github.io/make-24/ redirect to make24.org and h
 
 make the buttons look nicer on the home screen lol. don't be on one and two lines for the duel and battle buttons on mobile, for example
 make the text sizes of the buttons consistent in the Level
+
+add hint for "cards":[-1,-1],"ops":["÷","√","∛","ln"]

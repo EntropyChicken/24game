@@ -10,7 +10,8 @@ const TRANSLATIONS = {
             designedSets: ["Discovery", "Insight", "Theory", "JavaScript", "CRAZY HARD"],
             getGameCountUpperText: (val) => val === 1 ? "game" : "games",
             gameCountLowerText: "won worldwide!",
-            historyButton: "My\nwins"
+            historyButton: "My\nwins",
+            offlineMode: "Offline mode"
         },
         level:{
             homeButton:"Home",
@@ -58,7 +59,8 @@ const TRANSLATIONS = {
             designedSets: ["探索", "洞察", "理论", "JS代码", "抓狂"],
             getGameCountUpperText: (val) => "次通关",
             gameCountLowerText: "来自全球玩家!",
-            historyButton: "我的\n通关"
+            historyButton: "我的\n通关",
+            offlineMode: "离线模式"
         },
         level: {
             homeButton: "主页",
@@ -106,7 +108,8 @@ const TRANSLATIONS = {
             designedSets: ["探索", "洞察", "理論", "JS程式碼", "抓狂"],
             getGameCountUpperText: (val) => "次通關",
             gameCountLowerText: "來自全球玩家!",
-            historyButton: "我的\n通關"
+            historyButton: "我的\n通關",
+            offlineMode: "離線模式"
         },
         level: {
             homeButton: "主頁",

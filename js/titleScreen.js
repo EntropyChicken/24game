@@ -251,15 +251,15 @@ class TitleScreen {
                         textSize(s);
                         text(TRANSLATIONS[currentLang].titleScreen.getGameCountUpperText(gameCount), width - this.historyButton.w - 2*this.padding + x, height - s - this.padding + y * 0.8);
                         text(TRANSLATIONS[currentLang].titleScreen.gameCountLowerText, width - this.historyButton.w - 2*this.padding + x, height - this.padding + y * 0.8);
-                        let w = textWidth(" games");
+                        let w = textWidth(" "+TRANSLATIONS[currentLang].titleScreen.getGameCountUpperText(gameCount));
                         textSize(s * (gameCountDrawScale + 0.3));
                         text(gameCount, width - this.historyButton.w - 2*this.padding - w + x + (gameCountDrawScale-1)*4, height - s - this.padding + 2 + y * 0.8 + (gameCountDrawScale-1)*8);
                     }
                 } else {
                     let s = constrain(width * 0.035, 27, 35);
                     textSize(s);
-                    text("📡❌", width - 15 + x, height - s - 15 + y * 0.8);
-                    text("Offline mode", width - 15 + x, height - 15 + y * 0.8);
+                    text("📡❌", width - this.historyButton.w - 2*this.padding - 15 + x, height - s - 15 + y * 0.8);
+                    text(TRANSLATIONS[currentLang].titleScreen.offlineMode, width - this.historyButton.w - 2*this.padding - 15 + x, height - 15 + y * 0.8);
                 }
             }
         }

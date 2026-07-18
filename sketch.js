@@ -632,6 +632,8 @@ function touchStarted() {
                 duel.handleClick(t.x, t.y);
             } else if (screen === "history") {
                 historyScreen.handleClick(t.x, t.y);
+            } else if (screen === "workshop") {
+                workshopScreen.handleClick(t.x, t.y);
             } else if (screen === "battle") {
                 if (battleTeam === null) {
                     let centralOrbitRadius = 220;

@@ -1,4 +1,4 @@
-const CACHE_NAME = "24game-cache-v116";
+const CACHE_NAME = "24game-cache-v117";
 const CACHE_FILES = [
     "./", 
     "./index.html",
@@ -8,6 +8,7 @@ const CACHE_FILES = [
     "./assets/icon-550.png",
     "./assets/favicon.png",
     "./sketch.js",
+    "./js/supabaseChannel.js",
     "./js/rational.js",
     "./js/complex.js",
     "./js/operation.js",

@@ -16,7 +16,8 @@ class WorkshopScreen {
             sols:[], // only sols[0] will exist and be used (no alternative solutions listed)
         };
 
-        this.backgroundColor = color(222,180,190);
+        this.backgroundColor = color(222,180,200);
+        this.updateShadeColor();
 
         // let split = width > 450 ? 0.65 : 0.45;
         let split = 0.65;
@@ -122,7 +123,7 @@ class WorkshopScreen {
         this.generateWorkbenchLevel();
     }
     draw() {
-        theme.shadeColor = lerpColor(color(255),lerpColor(color(0),this.backgroundColor,1.4),0.6);
+        this.updateShadeColor();
 
         if(this.workbenchLevel.solved){
             this.generateWorkbenchLevel();
@@ -165,6 +166,9 @@ class WorkshopScreen {
         }
     }
 
+    updateShadeColor() {
+        theme.shadeColor = lerpColor(color(255),lerpColor(color(0),this.backgroundColor,1.4),0.6);
+    }
     generateWorkbenchLevel() {
         this.workbenchLevel = new Level(this.workbench.cards,this.workbench.ops,this.workbench,false);
         Level.setupKeyboard(this.workbenchLevel);

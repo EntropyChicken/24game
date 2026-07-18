@@ -318,7 +318,7 @@ class TitleScreen {
                     }
                 } else {
                     textSize(s);
-                    text("📡❌", width - this.historyButton.w - 2*this.padding + x, height - s - this.padding + y * 0.8);
+                    text("📡❌", width - this.historyButton.w - 2*this.padding + x, height - s*1.15 - this.padding + y * 0.8);
                     text(TRANSLATIONS[currentLang].titleScreen.offlineMode, width - this.historyButton.w - 2*this.padding + x, height - this.padding + y * 0.8);
                 }
             }

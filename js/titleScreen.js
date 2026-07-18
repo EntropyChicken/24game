@@ -325,13 +325,11 @@ class TitleScreen {
                 if (isOnlineSession) {
                     if (gameCount !== undefined) {
                         textSize(s);
-                        text(TRANSLATIONS[currentLang].titleScreen.getGameCountUpperText(gameCount), this.historyButton.w + 2*this.padding + x, height - s - this.padding + y * 0.8);
-                        text(TRANSLATIONS[currentLang].titleScreen.gameCountLowerText, this.historyButton.w + 2*this.padding + x, height - this.padding + y * 0.8);
-                        let w = textWidth(" "+TRANSLATIONS[currentLang].titleScreen.getGameCountUpperText(gameCount));
+                        text(TRANSLATIONS[currentLang].titleScreen.getGameCountLowerText(gameCount), this.historyButton.w + 2*this.padding + x, height - this.padding + y * 0.8);
                         textSize(s * (gameCountDrawScale + 0.3));
-                        text(gameCount, width - this.historyButton.w - 2*this.padding - w + x + (gameCountDrawScale-1)*4, height - s - this.padding + 2 + y * 0.8 + (gameCountDrawScale-1)*8);
+                        text(gameCount, this.historyButton.w + 2*this.padding + x - (gameCountDrawScale-1)*4, height - s - this.padding + 2 + y * 0.8 + (gameCountDrawScale-1)*8);
                     }
-                } else {
+                } else {   
                     textSize(s);
                     text("📡❌", this.historyButton.w + 2*this.padding + x, height - s*1.15 - this.padding + y * 0.8);
                     text(TRANSLATIONS[currentLang].titleScreen.offlineMode, this.historyButton.w + 2*this.padding + x, height - this.padding + y * 0.8);

@@ -10,8 +10,7 @@ const TRANSLATIONS = {
             hostBattleChecking: "Loading...",
             randomSets: ["Easy", "Medium", "Hard", "Tricky", "Very Hard"],
             designedSets: ["Discovery", "Insight", "Theory", "JavaScript", "CRAZY HARD"],
-            getGameCountUpperText: (val) => val === 1 ? "game" : "games",
-            gameCountLowerText: "won worldwide!",
+            getGameCountLowerText: (val) => ((val === 1 ? "game" : "games") + " won worldwide!"),
             historyButton: "My\nWins",
             offlineMode: "Offline mode",
             workshopButton: "Make My Own Puzzle"

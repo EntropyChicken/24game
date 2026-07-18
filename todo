@@ -34,3 +34,5 @@ make numberInput only accept decimal real numbers (maybe don't even let people t
 make consistent between this.numberInput versus. teamInput
 
 maybe red background means the user's puzzle has not been verified, while blue background means it has been verified
+
+make the auto gen hint for custom levels depend on language

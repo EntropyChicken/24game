@@ -10,9 +10,7 @@ class WorkshopScreen {
             // same format as the designed puzzle JSONs
             cards:[1,2],
             ops:["+","-","×","÷"],
-            hint:{
-                universal:""
-            }, // only hint.universal will exist and be used (no language-specific hints)
+            hint:{english:""}, // only hint.english will exist and be used as default (no language-specific hints)
             sols:[], // only sols[0] will exist and be used (no alternative solutions listed)
         };
 
@@ -54,7 +52,7 @@ class WorkshopScreen {
 			getText: () => TRANSLATIONS[currentLang].workshopScreen.numberDeleteButton,
 			onClick: () => {
                 workshopScreen.workbench.cards.pop();
-                workshopScreen.generateWorkbenchLevel();
+                workshopScreen.generateWorkbenchLevel(true);
             }
 		});
         this.operationToggleButtons = [];
@@ -80,7 +78,7 @@ class WorkshopScreen {
                                 workshopScreen.operationToggleButtons[i].style.shadeColor = theme.shadeColor;
                                 workshopScreen.operationToggleButtons[i].style.hovering = false;
                                 workshopScreen.workbench.ops.splice(j,1);
-                                workshopScreen.generateWorkbenchLevel();
+                                workshopScreen.generateWorkbenchLevel(true);
                                 return;
                             }
                         }
@@ -88,7 +86,7 @@ class WorkshopScreen {
                         workshopScreen.operationToggleButtons[i].style.mainColor = theme.selectedColor;
                         workshopScreen.operationToggleButtons[i].style.shadeColor = theme.shadeColorCorrect;
                         workshopScreen.operationToggleButtons[i].style.hovering = true;
-                        workshopScreen.generateWorkbenchLevel();
+                        workshopScreen.generateWorkbenchLevel(true);
                     }
                 }));
                 x += w;
@@ -101,7 +99,7 @@ class WorkshopScreen {
         this.updateOperationToggleButtonStyles();
 
         this.workbenchLevel = null;
-        this.generateWorkbenchLevel();
+        this.generateWorkbenchLevel(true);
 	}
     updateOperationToggleButtonStyles() {
         for(let btn of this.operationToggleButtons){
@@ -126,8 +124,27 @@ class WorkshopScreen {
         this.updateShadeColor();
 
         if(this.workbenchLevel.solved){
+            if(this.mode === "working"){
+                this.workbench.sols = [this.workbenchLevel.watcherSequence.toExpr()];
+                let finalAction = this.workbenchLevel.watcherSequence.actions[this.workbenchLevel.watcherSequence.actions.length-1];
+                console.log(finalAction);
+                let h = finalAction.s;
+                if(finalAction.a!==undefined){
+                    h = finalAction.a.getText(false) + h;
+                }
+                if(finalAction.b!==undefined){
+                    h += finalAction.b.getText(false);
+                }
+                h += "=24";
+                this.workbench.hint = {
+                    english: "A possible final step is "+h
+                }
+                this.mode = "playing";
+            }
+            else{
+                this.mode = "working";
+            }
             this.generateWorkbenchLevel();
-            this.mode = (this.mode === "playing" ? "working" : "playing"); // flip mode
         }
 
         if(this.mode === "playing"){
@@ -169,7 +186,11 @@ class WorkshopScreen {
     updateShadeColor() {
         theme.shadeColor = lerpColor(color(255),lerpColor(color(0),this.backgroundColor,1.4),0.6);
     }
-    generateWorkbenchLevel() {
+    generateWorkbenchLevel(clearHintAndSolution = false) {
+        if(clearHintAndSolution){
+            this.workbench.sols = [];
+            this.workbench.hint = {};
+        }
         this.workbenchLevel = new Level(this.workbench.cards,this.workbench.ops,this.workbench,false);
         Level.setupKeyboard(this.workbenchLevel);
     }
@@ -178,8 +199,13 @@ class WorkshopScreen {
         this.generateWorkbenchLevel();
     }
     handleClick(mx, my) {
-        this.workbenchLevel.handleClick(map(mx,0,this.workbenchLevelWidth,0,width), map(my,this.workbenchHeight,height,0,height));
-        
+        if(this.mode === "working"){ // do transform
+            this.workbenchLevel.handleClick(map(mx,0,this.workbenchLevelWidth,0,width), map(my,this.workbenchHeight,height,0,height));
+        }
+        else{
+            this.workbenchLevel.handleClick(mx,my);
+        }
+
         const buttons = this.operationToggleButtons.concat([this.numberDeleteButton]);
         for(const btn of buttons) {
             if(btn.contains(mx, my)) {

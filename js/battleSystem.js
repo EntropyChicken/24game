@@ -1,5 +1,3 @@
-// ngl if channel doesn't exist (in the case that we're offline) then most stuff in this script is broken. but it should never be called
-
 // When true: the battle button shows "Host Battle" (and lets anyone become
 // battle master) when no battle master currently exists.
 // When false: the battle button is hidden entirely when no battle master
@@ -68,7 +66,7 @@ function toggleDoublerReasonEnabled(reasonKey) {
     }
 }
 
-async function setupRealtime() {
+async function setupRealtime() { // this function won't even be called if channel is undefined at the time of this script being run (offline mode)
     channel
         .on("broadcast", { event: "win" }, (msg) => {
             gameCount = msg.payload.gameCount;
@@ -264,7 +262,9 @@ async function setupRealtime() {
     }); 
 }
 
-setupRealtime();
+if(channel !== undefined){
+    setupRealtime();
+}
 
 // --- BATTLE HELPER LOGIC ---
 async function broadcastWin() {

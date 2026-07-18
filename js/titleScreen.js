@@ -126,7 +126,7 @@ class TitleScreen {
             onClick: () => { setScreen('history'); }
         });
 
-        this.engButton = new Button({
+        this.englishButton = new Button({
             x: width - langBtnW * 3 - langGap * 2 - this.padding, 
             y: this.padding, 
             w: langBtnW, 
@@ -135,14 +135,15 @@ class TitleScreen {
             style: {
                 r: 8, onHoverMovement: 0.0025, textColor: color(111),
                 predraw: () => {
+                    let s = titleScreen.englishButton.style;
                     if (currentLang === 'english') {
-                        titleScreen.engButton.style.mainColor = theme.selectedColor;
-                        titleScreen.engButton.style.shadeColor = theme.shadeColorCorrect;
-                        titleScreen.engButton.style.hovering = true;
+                        s.mainColor = theme.selectedColor;
+                        s.shadeColor = theme.shadeColorCorrect;
+                        s.hovering = true;
                     } else {
-                        titleScreen.engButton.style.mainColor = color(255,255,255);
-                        titleScreen.engButton.style.shadeColor = theme.shadeColor;
-                        titleScreen.engButton.style.hovering = false;
+                        s.mainColor = color(255,255,255);
+                        s.shadeColor = theme.shadeColor;
+                        s.hovering = false;
                     }
                 }
             },
@@ -150,7 +151,7 @@ class TitleScreen {
             onClick: () => { changeLanguage('english'); }
         });
 
-        this.traditionalButton = new Button({
+        this.traditionalChineseButton = new Button({
             x: width - langBtnW * 2 - langGap - this.padding, 
             y: this.padding, 
             w: langBtnW, 
@@ -159,14 +160,15 @@ class TitleScreen {
             style: {
                 r: 8, onHoverMovement: 0.0025, textColor: color(111),
                 predraw: () => {
+                    let s = titleScreen.traditionalChineseButton.style
                     if (currentLang === 'chinese_traditional') {
-                        titleScreen.traditionalButton.style.mainColor = theme.selectedColor;
-                        titleScreen.traditionalButton.style.shadeColor = theme.shadeColorCorrect;
-                        titleScreen.traditionalButton.style.hovering = true;
+                        s.mainColor = theme.selectedColor;
+                        s.shadeColor = theme.shadeColorCorrect;
+                        s.hovering = true;
                     } else {
-                        titleScreen.traditionalButton.style.mainColor = color(255,255,255);
-                        titleScreen.traditionalButton.style.shadeColor = theme.shadeColor;
-                        titleScreen.traditionalButton.style.hovering = false;
+                        s.mainColor = color(255);
+                        s.shadeColor = theme.shadeColor;
+                        s.hovering = false;
                     }
                 }
             },
@@ -174,7 +176,7 @@ class TitleScreen {
             onClick: () => { changeLanguage('chinese_traditional'); }
         });
 
-        this.chiButton = new Button({
+        this.simplifiedChineseButton = new Button({
             x: width - langBtnW - this.padding, 
             y: this.padding, 
             w: langBtnW, 
@@ -183,14 +185,15 @@ class TitleScreen {
             style: {
                 r: 8, onHoverMovement: 0.0025, textColor: color(111),
                 predraw: () => {
+                    let s = titleScreen.simplifiedChineseButton.style;
                     if (currentLang === 'chinese_simplified') {
-                        titleScreen.chiButton.style.mainColor = theme.selectedColor;
-                        titleScreen.chiButton.style.shadeColor = theme.shadeColorCorrect;
-                        titleScreen.chiButton.style.hovering = true;
+                        s.mainColor = theme.selectedColor;
+                        s.shadeColor = theme.shadeColorCorrect;
+                        s.hovering = true;
                     } else {
-                        titleScreen.chiButton.style.mainColor = color(255,255,255);
-                        titleScreen.chiButton.style.shadeColor = theme.shadeColor;
-                        titleScreen.chiButton.style.hovering = false;
+                        s.mainColor = color(255);
+                        s.shadeColor = theme.shadeColor;
+                        s.hovering = false;
                     }
                 }
             },
@@ -288,9 +291,9 @@ class TitleScreen {
         this.battleButton.draw();
 
         this.historyButton.draw();
-        this.engButton.draw();
-        this.traditionalButton.draw();
-        this.chiButton.draw();
+        this.englishButton.draw();
+        this.traditionalChineseButton.draw();
+        this.simplifiedChineseButton.draw();
 
         noStroke();
         for(let y = 2; y>=-2; y-=2){
@@ -452,7 +455,7 @@ class TitleScreen {
             }
         }
         
-        const buttons = [this.duelButton, this.historyButton, this.engButton, this.traditionalButton, this.chiButton];
+        const buttons = [this.duelButton, this.historyButton, this.englishButton, this.traditionalChineseButton, this.simplifiedChineseButton];
         if (this.isBattleButtonVisible() && this.isBattleButtonActive()) {
             buttons.push(this.battleButton);
         }

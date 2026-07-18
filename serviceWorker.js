@@ -24,6 +24,7 @@ const CACHE_FILES = [
     "./js/battleSystem.js",
     "./js/translations.js",
     "./js/historyScreen.js",
+    "./js/workshopScreen.js",
     "./libraries/p5.min.js",
     "./libraries/p5.sound.min.js",
     "./levelData/classicLevelsVeryHard.json",

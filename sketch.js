@@ -4,7 +4,7 @@ const USE_FLAG_EMOJIS = false;
 let showFlagEmojis = false;
 
 let screen = "title";
-let level, duel, titleScreen, masterPreviewLevel, historyScreen;
+let level, duel, titleScreen, masterPreviewLevel, historyScreen, workshopScreen;
 let originalClassicSets = [[], [], [], [], []];
 let originalPuzzleSets = [[], [], [], []];
 let classicSets = []; 
@@ -72,6 +72,7 @@ function setup() {
     teamInput.style('font-family', 'Arial, sans-serif');
 
     historyScreen = new HistoryScreen();
+    workshopScreen = new WorkshopScreen();
 
     let inputWidth = teamInput.elt.offsetWidth;
     let inputHeight = teamInput.elt.offsetHeight;
@@ -135,6 +136,10 @@ function draw() {
             duel = new Duel(levelArgs.cards,levelArgs.ops,levelArgs.lvl,duel.scores);
             setThemeColor(theme.backgroundColor);
         }
+    } else if (screen === "history") {
+        historyScreen.draw();
+    } else if (screen === "workshop") {
+        workshopScreen.draw();
     } else if (screen === "battle") {
         if(battleTeam === null){
             drawBattleTeamSelection();
@@ -364,8 +369,6 @@ function draw() {
 
             battleMasterVictoryFlash *= 0.94;
         }
-    } else if (screen === "history") {
-        historyScreen.draw();
     }
 }
 

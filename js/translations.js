@@ -13,7 +13,8 @@ const TRANSLATIONS = {
             getGameCountUpperText: (val) => val === 1 ? "game" : "games",
             gameCountLowerText: "won worldwide!",
             historyButton: "My\nwins",
-            offlineMode: "Offline mode"
+            offlineMode: "Offline mode",
+            workshopButton: "My Custom Puzzles"
         },
         level:{
             homeButton:"Home",

@@ -123,7 +123,7 @@ class TitleScreen {
             label: "History Button",
             style: {r: 8, onHoverMovement: -0.0035, textColor: color(111)},
             getText: () => TRANSLATIONS[currentLang].titleScreen.historyButton,
-            onClick: () => { setScreen('history'); }
+            onClick: () => { setScreen("history"); }
         });
 
         this.englishButton = new Button({
@@ -199,6 +199,17 @@ class TitleScreen {
             },
             getText: () => simplifiedChineseGetText,
             onClick: () => { changeLanguage('chinese_simplified'); }
+        });
+        
+        this.workshopButton = new Button({
+            x: width - langBtnW - this.padding,
+            y: height - this.historyButton.h - this.padding,
+            w: langBtnW,
+            h: this.historyButton.h,
+            label: "Workshop Button",
+            style: {r: 8, onHoverMovement: -0.0035, textColor: color(111)},
+            getText: () => TRANSLATIONS[currentLang].titleScreen.workshopButton,
+            onClick: () => { setScreen("workshop") }
         });
 
         if (typeof channel !== 'undefined') {
@@ -294,6 +305,7 @@ class TitleScreen {
         this.englishButton.draw();
         this.traditionalChineseButton.draw();
         this.simplifiedChineseButton.draw();
+        this.workshopButton.draw();
 
         noStroke();
         for(let y = 2; y>=-2; y-=2){
@@ -455,7 +467,7 @@ class TitleScreen {
             }
         }
         
-        const buttons = [this.duelButton, this.historyButton, this.englishButton, this.traditionalChineseButton, this.simplifiedChineseButton];
+        const buttons = [this.duelButton, this.historyButton, this.englishButton, this.traditionalChineseButton, this.simplifiedChineseButton, this.workshopButton];
         if (this.isBattleButtonVisible() && this.isBattleButtonActive()) {
             buttons.push(this.battleButton);
         }

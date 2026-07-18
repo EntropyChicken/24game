@@ -201,18 +201,17 @@ class WorkshopScreen {
     handleClick(mx, my) {
         if(this.mode === "working"){ // do transform
             this.workbenchLevel.handleClick(map(mx,0,this.workbenchLevelWidth,0,width), map(my,this.workbenchHeight,height,0,height));
+            const buttons = this.operationToggleButtons.concat([this.numberDeleteButton]);
+            for(const btn of buttons) {
+                if(btn.contains(mx, my)) {
+                    btn.drawScale -= 0.08;
+                    btn.onClick();
+                    return;
+                }
+            }
         }
         else{
             this.workbenchLevel.handleClick(mx,my);
-        }
-
-        const buttons = this.operationToggleButtons.concat([this.numberDeleteButton]);
-        for(const btn of buttons) {
-            if(btn.contains(mx, my)) {
-                btn.drawScale -= 0.08;
-                btn.onClick();
-                return;
-            }
         }
     }
     hide() {

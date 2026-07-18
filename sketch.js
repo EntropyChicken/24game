@@ -84,7 +84,7 @@ function setup() {
     teamInput.position(safeX, safeY);
     teamInput.elt.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.keyCode === 13) {
-            teamInputSubmit(teamInput.value());
+            setBattleTeam(teamInput.value());
             teamInput.elt.blur(); 
         }
     });
@@ -386,8 +386,14 @@ function setThemeColor(color) {
 function setScreen(s){
     screen = s;
     
+    if(screen !== "battle"){
+        teamInput.hide();
+    }
     if(screen !== "history"){
         historyScreen.hide();
+    }
+    if(screen !== "workshop"){
+        workshopScreen.hide();
     }
 
     if(screen === "title"){
@@ -431,6 +437,9 @@ function setScreen(s){
     else if(screen === "history"){
         historyScreen.show();
     }
+    else if(screen === "workshop"){
+        workshopScreen.show();
+    }
     else{
         setThemeColor(color(0,0,0));
     }
@@ -444,6 +453,7 @@ function windowResized() {
         newTitleScreen.duelMode = titleScreen.duelMode;
     }
     titleScreen = newTitleScreen;
+    workshopScreen = new WorkshopScreen();
     
     if(level!==undefined){
         level.reSetupLayout();
@@ -475,6 +485,8 @@ function mousePressed() {
         duel.handleClick(mouseX, mouseY);
     } else if (screen === "history") {
         historyScreen.handleClick(mouseX, mouseY);
+    } else if (screen === "workshop") {
+        workshopScreen.handleClick(mouseX, mouseY);
     } else if (screen === "battle") {
         if (battleTeam === null) {  
             let centralOrbitRadius = 220;
@@ -495,7 +507,7 @@ function mousePressed() {
             let btnX = width / 2 - 60;
             let btnY = inputY + inputH + 20; 
             if (mouseX > btnX && mouseX < btnX + 120 && mouseY > btnY && mouseY < btnY + 50) {
-                teamInputSubmit(teamInput.value());
+                setBattleTeam(teamInput.value());
                 return;
             }
 
@@ -639,7 +651,7 @@ function touchStarted() {
                     let btnY = inputY + inputH + 20;
                     
                     if (t.x > btnX && t.x < btnX + btnW && t.y > btnY && t.y < btnY + btnH) {
-                        teamInputSubmit(teamInput.value());
+                        setBattleTeam(teamInput.value());
                         return false;
                     }
 

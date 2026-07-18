@@ -52,7 +52,8 @@ const TRANSLATIONS = {
             }
         },
         workshopScreen: {
-            numberInput: "Type a numerical value..."
+            numberInput: "Type a number to create card...",
+            numberDeleteButton: "Delete card"
         },
     },
     chinese_simplified: {

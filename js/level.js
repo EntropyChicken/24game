@@ -11,7 +11,7 @@ class Level {
 	static WIN_TIMER_START = 70;
 	static BACK_SLASH_CHEAT = false;
 
-	constructor(numbers, opSymbols = Level.SYMBOLS, metaData = {}, useRational = false) {
+	constructor(numbers, opSymbols = Level.SYMBOLS, metaData = {}, useRational = false) { // it's kind of silly that metaData contains the numbers and opSymbols again, usually 
 		this.metaData = metaData;
 		this.values = numbers.map(n => useRational ? new Rational(n, 1) : new Complex(n));
 		this.originalValues = numbers.map(n => useRational ? new Rational(n, 1) : new Complex(n));
@@ -490,8 +490,8 @@ class Level {
 			if(solCount!==1){
 				hint += "s";
 			}
-			hint += ". ";
 			if(solCount!==0){
+				hint += ". ";
 				let sol = this.metaData.sols[0];
 				if(needsFrac!==undefined){
 					if(needsFrac){

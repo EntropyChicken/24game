@@ -480,13 +480,7 @@ function drawBattleTeamSelection(){
     text(TRANSLATIONS[currentLang].battleScreen.teamSelection.join, btnX + btnW / 2, btnY + btnH / 2);
 }
 
-function teamInputSubmit(value) { // it should be that value === teamInput.value()
-    let typedName = value.trim();
-    if (typedName !== "") {
-        setBattleTeam(typedName);
-    }
-}
-
+ // from teamInput, team is set to teamInput.value()
 function setBattleTeam(team){
     team = team.trim();
     if (team === "") return; 

@@ -32,3 +32,5 @@ investigate if this block of code from battleSystem.js is too lax for making isO
 
 make numberInput only accept decimal real numbers (maybe don't even let people type PI) (clarify no imaginary numbers)
 make consistent between this.numberInput versus. teamInput
+
+maybe red background means the user's puzzle has not been verified, while blue background means it has been verified

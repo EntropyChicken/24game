@@ -94,7 +94,7 @@ class Duel {
             rotate(this.ang);
         }
 
-        let trueMx = mx;
+        let trueMx = mx; // sus trick, temoprarily making mx fake so that it works for the transformed Level
         let trueMy = my;
 
         background(theme.backgroundColor);

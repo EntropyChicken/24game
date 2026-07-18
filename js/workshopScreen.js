@@ -125,21 +125,23 @@ class WorkshopScreen {
 
         if(this.workbenchLevel.solved){
             if(this.mode === "working"){
-                this.workbench.sols = [this.workbenchLevel.watcherSequence.toExpr()];
-                let finalAction = this.workbenchLevel.watcherSequence.actions[this.workbenchLevel.watcherSequence.actions.length-1];
-                console.log(finalAction);
-                let h = finalAction.s;
-                if(finalAction.a!==undefined){
-                    h = finalAction.a.getText(false) + h;
+                // if it's an empty puzzle then don't move on (probably started with just 24 or pressed skip or something)
+                if(this.workbenchLevel.watcherSequence.actions.length){
+                    this.workbench.sols = [this.workbenchLevel.watcherSequence.toExpr()];
+                    let finalAction = this.workbenchLevel.watcherSequence.actions[this.workbenchLevel.watcherSequence.actions.length-1];
+                    let h = finalAction.s;
+                    if(finalAction.a!==undefined){
+                        h = finalAction.a.getText(false) + h;
+                    }
+                    if(finalAction.b!==undefined){
+                        h += finalAction.b.getText(false);
+                    }
+                    h += "=24";
+                    this.workbench.hint = {
+                        english: "A possible final step is "+h
+                    }
+                    this.mode = "playing";
                 }
-                if(finalAction.b!==undefined){
-                    h += finalAction.b.getText(false);
-                }
-                h += "=24";
-                this.workbench.hint = {
-                    english: "A possible final step is "+h
-                }
-                this.mode = "playing";
             }
             else{
                 this.mode = "working";

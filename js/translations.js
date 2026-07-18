@@ -12,9 +12,9 @@ const TRANSLATIONS = {
             designedSets: ["Discovery", "Insight", "Theory", "JavaScript", "CRAZY HARD"],
             getGameCountUpperText: (val) => val === 1 ? "game" : "games",
             gameCountLowerText: "won worldwide!",
-            historyButton: "My\nwins",
+            historyButton: "My\nWins",
             offlineMode: "Offline mode",
-            workshopButton: "My Custom Puzzles"
+            workshopButton: "Make My Own Puzzle"
         },
         level:{
             homeButton:"Home",

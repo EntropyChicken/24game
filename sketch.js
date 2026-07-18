@@ -61,7 +61,7 @@ function setup() {
 
     createCanvas(windowWidth, windowHeight);
     
-    teamInput = createInput('');
+    teamInput = createInput(''); // this should only run once. if it has to be recreated, it should be removed before recreated
     teamInput.attribute('placeholder', TRANSLATIONS[currentLang].battleScreen.teamSelection.inputBox);
     teamInput.style('font-size', '20px');
     teamInput.style('padding', '10px');
@@ -453,6 +453,9 @@ function windowResized() {
         newTitleScreen.duelMode = titleScreen.duelMode;
     }
     titleScreen = newTitleScreen;
+    if(workshopScreen.numberInput!==undefined){
+        workshopScreen.numberInput.remove();
+    }
     workshopScreen = new WorkshopScreen();
     
     if(level!==undefined){

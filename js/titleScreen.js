@@ -202,9 +202,9 @@ class TitleScreen {
         });
         
         this.workshopButton = new Button({
-            x: width - langBtnW - this.padding,
+            x: width - this.historyButton.w*2 - this.padding,
             y: height - this.historyButton.h - this.padding,
-            w: langBtnW,
+            w: this.historyButton.w*2,
             h: this.historyButton.h,
             label: "Workshop Button",
             style: {r: 8, onHoverMovement: -0.0035, textColor: color(111)},

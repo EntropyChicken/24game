@@ -4,12 +4,24 @@
 
 class WorkshopScreen {
 	constructor() {
+        this.workbench = {
+            // same format as the designed puzzle JSONs
+            cards:[1,2,3],
+            ops:["+","-"],
+            hint:{
+                universal:""
+            }, // only hint.universal will exist and be used (no language-specific hints)
+            sols:[], // only sols[0] will exist and be used (no alternative solutions listed)
+        };
+
         // let split = width > 450 ? 0.65 : 0.45;
-        let split = 0.5;
-        this.workbenchWidth = width*split;
+        let split = 0.65;
+        this.workbenchWidth = width; // should be width, actually. it'll take up the full upper part of screen
         this.workbenchHeight = height*(1-split);
+        this.workbenchLevelHeight = height*split;
+        this.workbenchLevelWidth = width*split;
         this.padding = 15;
-    
+
         this.numberInput = createInput('');
         this.numberInput.attribute('placeholder', TRANSLATIONS[currentLang].workshopScreen.numberInput);
         this.numberInput.style('font-size', '20px');
@@ -31,7 +43,7 @@ class WorkshopScreen {
 
         // same size/position formula as Level's homeButton
 		this.numberDeleteButton = new Button({
-			x: this.padding, y: this.numberInput.y+this.numberInput.height, w: max(50, this.workbenchWidth * 0.15), h: this.workbenchHeight * 0.2,
+			x: this.padding, y: this.numberInput.y+this.numberInput.height, w: max(70, this.workbenchWidth * 0.2), h: this.workbenchHeight * 0.15,
 			label: "Number Delete Button",
 			style: {r: 10, onHoverMovement: 0.003},
 			getText: () => TRANSLATIONS[currentLang].workshopScreen.numberDeleteButton,
@@ -44,26 +56,33 @@ class WorkshopScreen {
         { // generate operation toggles
             let x = this.padding;
             let y = this.numberDeleteButton.y+this.numberDeleteButton.h+this.padding;
-            let w = 45;
-            let h = 35;
+            let w = (width > 600 ? 55 : 43);
+            let h = (width > 600 ? 35 : 32);
             for(let s of Sequence.SYMBOLS){
+                let i = this.operationToggleButtons.length;
                 this.operationToggleButtons.push(new Button({
                     x:x,y:y,w:w,h:h,
-                    label: s+"Toggle Button",
-                    style: {r: 10, onHoverMovement: -0.003},
+                    label: s+" Toggle Button",
+                    style: {
+                        r: 10,
+                        onHoverMovement: -0.003
+                    },
                     getText: () => s,
                     onClick: () => {
-                        let has = false;
-                        for(let i = 0; i<workshopScreen.workbench.ops.length; i++){
-                            if(workshopScreen.workbench.ops[i] === s){
-                                has = true;
-                                workshopScreen.workbench.ops.splice(i,1);
-                                break;
+                        for(let j = 0; j<workshopScreen.workbench.ops.length; j++){
+                            if(workshopScreen.workbench.ops[j] === s){
+                                workshopScreen.operationToggleButtons[i].style.mainColor = color(255,255,255);
+                                workshopScreen.operationToggleButtons[i].style.shadeColor = theme.shadeColor;
+                                workshopScreen.operationToggleButtons[i].style.hovering = false;
+                                workshopScreen.workbench.ops.splice(j,1);
+                                workshopScreen.generateWorkbenchLevel();
+                                return;
                             }
                         }
-                        if(!has){
-                            workshopScreen.workbench.ops.push(s);
-                        }
+                        workshopScreen.workbench.ops.push(s);
+                        workshopScreen.operationToggleButtons[i].style.mainColor = theme.selectedColor;
+                        workshopScreen.operationToggleButtons[i].style.shadeColor = theme.shadeColorCorrect;
+                        workshopScreen.operationToggleButtons[i].style.hovering = true;
                         workshopScreen.generateWorkbenchLevel();
                     }
                 }));
@@ -74,23 +93,30 @@ class WorkshopScreen {
                 }
             }
         }
+        this.updateOperationToggleButtonStyles();
 
-
-
-        // there should also be a grid of checkboxes for every possible symbol in Sequence.SYMBOLS
-
-        this.workbench = {
-            // same format as the designed puzzle JSONs
-            cards:[1,2,3],
-            ops:["+","-"],
-            hint:{
-                universal:""
-            }, // only hint.universal will exist and be used (no language-specific hints)
-            sols:[], // only sols[0] will exist and be used (no alternative solutions listed)
-        };
         this.workbenchLevel = null;
         this.generateWorkbenchLevel();
 	}
+    updateOperationToggleButtonStyles() {
+        for(let btn of this.operationToggleButtons){
+            let s = btn.getText();
+            // off by default
+            btn.style.mainColor = color(255,255,255); 
+            btn.style.shadeColor = theme.shadeColor;
+            btn.style.hovering = false;
+            for(let j = 0; j<this.workbench.ops.length; j++){
+                if(this.workbench.ops[j] === s){
+                    // is on
+                    btn.style.mainColor = theme.selectedColor;
+                    btn.style.shadeColor = theme.shadeColorCorrect;
+                    btn.style.hovering = true;
+                    break;
+                }
+            }
+        }
+        this.generateWorkbenchLevel();
+    }
     drawWorkbench() {
 
     }
@@ -98,20 +124,26 @@ class WorkshopScreen {
 
     }
     draw() {
-        // background(210,225,250); // color of designed puzzle modes
-        background(0);
+        background(lerpColor(color(0),color(210,225,250),0.3)); // color of designed puzzle modes
         
         this.numberDeleteButton.draw();
         for(let btn of this.operationToggleButtons){
             btn.draw();
         }
 
+        if(this.workbenchLevel.solved){
+            // this.generateWorkbenchLevel();
+            setScreen("customLevel");
+        }
+        fill(222,165,115);
+        noStroke();
+        rect(0,this.workbenchHeight,this.workbenchLevelWidth,this.workbenchLevelHeight,20);
         push();
         translate(0,this.workbenchHeight);
-        scale(this.workbenchWidth/width,(height-this.workbenchHeight)/height);
+        scale(this.workbenchLevelWidth/width,this.workbenchLevelHeight/height);
         let trueMx = mx; // sus trick, temoprarily making mx fake so that it works for the transformed Level
         let trueMy = my;
-        mx = map(mx,0,this.workbenchWidth,0,width);
+        mx = map(mx,0,this.workbenchLevelWidth,0,width);
         my = map(my,this.workbenchHeight,height,0,height);
         this.workbenchLevel.draw(false);
         mx = trueMx;
@@ -121,13 +153,14 @@ class WorkshopScreen {
 
     generateWorkbenchLevel() {
         this.workbenchLevel = new Level(this.workbench.cards,this.workbench.ops,this.workbench,false);
+        Level.setupKeyboard(this.workbenchLevel);
     }
     createCard(value) { // create card. the argument should be value === this.numberInput.value()
         this.workbench.cards.push(+value);
         this.generateWorkbenchLevel();
     }
     handleClick(mx, my) {
-        this.workbenchLevel.handleClick(map(mx,0,this.workbenchWidth,0,width), map(my,this.workbenchHeight,height,0,height));
+        this.workbenchLevel.handleClick(map(mx,0,this.workbenchLevelWidth,0,width), map(my,this.workbenchHeight,height,0,height));
         
         const buttons = this.operationToggleButtons.concat([this.numberDeleteButton]);
         for(const btn of buttons) {

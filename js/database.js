@@ -5,7 +5,7 @@ let gameCountDrawScale = 1;
 
 document.addEventListener('firebase_initialized', () => {
     firebaseReady = window.firebaseAppReady;
-    isOnlineSession = (firebaseReady && firebaseReady.isOnlineMode);
+    isOnlineSession = (firebaseReady && firebaseReady.isOnlineMode && channel !== undefined);
     getGameCount().then(val => {
         gameCount = val;
     });

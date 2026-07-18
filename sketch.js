@@ -1,4 +1,4 @@
-let isOnlineSession = false;
+let isOnlineSession = false; // true only if all online stuff works (firebase, supabase)
 let currentLang = localStorage.getItem('user_lang_preference') || getUserLanguage();
 const USE_FLAG_EMOJIS = false;
 let showFlagEmojis = false;

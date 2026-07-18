@@ -67,14 +67,18 @@ function toggleDoublerReasonEnabled(reasonKey) {
 }
 
 // --- SUPABASE SETUP ---
-const supabaseClient = window.supabase.createClient(
-    "https://yjiizqjjuunbvmkuxulv.supabase.co",
-    "sb_publishable_UgcUH946WkpvMmPIvHN0Yg_cDczSY6T",
-    { auth: { persistSession: false } }
-);
-const channel = supabaseClient.channel("main-room", {
-    config: { broadcast: { self: true, ack: true } }
-});
+let supabaseClient, channel;
+if(window.supabase !== undefined){
+    supabaseClient = window.supabase.createClient(
+        "https://yjiizqjjuunbvmkuxulv.supabase.co",
+        "sb_publishable_UgcUH946WkpvMmPIvHN0Yg_cDczSY6T",
+        { auth: { persistSession: false } }
+    );
+    channel = supabaseClient.channel("main-room", {
+        config: { broadcast: { self: true, ack: true } }
+    });
+}
+// ngl if channel doesn't exist (in the case that we're offline) then most stuff in this script is broken. but it should never be called
 
 async function setupRealtime() {
     channel

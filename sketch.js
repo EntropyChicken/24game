@@ -84,7 +84,7 @@ function setup() {
     teamInput.position(safeX, safeY);
     teamInput.elt.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.keyCode === 13) {
-            handleTeamSubmit();
+            teamInputSubmit(teamInput.value());
             teamInput.elt.blur(); 
         }
     });
@@ -495,7 +495,7 @@ function mousePressed() {
             let btnX = width / 2 - 60;
             let btnY = inputY + inputH + 20; 
             if (mouseX > btnX && mouseX < btnX + 120 && mouseY > btnY && mouseY < btnY + 50) {
-                handleTeamSubmit();
+                teamInputSubmit(teamInput.value());
                 return;
             }
 
@@ -639,7 +639,7 @@ function touchStarted() {
                     let btnY = inputY + inputH + 20;
                     
                     if (t.x > btnX && t.x < btnX + btnW && t.y > btnY && t.y < btnY + btnH) {
-                        handleTeamSubmit();
+                        teamInputSubmit(teamInput.value());
                         return false;
                     }
 

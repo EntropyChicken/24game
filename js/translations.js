@@ -50,7 +50,10 @@ const TRANSLATIONS = {
                 team: "Team: ",
                 waiting: "...waiting to receive puzzle..."
             }
-        }
+        },
+        workshopScreen: {
+            numberInput: "Type a numerical value..."
+        },
     },
     chinese_simplified: {
         titleScreen:{

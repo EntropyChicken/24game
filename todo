@@ -29,3 +29,6 @@ investigate if this block of code from battleSystem.js is too lax for making isO
     await channel.subscribe((status) => {
         if (status === "SUBSCRIBED") {
             isOnlineSession = true; // sketchy?
+
+make numberInput only accept decimal real numbers (maybe don't even let people type PI) (clarify no imaginary numbers)
+make consistent between this.numberInput versus. teamInput

@@ -116,7 +116,7 @@ class TitleScreen {
         }
 
         this.historyButton = new Button({
-            x: width-this.padding-45, 
+            x: this.padding, 
             y: height-this.padding-70,
             w: 45,
             h: 70,
@@ -304,22 +304,22 @@ class TitleScreen {
                 textSize(constrain(width*0.035,27,45));
                 text(TRANSLATIONS[currentLang].titleScreen.randomSetSection,width*0.3+x, height*0.363+y*0.8);
                 text(TRANSLATIONS[currentLang].titleScreen.designedSetSection,width*0.7+x, height*0.363+y*0.8);
-                textAlign(RIGHT,BOTTOM);
+                textAlign(LEFT,BOTTOM);
                 
                 let s = constrain(width * 0.035, 27, 35);
                 if (isOnlineSession) {
                     if (gameCount !== undefined) {
                         textSize(s);
-                        text(TRANSLATIONS[currentLang].titleScreen.getGameCountUpperText(gameCount), width - this.historyButton.w - 2*this.padding + x, height - s - this.padding + y * 0.8);
-                        text(TRANSLATIONS[currentLang].titleScreen.gameCountLowerText, width - this.historyButton.w - 2*this.padding + x, height - this.padding + y * 0.8);
+                        text(TRANSLATIONS[currentLang].titleScreen.getGameCountUpperText(gameCount), this.historyButton.w + 2*this.padding + x, height - s - this.padding + y * 0.8);
+                        text(TRANSLATIONS[currentLang].titleScreen.gameCountLowerText, this.historyButton.w + 2*this.padding + x, height - this.padding + y * 0.8);
                         let w = textWidth(" "+TRANSLATIONS[currentLang].titleScreen.getGameCountUpperText(gameCount));
                         textSize(s * (gameCountDrawScale + 0.3));
                         text(gameCount, width - this.historyButton.w - 2*this.padding - w + x + (gameCountDrawScale-1)*4, height - s - this.padding + 2 + y * 0.8 + (gameCountDrawScale-1)*8);
                     }
                 } else {
                     textSize(s);
-                    text("📡❌", width - this.historyButton.w - 2*this.padding + x, height - s*1.15 - this.padding + y * 0.8);
-                    text(TRANSLATIONS[currentLang].titleScreen.offlineMode, width - this.historyButton.w - 2*this.padding + x, height - this.padding + y * 0.8);
+                    text("📡❌", this.historyButton.w + 2*this.padding + x, height - s*1.15 - this.padding + y * 0.8);
+                    text(TRANSLATIONS[currentLang].titleScreen.offlineMode, this.historyButton.w + 2*this.padding + x, height - this.padding + y * 0.8);
                 }
             }
         }

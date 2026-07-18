@@ -24,3 +24,8 @@ make the buttons look nicer on the home screen lol. don't be on one and two line
 make the text sizes of the buttons consistent in the Level
 
 add hint for "cards":[-1,-1],"ops":["÷","√","∛","ln"]
+
+investigate if this block of code from battleSystem.js is too lax for making isOnlineSession and may cause bugs
+    await channel.subscribe((status) => {
+        if (status === "SUBSCRIBED") {
+            isOnlineSession = true; // sketchy?

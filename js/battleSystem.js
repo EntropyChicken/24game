@@ -1,3 +1,5 @@
+// ngl if channel doesn't exist (in the case that we're offline) then most stuff in this script is broken. but it should never be called
+
 // When true: the battle button shows "Host Battle" (and lets anyone become
 // battle master) when no battle master currently exists.
 // When false: the battle button is hidden entirely when no battle master
@@ -65,20 +67,6 @@ function toggleDoublerReasonEnabled(reasonKey) {
         case "over_9000": battleMasterAwardForOver9000 = !battleMasterAwardForOver9000; break;
     }
 }
-
-// --- SUPABASE SETUP ---
-let supabaseClient, channel;
-if(window.supabase !== undefined){
-    supabaseClient = window.supabase.createClient(
-        "https://yjiizqjjuunbvmkuxulv.supabase.co",
-        "sb_publishable_UgcUH946WkpvMmPIvHN0Yg_cDczSY6T",
-        { auth: { persistSession: false } }
-    );
-    channel = supabaseClient.channel("main-room", {
-        config: { broadcast: { self: true, ack: true } }
-    });
-}
-// ngl if channel doesn't exist (in the case that we're offline) then most stuff in this script is broken. but it should never be called
 
 async function setupRealtime() {
     channel
@@ -266,7 +254,7 @@ async function setupRealtime() {
         });
     await channel.subscribe((status) => {
         if (status === "SUBSCRIBED") {
-            isOnlineSession = true;
+            isOnlineSession = true; // sketchy?
             if (screen === "title" && titleScreen) {
                 channel.send({ type: "broadcast", event: "ping_game_master", payload: {} });
             }

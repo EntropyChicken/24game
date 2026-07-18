@@ -8,8 +8,8 @@ class WorkshopScreen {
 
         this.workbench = {
             // same format as the designed puzzle JSONs
-            cards:[1,2,3],
-            ops:["+","-"],
+            cards:[1,2],
+            ops:["+","-","×","÷"],
             hint:{
                 universal:""
             }, // only hint.universal will exist and be used (no language-specific hints)

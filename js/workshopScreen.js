@@ -16,7 +16,7 @@ class WorkshopScreen {
             sols:[], // only sols[0] will exist and be used (no alternative solutions listed)
         };
 
-        this.levelColor = color(222,180,190);
+        this.backgroundColor = color(222,180,190);
 
         // let split = width > 450 ? 0.65 : 0.45;
         let split = 0.65;
@@ -122,6 +122,8 @@ class WorkshopScreen {
         this.generateWorkbenchLevel();
     }
     draw() {
+        theme.shadeColor = lerpColor(color(255),lerpColor(color(0),this.backgroundColor,1.4),0.6);
+
         if(this.workbenchLevel.solved){
             this.generateWorkbenchLevel();
             this.mode = (this.mode === "playing" ? "working" : "playing"); // flip mode
@@ -129,7 +131,7 @@ class WorkshopScreen {
 
         if(this.mode === "playing"){
             this.numberInput.hide();
-            background(this.levelColor);
+            background(this.backgroundColor);
             this.workbenchLevel.draw(false);
         }
         else{
@@ -141,7 +143,7 @@ class WorkshopScreen {
                 btn.draw();
             }
 
-            fill(this.levelColor);
+            fill(this.backgroundColor);
             noStroke();
             rect(0,this.workbenchHeight,this.workbenchLevelWidth,this.workbenchLevelHeight,20);
             push();

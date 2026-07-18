@@ -108,13 +108,11 @@ function draw() {
     
     if (screen === "title") {
         titleScreen.draw();
-        // Secret shortcut: always works to become battle master, regardless
-        // of SHOW_HOST_BATTLE_BUTTON, and intentionally bypasses the
-        // "is someone already battle master" check that the Host Battle
-        // button performs.
         if (keyIsDown(220) && keyIsDown(191) && screen !== "battleMaster") {
             setScreen("battleMaster");
         }
+        if(workshopScreen!==undefined) workshopScreen.numberInput.hide(); // idk why but opening console log (ctrl+shift+i) makes this appear on the title screen
+        teamInput.hide(); // for good measure
     } else if (screen === "game") {
         background(220);
         level.draw();

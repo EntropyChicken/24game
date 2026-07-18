@@ -4,6 +4,8 @@
 
 class WorkshopScreen {
 	constructor() {
+        this.mode = "working"; // "working" to create the level, and "playing" to play the level in fullscreen
+
         this.workbench = {
             // same format as the designed puzzle JSONs
             cards:[1,2,3],
@@ -13,6 +15,8 @@ class WorkshopScreen {
             }, // only hint.universal will exist and be used (no language-specific hints)
             sols:[], // only sols[0] will exist and be used (no alternative solutions listed)
         };
+
+        this.levelColor = color(222,180,190);
 
         // let split = width > 450 ? 0.65 : 0.45;
         let split = 0.65;
@@ -117,38 +121,46 @@ class WorkshopScreen {
         }
         this.generateWorkbenchLevel();
     }
-    drawWorkbench() {
-
-    }
-    drawList() {
-
-    }
     draw() {
-        background(lerpColor(color(0),color(210,225,250),0.3)); // color of designed puzzle modes
-        
-        this.numberDeleteButton.draw();
-        for(let btn of this.operationToggleButtons){
-            btn.draw();
+        if(this.workbenchLevel.solved){
+            this.generateWorkbenchLevel();
+            this.mode = (this.mode === "playing" ? "working" : "playing"); // flip mode
         }
 
-        if(this.workbenchLevel.solved){
-            // this.generateWorkbenchLevel();
-            setScreen("customLevel");
+        if(this.mode === "playing"){
+            this.numberInput.hide();
+            background(this.levelColor);
+            this.workbenchLevel.draw(false);
         }
-        fill(222,165,115);
-        noStroke();
-        rect(0,this.workbenchHeight,this.workbenchLevelWidth,this.workbenchLevelHeight,20);
-        push();
-        translate(0,this.workbenchHeight);
-        scale(this.workbenchLevelWidth/width,this.workbenchLevelHeight/height);
-        let trueMx = mx; // sus trick, temoprarily making mx fake so that it works for the transformed Level
-        let trueMy = my;
-        mx = map(mx,0,this.workbenchLevelWidth,0,width);
-        my = map(my,this.workbenchHeight,height,0,height);
-        this.workbenchLevel.draw(false);
-        mx = trueMx;
-        my = trueMy;
-        pop();
+        else{
+            background(lerpColor(color(0),color(210,225,250),0.3)); // color of designed puzzle modes
+            
+            this.numberInput.show();
+            this.numberDeleteButton.draw();
+            for(let btn of this.operationToggleButtons){
+                btn.draw();
+            }
+
+            fill(this.levelColor);
+            noStroke();
+            rect(0,this.workbenchHeight,this.workbenchLevelWidth,this.workbenchLevelHeight,20);
+            push();
+            translate(0,this.workbenchHeight);
+            scale(this.workbenchLevelWidth/width,this.workbenchLevelHeight/height);
+            let trueMx = mx; // sus trick, temoprarily making mx fake so that it works for the transformed Level
+            let trueMy = my;
+            mx = map(mx,0,this.workbenchLevelWidth,0,width);
+            my = map(my,this.workbenchHeight,height,0,height);
+            this.workbenchLevel.draw(false);
+            mx = trueMx;
+            my = trueMy;
+            pop();
+
+            fill(255);
+            textAlign(LEFT,TOP);
+            textSize(constrain(width*0.05,15,30));
+            text("solve your puzzle to verify that it is possible",this.workbenchLevelWidth+this.padding,this.workbenchHeight+this.padding,width-this.workbenchLevelWidth-2*this.padding);
+        }
     }
 
     generateWorkbenchLevel() {

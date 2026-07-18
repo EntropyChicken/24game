@@ -118,7 +118,7 @@ class TitleScreen {
         this.historyButton = new Button({
             x: this.padding, 
             y: height-this.padding-70,
-            w: 45,
+            w: 50,
             h: 70,
             label: "History Button",
             style: {r: 8, onHoverMovement: -0.0035, textColor: color(111)},

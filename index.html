@@ -83,9 +83,9 @@
             isOnlineMode: true,
             isReady: true       
           };
-          console.log("Online systems ready!");
+          console.log("Firebase online");
         } catch (err) {
-          console.warn("Offline fallback activated:", err);
+          console.warn("Firebase offline: will use fallback:", err);
           
           window.firebaseAppReady = {
             isOnlineMode: false,

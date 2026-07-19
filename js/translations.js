@@ -66,8 +66,9 @@ const TRANSLATIONS = {
             hostBattleChecking: "加载中...",
             randomSets: ["简单", "中等", "困难", "刁钻", "极难"],
             designedSets: ["探索", "洞察", "理论", "JS代码", "抓狂"],
-            getGameCountUpperText: (val) => "次通关",
-            gameCountLowerText: "来自全球玩家!",
+            // getGameCountUpperText: (val) => "次通关",
+            // gameCountLowerText: "来自全球玩家!",
+            getGameCountLowerText: (val) => ((val === 1 ? "game" : "games") + " won worldwide!"),
             historyButton: "我的\n通关",
             offlineMode: "离线模式"
         },
@@ -105,7 +106,11 @@ const TRANSLATIONS = {
                 team: "队伍: ",
                 waiting: "...正在等待接收谜题..."
             }
-        }
+        },
+        workshopScreen: {
+            numberInput: "Type a number to create card...",
+            numberDeleteButton: "Delete card"
+        },
     },
     chinese_traditional: {
         titleScreen:{
@@ -118,8 +123,9 @@ const TRANSLATIONS = {
             hostBattleChecking: "載入中...",
             randomSets: ["簡單", "中等", "困難", "刁鑽", "極難"],
             designedSets: ["探索", "洞察", "理論", "JS程式碼", "抓狂"],
-            getGameCountUpperText: (val) => "次通關",
-            gameCountLowerText: "來自全球玩家!",
+            // getGameCountUpperText: (val) => "次通關",
+            // gameCountLowerText: "來自全球玩家!",
+            getGameCountLowerText: (val) => ((val === 1 ? "game" : "games") + " won worldwide!"),
             historyButton: "我的\n通關",
             offlineMode: "離線模式"
         },
@@ -157,6 +163,10 @@ const TRANSLATIONS = {
                 team: "隊伍: ",
                 waiting: "...正在等待接收謎題..."
             }
-        }
+        },
+        workshopScreen: {
+            numberInput: "Type a number to create card...",
+            numberDeleteButton: "Delete card"
+        },
     }
 };

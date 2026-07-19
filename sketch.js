@@ -34,6 +34,7 @@ function preload() {
 }
 
 function setup() {
+    document.getElementById('loading')?.remove();
     for(let s of originalClassicSets){
         classicSets.push(shuffle([...s]));
     }

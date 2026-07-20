@@ -38,3 +38,5 @@ maybe red background means the user's puzzle has not been verified, while blue b
 make the auto gen hint for custom levels depend on language
 
 test that US has online mode and that the translations are accurate (and same obj structure)
+
+let numberInput work on mobile (rn you can't tap on it for some reason)

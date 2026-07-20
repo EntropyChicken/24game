@@ -605,6 +605,16 @@ function mousePressed() {
 }
 
 function touchStarted() {
+    if (screen === "workshop" && workshopScreen && workshopScreen.numberInput) { // sketchy thing to make numberInput box tappable
+        const inputElt = workshopScreen.numberInput.elt;
+        const rect = inputElt.getBoundingClientRect();
+        for (let t of touches) {
+            if (t.x >= rect.left && t.x <= rect.right &&
+                t.y >= rect.top && t.y <= rect.bottom) {
+                return true; // allows focus and keyboard
+            }
+        }
+    }
     for (let t of touches) {
         if (screen === "battle" && battleTeam === null) {
             let centralOrbitRadius = 220;

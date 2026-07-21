@@ -59,6 +59,10 @@ function symbolIsBinary(symbol) {
     return binaryOperators.includes(symbol);
 }
 
+function symbolIsCommutative(symbol) {
+    return symbol === '+' || symbol === '×';
+}
+
 function getFinalStep(expr) {
     expr = expr.replace(/\s+/g, "");
 

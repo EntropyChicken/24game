@@ -43,6 +43,7 @@ class WorkshopScreen {
                 teamInput.elt.blur();
             }
         });
+        this.numberInput.hide();
 
         // same size/position formula as Level's homeButton
 		this.numberDeleteButton = new Button({
@@ -98,7 +99,8 @@ class WorkshopScreen {
         }
         this.updateOperationToggleButtonStyles();
 
-        this.workbenchLevel = null;
+        this.workbenchLevel = null; // Level
+        this.workbenchSolver = null; // Solver
         this.generateWorkbenchLevel(true);
 	}
     updateOperationToggleButtonStyles() {
@@ -195,6 +197,7 @@ class WorkshopScreen {
         }
         this.workbenchLevel = new Level(this.workbench.cards,this.workbench.ops,this.workbench,false);
         Level.setupKeyboard(this.workbenchLevel);
+        this.workbenchSolver = new Solver(this.workbenchLevel);
     }
     createCard(value) { // create card. the argument should be value === this.numberInput.value()
         this.workbench.cards.push(+value);

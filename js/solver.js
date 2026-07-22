@@ -1,5 +1,6 @@
 // for space efficiency, perhaps i don't have to store the action information for every node, but just figure out what happened in makePath. however this pretty much duplicates code and it also requires stringToCards to work properly
 
+// BFS to find shortest solutions to making 24 for any given numbers and opSymbols
 class Solver {
     static FRACTION_DIGITS = 14; // should be more precise than display threshold. we assume we round this at every calculation
 
@@ -13,6 +14,9 @@ class Solver {
         this.queueId = 0; // the next index to pull from the queue
         this.path = [];
         this.solutionSequence = new Sequence(undefined,false);
+        this.iterations = 0; // increases during solveLoop
+
+        this.initializeBFS();
     }
 
     static cardsToString(cards){ // cards is an array of Complex. do not mutate
@@ -139,8 +143,23 @@ class Solver {
         }
     }
 
-    solveLoop(maxIterations) { // returns -1 if did not find a solution, -2 if deemed impossible, or the iteration number (between 1 and maxIterations, inclusive). if it finds a solution, it will eventually call makeSolutionSequence
-        for(let iteration = 1; iteration <= maxIterations && this.queueId < this.queue.length; iteration++){
+    initializeBFS() { // reset variables and initalize queue and maps
+        this.from = new Map();
+        this.actions = new Map();
+        this.queue = [this.values];
+        this.queueId = 0;
+        this.path = [];
+        this.solutionSequence = new Sequence(undefined,false);
+        this.iterations = 0;
+        
+        let s = Solver.cardsToString(this.values);
+        this.from.set(s,"origin");
+        this.actions.set(s,{});
+    }
+    solveLoop(maxIterations) { // returns -1 if did not find a solution, -2 if deemed impossible, or the total number of iterations if it finds a solution (and it will eventually call makeSolutionSequence)
+        for(let iter = 0; iter < maxIterations && this.queueId < this.queue.length; iter++){
+            this.iterations++; // total iterations this Solver has ever done for this solve
+
             let cards = this.queue[this.queueId]; // do not mutate the cards themselves
             this.queueId++;
             let currentKey = Solver.cardsToString(cards);
@@ -159,7 +178,7 @@ class Solver {
                                 a:cards[i],
                                 s:op,
                                 b:cards[j]
-                            })) return iteration;
+                            })) return this.iterations;
                         }
                     }
                 }
@@ -172,13 +191,13 @@ class Solver {
                             if(this.queueUp(cardsCopy,currentKey,{
                                 a:cards[i],
                                 s:op
-                            })) return iteration;
+                            })) return this.iterations;
                         }
                         else{
                             if(this.queueUp(cardsCopy,currentKey,{
                                 s:op,
                                 b:cards[i]
-                            })) return iteration;
+                            })) return this.iterations;
                         }
                     }
                 }
@@ -190,15 +209,7 @@ class Solver {
         return -1; // not found yet. perhaps there is a solution or perhaps not
     }
     getSolution(maxIterations) { // return a solution as an expression string, or "not found yet" if no solution found, or "impossible" if determined impossible
-        this.from = new Map();
-        this.actions = new Map();
-        this.path = [];
-        this.solutionSequence = new Sequence(undefined,false);
-        this.queue = [this.values];
-        this.queueId = 0;
-        let s = Solver.cardsToString(this.values);
-        this.from.set(s,"origin");
-        this.actions.set(s,{});
+        reset();
         let result = this.solveLoop(maxIterations);
         if(result === -2) {
             return "impossible";

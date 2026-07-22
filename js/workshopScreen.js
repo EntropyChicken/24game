@@ -97,13 +97,12 @@ class WorkshopScreen {
                 }
             }
         }
-        this.updateOperationToggleButtonStyles();
 
         this.workbenchLevel = null; // Level
         this.workbenchSolver = null; // Solver
-        this.generateWorkbenchLevel(true);
+        this.updateOperationToggleButtonStyles(true); // calls this.generateWorkbenchLevel(true);
 	}
-    updateOperationToggleButtonStyles() {
+    updateOperationToggleButtonStyles(clearHintAndSolution = false) {
         for(let btn of this.operationToggleButtons){
             let s = btn.getText();
             // off by default
@@ -120,7 +119,7 @@ class WorkshopScreen {
                 }
             }
         }
-        this.generateWorkbenchLevel();
+        this.generateWorkbenchLevel(clearHintAndSolution);
     }
     draw() {
         this.updateShadeColor();
@@ -197,7 +196,7 @@ class WorkshopScreen {
         }
         this.workbenchLevel = new Level(this.workbench.cards,this.workbench.ops,this.workbench,false);
         Level.setupKeyboard(this.workbenchLevel);
-        this.workbenchSolver = new Solver(this.workbenchLevel);
+        this.workbenchSolver = new Solver(this.workbenchLevel.values,this.workbenchLevel.opSymbols);
     }
     createCard(value) { // create card. the argument should be value === this.numberInput.value()
         this.workbench.cards.push(+value);

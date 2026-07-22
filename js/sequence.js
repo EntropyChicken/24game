@@ -382,18 +382,6 @@ function stringToNum(s){
     return val*negate;
 }
 
-// evaluates all expressions for all classics and puzzles except for js puzzles, sees if they're 24
-function testAllSolutions() {
-    // let problemSets = puzzleSets.slice(0, 2).concat(puzzleSets.slice(3), classicSets);
-    for(let problemSet of puzzleSets.slice(0,2).concat(puzzleSets.slice(3))){
-        testSolutionsOfProblemSet(problemSet,false);
-    }
-    for(let problemSet of classicSets){
-        testSolutionsOfProblemSet(problemSet,true);
-    }
-    console.log("finished testing all solutions in all problem sets!");
-}
-
 function testSolutionsOfProblemSet(problemSet,useRational){
     for(let problem of problemSet){
         for(let sol of problem.sols){
@@ -412,4 +400,15 @@ function testSolutionsOfProblemSet(problemSet,useRational){
             }
         }
     }
+}
+
+// evaluates all expressions for all classics and puzzles except for js puzzles, sees if they're 24
+function testAllSolutions() {
+    for(let problemSet of classicSets){
+        testSolutionsOfProblemSet(problemSet,true);
+    }
+    for(let problemSet of puzzleSets.slice(0,3).concat(puzzleSets.slice(4))){
+        testSolutionsOfProblemSet(problemSet,false);
+    }
+    console.log("finished testing all solutions in all problem sets!");
 }

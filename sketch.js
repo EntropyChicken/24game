@@ -41,7 +41,9 @@ function setup() {
     for(let s of originalPuzzleSets){
         puzzleSets.push(shuffle([...s]));
     }
+
     // testAllSolutions();
+    // findAllSolutions(10000);
 
     canHover = window.matchMedia('(hover: hover)').matches;
     // Touch-primary input + a small viewport is our best available signal

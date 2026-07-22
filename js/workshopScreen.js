@@ -3,6 +3,8 @@
 // right: list of created levels
 
 class WorkshopScreen {
+    static ITERATIONS_PER_FRAME = 500;
+
 	constructor() {
         this.mode = "working"; // "working" to create the level, and "playing" to play the level in fullscreen
 
@@ -178,11 +180,24 @@ class WorkshopScreen {
             mx = trueMx;
             my = trueMy;
             pop();
+            
+            let solverTxt = "Autosolver iterations: "+this.workbenchSolver.iterations;
+            if(this.workbenchSolver.conclusion === "not found yet"){
+                this.workbenchSolver.iterate(WorkshopScreen.ITERATIONS_PER_FRAME);
+                solverTxt += " ...still trying...";
+            }
+            else if(this.workbenchSolver.conclusion === "impossible"){
+                solverTxt += ". Your puzzle is impossible (every combination has been checked)";
+            }
+            else if(this.workbenchSolver.conclusion === "solved"){
+                solverTxt += ". SOLVED! "+this.workbenchSolver.solutionSequenceExpr+" = 24";
+            }
 
             fill(255);
             textAlign(LEFT,TOP);
             textSize(constrain(width*0.05,15,30));
-            text("solve your puzzle to verify that it is possible",this.workbenchLevelWidth+this.padding,this.workbenchHeight+this.padding,width-this.workbenchLevelWidth-2*this.padding);
+            text("Solve your puzzle to verify that it's possible. "+solverTxt,this.workbenchLevelWidth+this.padding,this.workbenchHeight+this.padding,width-this.workbenchLevelWidth-2*this.padding);
+
         }
     }
 
@@ -196,7 +211,7 @@ class WorkshopScreen {
         }
         this.workbenchLevel = new Level(this.workbench.cards,this.workbench.ops,this.workbench,false);
         Level.setupKeyboard(this.workbenchLevel);
-        this.workbenchSolver = new Solver(this.workbenchLevel.values,this.workbenchLevel.opSymbols);
+        this.workbenchSolver = new Solver(this.workbench.cards,this.workbench.ops);
     }
     createCard(value) { // create card. the argument should be value === this.numberInput.value()
         this.workbench.cards.push(+value);

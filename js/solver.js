@@ -10,11 +10,12 @@ class Solver {
 
         this.from = new Map(); // node (key) from which any node (key) was added
         this.actions = new Map(); // action (unlike in Sequence, this does not have id. need to reverse engineer later in makePath) by which any node (key) was added
-        this.queue = []; // never actually deletes the front. but it's not as big as the map so whatever
-        this.queueId = 0; // the next index to pull from the queue
+        this.queue = new Queue();
         this.path = [];
         this.solutionSequence = new Sequence(undefined,false);
-        this.iterations = 0; // increases during solveLoop
+        this.solutionSequenceExpr = "";
+        this.iterations = 0; // increases during .iterate()
+        this.conclusion = "not found yet";
 
         this.initializeBFS();
     }
@@ -146,22 +147,26 @@ class Solver {
     initializeBFS() { // reset variables and initalize queue and maps
         this.from = new Map();
         this.actions = new Map();
-        this.queue = [this.values];
-        this.queueId = 0;
+        this.queue = new Queue();
+        this.queue.push(this.values);
         this.path = [];
         this.solutionSequence = new Sequence(undefined,false);
+        this.solutionSequenceExpr = "";
         this.iterations = 0;
+        this.conclusion = "not found yet";
         
         let s = Solver.cardsToString(this.values);
         this.from.set(s,"origin");
         this.actions.set(s,{});
     }
-    solveLoop(maxIterations) { // returns -1 if did not find a solution, -2 if deemed impossible, or the total number of iterations if it finds a solution (and it will eventually call makeSolutionSequence)
-        for(let iter = 0; iter < maxIterations && this.queueId < this.queue.length; iter++){
+    iterate(maxIterations) {
+        if(this.conclusion === "solved"){
+            return "solved";
+        }
+        for(let iter = 0; iter < maxIterations && this.queue.size(); iter++){
             this.iterations++; // total iterations this Solver has ever done for this solve
 
-            let cards = this.queue[this.queueId]; // do not mutate the cards themselves
-            this.queueId++;
+            let cards = this.queue.pop(); // do not mutate the cards themselves
             let currentKey = Solver.cardsToString(cards);
 
             for(let op of this.opSymbols){
@@ -178,7 +183,11 @@ class Solver {
                                 a:cards[i],
                                 s:op,
                                 b:cards[j]
-                            })) return this.iterations;
+                            })){
+                                this.conclusion = "solved";
+                                this.solutionSequenceExpr = this.solutionSequence.toExpr();
+                                return "solved"
+                            };
                         }
                     }
                 }
@@ -191,31 +200,38 @@ class Solver {
                             if(this.queueUp(cardsCopy,currentKey,{
                                 a:cards[i],
                                 s:op
-                            })) return this.iterations;
+                            })){
+                                this.conclusion = "solved";
+                                this.solutionSequenceExpr = this.solutionSequence.toExpr();
+                                return "solved"
+                            };
                         }
                         else{
                             if(this.queueUp(cardsCopy,currentKey,{
                                 s:op,
                                 b:cards[i]
-                            })) return this.iterations;
+                            })){
+                                this.conclusion = "solved";
+                                this.solutionSequenceExpr = this.solutionSequence.toExpr();
+                                return "solved"
+                            };
                         }
                     }
                 }
             }
         }
-        if(this.queueId === this.queue.length){
-            return -2; // exhausted all of BFS possibilities and therefore it is impossible
+        if(this.queue.size()===0){
+            this.conclusion = "impossible";
+            return "impossible"; // exhausted all of BFS possibilities and therefore it is impossible
         }
-        return -1; // not found yet. perhaps there is a solution or perhaps not
+        this.conclusion = "not found yet";
+        return "not found yet"; // perhaps there is a solution or perhaps not
     }
     getSolution(maxIterations) { // return a solution as an expression string, or "not found yet" if no solution found, or "impossible" if determined impossible
-        reset();
-        let result = this.solveLoop(maxIterations);
-        if(result === -2) {
-            return "impossible";
-        }
-        else if(result === -1) {
-            return "not found yet";
+        this.initializeBFS();
+        let result = this.iterate(maxIterations);
+        if(result === "impossible" || result === "not found yet") {
+            return result;
         }
         else {
             return this.solutionSequence.toExpr();
@@ -253,4 +269,33 @@ function findAllSolutions(maxIterations=10000) {
         findSolutionsOfProblemSet(problemSet,maxIterations);
     }
     console.log("finished solving all problem sets!");
+}
+
+class Queue {
+    constructor(){
+        this.in = [];
+        this.out = [];
+    }
+    push(element){
+        this.in.push(element);
+    }
+    front(){
+        if(this.out.length===0){
+            this.in.reverse();
+            this.out = this.in;
+            this.in = [];
+        }
+        return this.out[this.out.length-1];
+    }
+    pop(){
+        if(this.out.length===0){
+            this.in.reverse();
+            this.out = this.in;
+            this.in = [];
+        }
+        return this.out.pop();
+    }
+    size(){
+        return this.in.length + this.out.length;
+    }
 }

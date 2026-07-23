@@ -11,7 +11,7 @@ class WorkshopScreen {
 
         this.workbench = {
             // same format as the designed puzzle JSONs
-            cards:[-1.23,-1.23,-1.23],
+            cards:[-0.1,-0.1,-0.1],
             ops:["÷","√","ln"], // "+","-","×","÷"
             hint:{english:""}, // only hint.english will exist and be used as default (no language-specific hints)
             sols:[], // only sols[0] will exist and be used (no alternative solutions listed)
@@ -182,22 +182,27 @@ class WorkshopScreen {
             my = trueMy;
             pop();
             
-            let solverTxt = "Autosolver iterations: "+this.workbenchSolver.iterations+". Depth:"+this.workbenchSolver.maxDepth+" operations. ";
+            let solverTxt = "SOLVER\nBFS iterations: "+this.workbenchSolver.iterations+"\nDepth: "+this.workbenchSolver.maxDepth+"\n\n";
             if(this.workbenchSolver.conclusion === "not found yet"){
                 this.workbenchSolver.iterate(WorkshopScreen.SOLVER_ITERATIONS,WorkshopScreen.SOLVER_MAX_MILLISECONDS);
                 solverTxt += "Still trying...";
+                if (performance.memory) {
+                    let used = performance.memory.usedJSHeapSize / 1024 / 1024;
+                    let limit = performance.memory.jsHeapSizeLimit / 1024 / 1024;
+                    solverTxt += `\nMemory use: ${round(used)} MB / ${round(limit)} MB`;
+                }
             }
             else if(this.workbenchSolver.conclusion === "impossible"){
                 solverTxt += "Your puzzle is impossible (every combination has been checked)";
             }
             else if(this.workbenchSolver.conclusion === "solved"){
-                solverTxt += "SOLVED! "+this.workbenchSolver.solutionSequenceExpr+" = 24";
+                solverTxt += "SOLVED!\n"+addSpacesAroundOperators(this.workbenchSolver.solutionSequenceExpr)+" = 24";
             }
 
             fill(255);
             textAlign(LEFT,TOP);
             textSize(constrain(width*0.05,15,30));
-            text("Solve your puzzle to verify that it's possible.\n\n"+solverTxt,this.workbenchLevelWidth+this.padding,this.workbenchHeight+this.padding,width-this.workbenchLevelWidth-2*this.padding);
+            text("Solve your puzzle to verify it\n\n"+solverTxt,this.workbenchLevelWidth+this.padding,this.workbenchHeight+this.padding,width-this.workbenchLevelWidth-2*this.padding);
 
         }
     }
@@ -240,4 +245,12 @@ class WorkshopScreen {
     show() {
         this.numberInput.show();
     }
+}
+
+// better for looping around the edge of the screen
+function addSpacesAroundOperators(str) {
+    return str.replace(/(?<![0-9)])-|([+\-×÷%^])/g, (match, p1) => {
+        if (match === '-' && !p1) return match; // Keep negative sign
+        return ` ${p1 || match} `;
+    }).replace(/\s+/g, ' ').trim();
 }

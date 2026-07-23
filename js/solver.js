@@ -2,7 +2,7 @@
 
 // BFS to find shortest solutions to making 24 for any given numbers and opSymbols
 class Solver {
-    static FRACTION_DIGITS = 14; // should be more precise than display threshold. we assume we round this at every calculation
+    static FRACTION_DIGITS = 14; // should be more precise than display threshold. we assume we round this at every calculation. interestingly, a lot of crazy hard puzzles still get solved correctly even if this equals 1. how strange. it may save memory to make this less
 
 	constructor(numbers,opSymbols) { // pass in numbers, not Complex
         this.values = numbers.map(n => new Complex(n)); // DO NOT MUTATE
@@ -22,17 +22,10 @@ class Solver {
         this.initializeBFS();
     }
 
-    static cardsToString(cards){ // cards is an array of Complex. do not mutate
-        let s = "";
-        for(let card of cards){
-            if(typeof card.real.toFixed !== "function"){
-                console.log("FAILED");
-                console.log(cards);
-                console.log(card);
-            } 
-            s += `${card.real.toFixed(Solver.FRACTION_DIGITS)},${card.imag.toFixed(Solver.FRACTION_DIGITS)};`;
-        }
-        return s;
+    static cardsToString(cards) { // cards is an array of Complex. do not mutate
+        return cards.map(card => 
+            `${card.real.toFixed(Solver.FRACTION_DIGITS)},${card.imag.toFixed(Solver.FRACTION_DIGITS)}`
+        ).join(';');
     }
     static stringToCards(string){
         let c = [];

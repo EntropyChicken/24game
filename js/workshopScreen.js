@@ -3,15 +3,16 @@
 // right: list of created levels
 
 class WorkshopScreen {
-    static ITERATIONS_PER_FRAME = 500;
+    static SOLVER_ITERATIONS = 10000;
+    static SOLVER_MAX_MILLISECONDS = 12;
 
 	constructor() {
         this.mode = "working"; // "working" to create the level, and "playing" to play the level in fullscreen
 
         this.workbench = {
             // same format as the designed puzzle JSONs
-            cards:[1,2],
-            ops:["+","-","×","÷"],
+            cards:[-1.23,-1.23,-1.23],
+            ops:["÷","√","ln"], // "+","-","×","÷"
             hint:{english:""}, // only hint.english will exist and be used as default (no language-specific hints)
             sols:[], // only sols[0] will exist and be used (no alternative solutions listed)
         };
@@ -183,7 +184,7 @@ class WorkshopScreen {
             
             let solverTxt = "Autosolver iterations: "+this.workbenchSolver.iterations;
             if(this.workbenchSolver.conclusion === "not found yet"){
-                this.workbenchSolver.iterate(WorkshopScreen.ITERATIONS_PER_FRAME);
+                this.workbenchSolver.iterate(WorkshopScreen.SOLVER_ITERATIONS,WorkshopScreen.SOLVER_MAX_MILLISECONDS);
                 solverTxt += " ...still trying...";
             }
             else if(this.workbenchSolver.conclusion === "impossible"){
@@ -196,7 +197,7 @@ class WorkshopScreen {
             fill(255);
             textAlign(LEFT,TOP);
             textSize(constrain(width*0.05,15,30));
-            text("Solve your puzzle to verify that it's possible. "+solverTxt,this.workbenchLevelWidth+this.padding,this.workbenchHeight+this.padding,width-this.workbenchLevelWidth-2*this.padding);
+            text("Solve your puzzle to verify that it's possible.\n\n"+solverTxt,this.workbenchLevelWidth+this.padding,this.workbenchHeight+this.padding,width-this.workbenchLevelWidth-2*this.padding);
 
         }
     }

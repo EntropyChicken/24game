@@ -124,6 +124,9 @@ class Sequence {
             if(right===null){
                 right = t.b.getText();
                 if(t.s==="√"){
+                    if(right.includes("+") || right.includes("-")){
+                        right = "("+right+")";
+                    }
                     return t.s + right;
                 }
             }
@@ -133,6 +136,9 @@ class Sequence {
 
             // prefer √√√ over √(√(√(
             if(!(symbolIsUnary(rs)&&right.charAt(0)==="√"&&t.s==="√")){
+                console.log(rs);
+                console.log(right.charAt(0));
+                console.log(t.s);
                 // general case: wrap
                 right = "("+right+")";
             }
@@ -203,6 +209,11 @@ class Sequence {
             return left + t.s + right;
         }
     }
+
+    static washExpr(expr){
+        let sequence = new Sequence(expr,false);
+        return sequence.toExpr();
+    }
 }
 
 function splitExpr(expr, splitStart, splitEnd) {
@@ -212,7 +223,7 @@ function splitExpr(expr, splitStart, splitEnd) {
         right:expr.substring(splitEnd,expr.length)
     };
 }
-// currently only supports binary symbols
+// this breaks for stuff like √-3 because it thinks the minus sign is subtraction. use √(-3) instead.
 function topSplitExpr(expr) {
     // remove outermost parentheses so that the target symbol is guaranteed at depth 0
     let minDepth = -1;

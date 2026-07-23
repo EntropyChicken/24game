@@ -159,11 +159,12 @@ class Solver {
         this.from.set(s,"origin");
         this.actions.set(s,{});
     }
-    iterate(maxIterations) {
+    iterate(maxIterations, maxMilliseconds = Infinity) {
         if(this.conclusion === "solved"){
             return "solved";
         }
-        for(let iter = 0; iter < maxIterations && this.queue.size(); iter++){
+        let endMillis = millis()+maxMilliseconds;
+        for(let iter = 0; this.queue.size() && iter < maxIterations && millis() < endMillis; iter++){
             this.iterations++; // total iterations this Solver has ever done for this solve
 
             let cards = this.queue.pop(); // do not mutate the cards themselves

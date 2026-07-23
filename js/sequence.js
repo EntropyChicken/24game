@@ -136,9 +136,6 @@ class Sequence {
 
             // prefer √√√ over √(√(√(
             if(!(symbolIsUnary(rs)&&right.charAt(0)==="√"&&t.s==="√")){
-                console.log(rs);
-                console.log(right.charAt(0));
-                console.log(t.s);
                 // general case: wrap
                 right = "("+right+")";
             }

@@ -182,16 +182,16 @@ class WorkshopScreen {
             my = trueMy;
             pop();
             
-            let solverTxt = "Autosolver iterations: "+this.workbenchSolver.iterations;
+            let solverTxt = "Autosolver iterations: "+this.workbenchSolver.iterations+". Depth:"+this.workbenchSolver.maxDepth+" operations. ";
             if(this.workbenchSolver.conclusion === "not found yet"){
                 this.workbenchSolver.iterate(WorkshopScreen.SOLVER_ITERATIONS,WorkshopScreen.SOLVER_MAX_MILLISECONDS);
-                solverTxt += " ...still trying...";
+                solverTxt += "Still trying...";
             }
             else if(this.workbenchSolver.conclusion === "impossible"){
-                solverTxt += ". Your puzzle is impossible (every combination has been checked)";
+                solverTxt += "Your puzzle is impossible (every combination has been checked)";
             }
             else if(this.workbenchSolver.conclusion === "solved"){
-                solverTxt += ". SOLVED! "+this.workbenchSolver.solutionSequenceExpr+" = 24";
+                solverTxt += "SOLVED! "+this.workbenchSolver.solutionSequenceExpr+" = 24";
             }
 
             fill(255);

@@ -10,6 +10,8 @@ class Solver {
 
         this.from = new Map(); // node (key) from which any node (key) was added
         this.actions = new Map(); // action (unlike in Sequence, this does not have id. need to reverse engineer later in makePath) by which any node (key) was added
+        this.depth = new Map(); // not necessary for this to work, but nice to know
+        this.maxDepth = 0;
         this.queue = new Queue();
         this.path = [];
         this.solutionSequence = new Sequence(undefined,false);
@@ -62,6 +64,10 @@ class Solver {
         if(this.from.has(newKey)) return false;
         this.from.set(newKey,previousKey);
         this.actions.set(newKey,action);
+        let newDepth = this.depth.get(previousKey)+1;
+        this.depth.set(newKey,newDepth);
+        console.assert(newDepth>=this.maxDepth);
+        this.maxDepth = newDepth;
         this.queue.push(cardsSorted);
         
         if(cardsSorted.length===1&&cardsSorted[0].equals24()){
@@ -147,6 +153,8 @@ class Solver {
     initializeBFS() { // reset variables and initalize queue and maps
         this.from = new Map();
         this.actions = new Map();
+        this.depth = new Map();
+        this.maxDepth = 0;
         this.queue = new Queue();
         this.queue.push(this.values);
         this.path = [];
@@ -158,6 +166,7 @@ class Solver {
         let s = Solver.cardsToString(this.values);
         this.from.set(s,"origin");
         this.actions.set(s,{});
+        this.depth.set(s,0);
     }
     iterate(maxIterations, maxMilliseconds = Infinity) {
         if(this.conclusion === "solved"){
